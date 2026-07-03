@@ -21,11 +21,13 @@ export default function LocatorMap({ countryId }: { countryId: string }) {
       const map = L.map(elRef.current, {
         zoomControl: true,
         attributionControl: false,
-        scrollWheelZoom: false, // 페이지 스크롤 보호
+        scrollWheelZoom: true, // 마우스 휠 줌
         dragging: true,
         doubleClickZoom: true,
         touchZoom: true,
-        zoomSnap: 0.25,
+        zoomSnap: 0, // 연속 줌으로 부드럽게
+        wheelPxPerZoomLevel: 120,
+        wheelDebounceTime: 20,
         minZoom: 2,
       });
       mapRef.current = map;
