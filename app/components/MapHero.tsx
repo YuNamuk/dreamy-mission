@@ -212,7 +212,7 @@ export default function MapHero({ countries, journey, hero, defaultLayer = 'terr
         <div className="herox__title">
           <h1 className="herox__h">
             {hero.l1}
-            {hero.l3 ? <>{' '}<span className="acc">{hero.l3}</span></> : null}
+            {hero.l3 ? <><br /><span className="acc">{hero.l3}</span></> : null}
             {hero.l2 ? <><br />{hero.l2}</> : null}
           </h1>
           <p className="herox__sub">
