@@ -212,10 +212,8 @@ export default function MapHero({ countries, journey, hero, defaultLayer = 'terr
         <div className="herox__title">
           <h1 className="herox__h">
             {hero.l1}
-            <br />
-            {hero.l2}
-            <br />
-            <span className="acc">{hero.l3}</span>
+            {hero.l2 ? <><br />{hero.l2}</> : null}
+            {hero.l3 ? <><br /><span className="acc">{hero.l3}</span></> : null}
           </h1>
           <p className="herox__sub">
             {hero.sub.split('\n').filter(Boolean).map((line, i) => (

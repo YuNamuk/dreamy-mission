@@ -30,10 +30,10 @@ export interface HomeContent {
 export const HOME_KEY = '__home__';
 
 export const HOME_DEFAULT: HomeContent = {
-  heroLine1: '드리미학교,',
-  heroLine2: '하나님의 꿈이',
-  heroLine3: '세상을 그립니다',
-  heroSub: '성공이 아닌 섬김을 배웁니다.\n하나님의 일하심에 참여합니다.\n같은 눈높이로 형제들을 사랑합니다.',
+  heroLine1: '드리미학교',
+  heroLine2: '',
+  heroLine3: '교육선교',
+  heroSub: '성공이 아닌 섬김을,\n나의 일이 아닌 하나님의 일하심을,\n선교는 사랑하는 것임을,\n배워갑니다.',
   journey: [
     { y: '2021', id: 'mongolia', desc: '밝은미래학교 협력 · 인턴 교사 파송 · 3P 교육' },
     { y: '2022', id: 'philippines', desc: '필리핀 드리미학교 건축 · 교사 훈련 · 학생 교육선교' },
