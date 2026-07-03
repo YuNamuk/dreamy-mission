@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import 'leaflet/dist/leaflet.css';
 import { LATLNG, SEOUL_LATLNG } from '@/lib/countries';
-import { IconGospel, IconEducation, IconService, IconCommunity } from './icons';
+import { IconGospel, IconEducation, IconService, IconFaith } from './icons';
 
 export interface HeroCountry {
   id: string;
@@ -30,10 +30,10 @@ export interface HeroText {
 }
 
 const VALUES = [
-  { icon: <IconGospel size={19} />, ko: '복음', en: 'Gospel' },
+  { icon: <IconFaith size={19} />, ko: '복음', en: 'Gospel' },
   { icon: <IconEducation size={19} />, ko: '교육', en: 'Education' },
   { icon: <IconService size={19} />, ko: '섬김', en: 'Service' },
-  { icon: <IconCommunity size={19} />, ko: '공동체', en: 'Community' },
+  { icon: <IconGospel size={19} />, ko: '사랑', en: 'Love' },
 ];
 
 const LAYERS = {
@@ -210,7 +210,6 @@ export default function MapHero({ countries, journey, hero, defaultLayer = 'terr
 
       <div className="herox__overlay">
         <div className="herox__title">
-          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.22em' }}>2022 — Present · Six Lands</div>
           <h1 className="herox__h">
             {hero.l1}
             <br />
@@ -218,7 +217,11 @@ export default function MapHero({ countries, journey, hero, defaultLayer = 'terr
             <br />
             <span className="acc">{hero.l3}</span>
           </h1>
-          <p className="herox__sub">{hero.sub}</p>
+          <p className="herox__sub">
+            {hero.sub.split('\n').filter(Boolean).map((line, i) => (
+              <span key={i} style={{ display: 'block' }}>{line}</span>
+            ))}
+          </p>
           <div className="valuechips">
             {VALUES.map((v) => (
               <div key={v.ko} className="valuechip">{v.icon}<b>{v.ko}</b><span>{v.en}</span></div>

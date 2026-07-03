@@ -33,7 +33,7 @@ export const HOME_DEFAULT: HomeContent = {
   heroLine1: '드리미학교,',
   heroLine2: '하나님의 꿈이',
   heroLine3: '세상을 그립니다',
-  heroSub: '윤창권 선생님의 ‘선교를 그리다’ 수업과 함께 하나님의 꿈을 배우고, 가르치고, 삶으로 그려갑니다.',
+  heroSub: '성공이 아닌 섬김을 배웁니다.\n하나님의 일하심에 참여합니다.\n같은 눈높이로 형제들을 사랑합니다.',
   journey: [
     { y: '2021', id: 'mongolia', desc: '밝은미래학교 협력 · 인턴 교사 파송 · 3P 교육' },
     { y: '2022', id: 'philippines', desc: '필리핀 드리미학교 건축 · 교사 훈련 · 학생 교육선교' },
