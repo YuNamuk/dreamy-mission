@@ -1569,3 +1569,23 @@ img {
   .country-facts { grid-template-columns: 1fr; max-width: none; }
   .country-silhouette { position: static; width: 200px; height: 190px; opacity: .1; margin: 12px 0 -8px; }
 }
+
+/* ════════════════════════════════════════════════
+   국가 통합 히어로 카드 (이름·설명·정보·위치 지도)
+   ════════════════════════════════════════════════ */
+.chero { display: grid; grid-template-columns: 1.12fr 0.88fr; background: #fff; border: 1px solid var(--line); border-radius: 24px; overflow: hidden; box-shadow: 0 30px 70px -46px rgba(14,36,56,.3); }
+.chero__left { padding: 40px 42px 38px; }
+.chero__head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.chero__head h1 { margin: 0; font-family: var(--f-disp); font-weight: 500; font-size: clamp(30px, 3.4vw, 58px); line-height: 1; letter-spacing: -.01em; color: var(--sky); }
+.chero__ko { font-size: clamp(18px, 2vw, 26px); font-weight: 600; letter-spacing: -.01em; }
+.chero__meta { font-family: var(--f-disp); font-size: 14px; font-weight: 700; color: var(--ink4); letter-spacing: .05em; }
+.chero__intro { margin: 22px 0 0; font-size: 15.5px; line-height: 1.95; color: var(--ink2); font-weight: 300; }
+.chero .country-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 0 34px; margin-top: 24px; max-width: none; }
+.chero__map { position: relative; min-height: 480px; background: #eef3f7; border-left: 1px solid var(--line); }
+.locmap { position: absolute; inset: 0; }
+.chero__pin { position: absolute; top: 16px; left: 16px; z-index: 500; font-family: var(--f-disp); font-size: 12px; font-weight: 800; letter-spacing: .02em; color: var(--navy); background: rgba(255,255,255,.92); border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; box-shadow: 0 6px 16px -8px rgba(14,36,56,.3); }
+@media (max-width: 900px) {
+  .chero { grid-template-columns: 1fr; }
+  .chero__left { padding: 28px 22px 26px; }
+  .chero__map { min-height: 300px; border-left: none; border-top: 1px solid var(--line); }
+}

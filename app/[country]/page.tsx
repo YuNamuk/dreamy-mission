@@ -11,6 +11,7 @@ import Footer from '../components/Footer';
 import EditController from '../components/EditController';
 import CategoryGallery, { type Category } from '../components/CategoryGallery';
 import VisitGallery from '../components/VisitGallery';
+import LocatorMap from '../components/LocatorMap';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,41 +41,41 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
     <main id="country-root">
       <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active="missions" logo={settings.logoUrl} />
 
-      {/* ── 벽면 헤더 ── */}
-      <section className="section--wide country-hd" style={{ padding: '120px 48px 0' }}>
-        <div className="country-silhouette" style={{ ['--shape' as string]: `url(/shapes/${id}.svg)` } as React.CSSProperties} aria-hidden />
-        <div className="country-hd__body">
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 22, flexWrap: 'wrap' }}>
-            <h1 style={{ margin: 0, fontFamily: 'var(--f-disp)', fontWeight: 500, fontSize: 'clamp(34px,4.6vw,72px)', lineHeight: 1, letterSpacing: '-.01em', color: 'var(--sky)' }}>
-              {country.en}
-            </h1>
-            <span style={{ fontSize: 'clamp(19px,2.4vw,28px)', fontWeight: 600, letterSpacing: '-.01em' }}>{country.ko}</span>
-            <span style={{ fontFamily: 'var(--f-disp)', fontSize: 15, fontWeight: 700, color: 'var(--ink4)', letterSpacing: '.06em' }}>
-              {indexLabel} / 06 · {country.years}
-            </span>
+      {/* ── 통합 히어로 카드: 이름 · 설명 · 국가정보 · 위치 지도 ── */}
+      <section className="section--wide" style={{ padding: '108px 48px 0' }}>
+        <div className="chero">
+          <div className="chero__left">
+            <div className="chero__head">
+              <h1>{country.en}</h1>
+              <span className="chero__ko">{country.ko}</span>
+              <span className="chero__meta">{indexLabel} / 06 · {country.years}</span>
+            </div>
+
+            <p data-field="intro" className="chero__intro">{country.intro}</p>
+
+            <div className="country-facts">
+              {([
+                ['수도', country.capital],
+                ['인구', country.pop],
+                ['면적', country.area],
+                ['언어', country.language],
+                ['종교', country.religion],
+                ['정치체제', country.government],
+                ['통화', country.currency],
+                ['기후', country.climate],
+                ['시차', country.timezone],
+              ] as [string, string][]).map(([label, value]) => (
+                <div className="fact" key={label}>
+                  <div className="fact__label">{label}</div>
+                  <div className="fact__val">{value}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <p data-field="intro" style={{ margin: '30px 0 0', maxWidth: 720, fontSize: 16.5, lineHeight: 2, color: 'var(--ink2)', fontWeight: 300 }}>
-            {country.intro}
-          </p>
-
-          <div className="country-facts">
-            {([
-              ['수도', country.capital],
-              ['인구', country.pop],
-              ['면적', country.area],
-              ['언어', country.language],
-              ['종교', country.religion],
-              ['정치체제', country.government],
-              ['통화', country.currency],
-              ['기후', country.climate],
-              ['시차', country.timezone],
-            ] as [string, string][]).map(([label, value]) => (
-              <div className="fact" key={label}>
-                <div className="fact__label">{label}</div>
-                <div className="fact__val">{value}</div>
-              </div>
-            ))}
+          <div className="chero__map">
+            <LocatorMap countryId={id} />
+            <div className="chero__pin">{country.ko}</div>
           </div>
         </div>
       </section>
