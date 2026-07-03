@@ -22,10 +22,12 @@ export default function Nav({
   user,
   countries = [],
   active,
+  logo,
 }: {
   user: DreamiUser | null;
   countries?: NavCountry[];
   active?: string;
+  logo?: string | null;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [missionsOpen, setMissionsOpen] = useState(false);
@@ -48,7 +50,7 @@ export default function Nav({
     <nav className="nav2">
       <Link href="/" className="nav2__brand" aria-label="홈">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/mark.png" alt="" />
+        <img src={logo || '/mark.png'} alt="" />
         <span className="nav2__wordmark">
           <b>Dreamy School</b>
           <i>Missions</i>

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getUser } from '@/lib/session';
 import { getCountry } from '@/lib/content';
+import { getSettings } from '@/lib/settings';
 import { COUNTRIES, countryIndex } from '@/lib/countries';
 import { resolvePhoto } from '@/lib/photos';
 import { PHOTO_BASE } from '@/lib/uploaded-photos';
@@ -15,7 +16,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function CountryPage({ params }: { params: Promise<{ country: string }> }) {
   const { country: id } = await params;
-  const [user, { country, images, catPhotos, visits }] = await Promise.all([getUser(), getCountry(id)]);
+  const [user, { country, images, catPhotos, visits }, settings] = await Promise.all([getUser(), getCountry(id), getSettings()]);
   if (!country) notFound();
   const hasVisits = visits.some((v) => v.photos.length > 0);
 
@@ -37,7 +38,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
 
   return (
     <main id="country-root">
-      <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active="missions" />
+      <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active="missions" logo={settings.logoUrl} />
 
       {/* ── 벽면 헤더 ── */}
       <section className="section--wide" style={{ padding: '120px 48px 0' }}>

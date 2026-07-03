@@ -8,6 +8,7 @@ import { findCountry } from '@/lib/countries';
 import { PHOTO_BASE } from '@/lib/uploaded-photos';
 import { supabase as sb } from '@/lib/supabase';
 import { HOME_KEY, loadHomeEdit, type HomeContent } from '@/lib/home';
+import { SETTINGS_KEY, loadSettingsEdit, type SiteSettings } from '@/lib/settings';
 
 export interface Result {
   ok: boolean;
@@ -106,6 +107,50 @@ export async function uploadCover(id: string, themeIndex: number, dataUrl: strin
     if (!res.ok) return { ok: false, error: res.error };
     revalidatePath(`/${id}`);
     return { ok: true, url: publicUrl };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** ── 사이트 설정 (전체 관리자 전용) ── */
+async function saveSettingsRaw(patch: Partial<SiteSettings>, byEmail: string): Promise<Result> {
+  if (!sb) return { ok: false, error: '백엔드 미연결' };
+  const existing = await loadSettingsEdit();
+  const merged = { ...existing, ...patch };
+  const { error } = await sb.from(CONTENT_TABLE).upsert(
+    { id: SETTINGS_KEY, data: merged, updated_by: byEmail, updated_at: new Date().toISOString() },
+    { onConflict: 'id' },
+  );
+  if (error) return { ok: false, error: error.message };
+  revalidatePath('/', 'layout');
+  revalidatePath('/admin/settings');
+  return { ok: true };
+}
+
+export async function saveSettings(patch: Partial<SiteSettings>): Promise<Result> {
+  try {
+    const me = await requireAdmin('super');
+    return await saveSettingsRaw(patch, me.email);
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+export async function uploadLogo(kind: 'color' | 'white', dataUrl: string): Promise<Result & { url?: string }> {
+  try {
+    const me = await requireAdmin('super');
+    const m = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+    if (!m || !m[1].startsWith('image/')) return { ok: false, error: '이미지 파일만 가능합니다.' };
+    const buffer = Buffer.from(m[2], 'base64');
+    if (buffer.byteLength > 4_000_000) return { ok: false, error: '이미지가 너무 큽니다 (최대 4MB).' };
+    const ext = m[1] === 'image/png' ? 'png' : m[1] === 'image/webp' ? 'webp' : m[1] === 'image/svg+xml' ? 'svg' : 'png';
+    const path = `site-logo-${kind}.${ext}`;
+    const url = await storagePut(path, m[1], buffer);
+    if (!url) return { ok: false, error: '업로드 실패' };
+    const versioned = `${url}?v=${Date.now()}`;
+    const res = await saveSettingsRaw(kind === 'white' ? { logoWhiteUrl: versioned } : { logoUrl: versioned }, me.email);
+    if (!res.ok) return res;
+    return { ok: true, url: versioned };
   } catch (err) {
     return { ok: false, error: (err as Error).message };
   }

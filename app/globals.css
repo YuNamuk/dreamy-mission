@@ -1512,3 +1512,9 @@ img {
 .acatwrap .acat { border: none; padding: 0; border-radius: 0; }
 .acat__gallery { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
 .acat__gallery-hd { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* 관리자 로고 업로드 박스 */
+.logobox { position: relative; height: 90px; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; }
+.logobox--dark { background: var(--navy-ink); }
+.logobox img { max-height: 46px; max-width: 70%; object-fit: contain; }
+.logobox span { position: absolute; inset: auto 0 0 0; text-align: center; font-size: 11.5px; font-weight: 700; color: #fff; background: rgba(11,27,52,.72); padding: 5px; }

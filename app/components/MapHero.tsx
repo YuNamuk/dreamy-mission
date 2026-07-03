@@ -60,11 +60,11 @@ function curve(a: [number, number], b: [number, number], bend = 0.16, n = 36): [
   return pts;
 }
 
-export default function MapHero({ countries, journey, hero }: { countries: HeroCountry[]; journey: JourneyRow[]; hero: HeroText }) {
+export default function MapHero({ countries, journey, hero, defaultLayer = 'terrain' }: { countries: HeroCountry[]; journey: JourneyRow[]; hero: HeroText; defaultLayer?: LayerKey }) {
   const elRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import('leaflet').Map | null>(null);
   const tileRef = useRef<import('leaflet').TileLayer | null>(null);
-  const [layer, setLayer] = useState<LayerKey>('terrain');
+  const [layer, setLayer] = useState<LayerKey>(defaultLayer);
   const router = useRouter();
 
   useEffect(() => {
@@ -92,8 +92,8 @@ export default function MapHero({ countries, journey, hero }: { countries: HeroC
       });
       mapRef.current = map;
       map.zoomControl.setPosition('bottomright');
-      const conf = LAYERS.terrain;
-      tileRef.current = L.tileLayer(conf.url, { maxZoom: conf.maxZoom, attribution: conf.attribution }).addTo(map);
+      const conf = LAYERS[defaultLayer];
+      tileRef.current = L.tileLayer(conf.url, { maxZoom: conf.maxZoom, attribution: conf.attribution, ...('subdomains' in conf ? { subdomains: conf.subdomains } : {}) }).addTo(map);
 
       // ── 커스텀 부드러운 줌 (휠 입력 누적 → 프레임마다 지수감쇠 lerp, 커서 앵커 고정) ──
       let targetZoom = map.getZoom();

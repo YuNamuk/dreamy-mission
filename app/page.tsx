@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getUser } from '@/lib/session';
 import { getCountries } from '@/lib/content';
 import { getHome } from '@/lib/home';
+import { getSettings } from '@/lib/settings';
 import { resolvePhoto } from '@/lib/photos';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
@@ -15,7 +16,7 @@ const DRAW_ICONS = [<IconEducation key="e" size={22} />, <IconCommunity key="c" 
 const DRAW_SLOTS = ['draw-education', 'draw-community', 'draw-service', 'draw-faith'];
 
 export default async function Home() {
-  const [user, countries, home] = await Promise.all([getUser(), getCountries(), getHome()]);
+  const [user, countries, home, settings] = await Promise.all([getUser(), getCountries(), getHome(), getSettings()]);
   const byId = Object.fromEntries(countries.map((c) => [c.id, c]));
   const navCountries = countries.map((c) => ({ id: c.id, ko: c.ko, en: c.en }));
 
@@ -34,7 +35,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Nav user={user} countries={navCountries} active="home" />
+      <Nav user={user} countries={navCountries} active="home" logo={settings.logoUrl} />
 
       {/* ── 히어로: 풀블리드 지도 + 타이틀(좌)·발자취(우) 오버레이 ── */}
       <div id="map">
@@ -42,6 +43,7 @@ export default async function Home() {
           countries={heroCountries}
           journey={journey}
           hero={{ l1: home.heroLine1, l2: home.heroLine2, l3: home.heroLine3, sub: home.heroSub }}
+          defaultLayer={settings.mapTile}
         />
       </div>
 

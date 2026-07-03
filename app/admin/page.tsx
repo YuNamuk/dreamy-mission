@@ -68,6 +68,20 @@ export default async function AdminHome() {
         </div>
       </section>
 
+      {/* 사이트 설정 (전체 관리자) */}
+      {admin.role === 'super' && (
+        <section className="admincard">
+          <h2>사이트 설정 <span className="muted" style={{ fontWeight: 400, fontSize: 13 }}>(전체 관리자 전용)</span></h2>
+          <p className="muted">기본 지도 타일 · 로고 · 대표 문구 · 대표 성경구절을 설정합니다.</p>
+          <div className="adminlist" style={{ marginTop: 10 }}>
+            <Link href="/admin/settings" className="adminlist__item">
+              <div><b>사이트 설정</b> <span className="muted">지도·로고·문구·구절</span></div>
+              <span className="adminlist__go">설정 →</span>
+            </Link>
+          </div>
+        </section>
+      )}
+
       {/* 관리자 관리 (전체 관리자) */}
       {admin.role === 'super' && <AdminManager admins={admins} meEmail={admin.email} />}
 
