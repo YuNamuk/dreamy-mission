@@ -92,6 +92,10 @@ export default async function AdminHome() {
               <span className="adminlist__go">편집 →</span>
             </Link>
           ))}
+          <Link href="/admin/stories" className="adminlist__item">
+            <div><b>STORIES 이야기 목록</b> <span className="muted">학생 소감문 · 계획서 · 현장 이야기 추가/편집</span></div>
+            <span className="adminlist__go">편집 →</span>
+          </Link>
         </div>
       </section>
 

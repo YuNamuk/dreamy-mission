@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { saveCountryContent, uploadCover, addCatPhotos, removeCatPhoto } from '../actions';
+import { saveCountryContent, saveCountryStructure, uploadCover, addCatPhotos, removeCatPhoto } from '../actions';
 
 interface Initial {
   intro: string;
@@ -11,7 +11,7 @@ interface Initial {
   timeline: { y: string; items: string[] }[];
 }
 
-export default function CountryEditor({ id, initial, covers, gallery }: { id: string; initial: Initial; covers: string[]; gallery: string[][] }) {
+export default function CountryEditor({ id, initial, covers, gallery, photoBase }: { id: string; initial: Initial; covers: string[]; gallery: string[][]; photoBase: string }) {
   const [intro, setIntro] = useState(initial.intro);
   const [themes, setThemes] = useState(initial.themes);
   const [stats, setStats] = useState(initial.stats);
@@ -50,6 +50,38 @@ export default function CountryEditor({ id, initial, covers, gallery }: { id: st
 
   function setTheme(i: number, k: 't' | 'd', v: string) {
     setThemes((p) => p.map((t, idx) => (idx === i ? { ...t, [k]: v } : t)));
+  }
+
+  /** 카테고리 구조(추가/삭제/순서)를 즉시 서버에 저장 */
+  function persistStructure(nt: { t: string; d: string }[], nc: string[], ng: string[][]) {
+    start(async () => {
+      const res = await saveCountryStructure(id, { themes: nt.map((t) => ({ t: t.t, d: t.d })), covers: nc, galleries: ng });
+      setMsg(res.ok ? '카테고리 구성을 저장했습니다.' : res.error ?? '저장 실패');
+      if (res.ok) router.refresh();
+    });
+  }
+  function addCategory() {
+    const nt = [...themes, { t: '새 카테고리', d: '' }];
+    const nc = [...coverUrls, `${photoBase}/th-${id}-${nt.length}.jpg`];
+    const ng = [...gal, []];
+    setThemes(nt); setCoverUrls(nc); setGal(ng);
+    persistStructure(nt, nc, ng);
+  }
+  function removeCategory(i: number) {
+    if (!confirm(`"${themes[i]?.t || '이 카테고리'}"를 삭제할까요? 이 카테고리의 갤러리 사진 목록도 사라집니다.`)) return;
+    const nt = themes.filter((_, x) => x !== i);
+    const nc = coverUrls.filter((_, x) => x !== i);
+    const ng = gal.filter((_, x) => x !== i);
+    setThemes(nt); setCoverUrls(nc); setGal(ng);
+    persistStructure(nt, nc, ng);
+  }
+  function moveCategory(i: number, dir: -1 | 1) {
+    const j = i + dir;
+    if (j < 0 || j >= themes.length) return;
+    const sw = <T,>(a: T[]) => { const b = [...a]; [b[i], b[j]] = [b[j], b[i]]; return b; };
+    const nt = sw(themes), nc = sw(coverUrls), ng = sw(gal);
+    setThemes(nt); setCoverUrls(nc); setGal(ng);
+    persistStructure(nt, nc, ng);
   }
   function setYear(i: number, y: string) {
     setTimeline((p) => p.map((r, idx) => (idx === i ? { ...r, y } : r)));
@@ -124,10 +156,17 @@ export default function CountryEditor({ id, initial, covers, gallery }: { id: st
 
       {/* 카테고리 */}
       <section className="admincard">
-        <h2>전시 카테고리</h2>
+        <h2>전시 카테고리 <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>· 추가·삭제·순서변경은 즉시 저장됩니다</span></h2>
         <div style={{ display: 'grid', gap: 16 }}>
           {themes.map((th, i) => (
             <div key={i} className="acatwrap">
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10 }}>
+                <span className="muted" style={{ fontSize: 12, fontWeight: 700 }}>카테고리 {String(i + 1).padStart(2, '0')}</span>
+                <span style={{ flex: 1 }} />
+                <button className="abtn" onClick={() => moveCategory(i, -1)} disabled={i === 0 || pending} title="위로">↑</button>
+                <button className="abtn" onClick={() => moveCategory(i, 1)} disabled={i === themes.length - 1 || pending} title="아래로">↓</button>
+                <button className="alink" onClick={() => removeCategory(i)} disabled={pending}>삭제</button>
+              </div>
               <div className="acat">
                 <div className="acat__media" onClick={() => pickCover(i)} title="클릭해서 커버 교체">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -165,6 +204,7 @@ export default function CountryEditor({ id, initial, covers, gallery }: { id: st
             </div>
           ))}
         </div>
+        <button className="abtn" style={{ marginTop: 14 }} onClick={addCategory} disabled={pending}>+ 카테고리 추가</button>
       </section>
 
       {/* 연혁 */}

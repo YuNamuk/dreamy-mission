@@ -4,6 +4,17 @@ const nextConfig = {
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '**.supabase.co' }],
   },
+  // 옛 기본 도메인 접속은 대표 도메인으로 영구 이전
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'dreamy-3.vercel.app' }],
+        destination: 'https://mission.dreamyedu.net/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

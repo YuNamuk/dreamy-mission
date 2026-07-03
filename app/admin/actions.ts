@@ -10,6 +10,7 @@ import { supabase as sb } from '@/lib/supabase';
 import { HOME_KEY, loadHomeEdit, type HomeContent } from '@/lib/home';
 import { SETTINGS_KEY, loadSettingsEdit, type SiteSettings } from '@/lib/settings';
 import { loadPageEdit, type PageKey, type PageContent, PAGE_KEYS } from '@/lib/pages';
+import { STORIES_KEY, type Story } from '@/lib/stories';
 
 export interface Result {
   ok: boolean;
@@ -81,6 +82,41 @@ export async function saveCountryContent(
   }
 }
 
+/** 전시 카테고리 구조(추가·삭제·순서) 저장 — themes/커버/갤러리를 새 순서로 원자적 재작성 */
+export async function saveCountryStructure(
+  id: string,
+  data: { themes: { t: string; d: string }[]; covers: (string | null)[]; galleries: string[][] },
+): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    if (!findCountry(id)) return { ok: false, error: '알 수 없는 국가' };
+    if (!sb) return { ok: false, error: '백엔드 미연결' };
+    if (!data.themes.length) return { ok: false, error: '카테고리는 최소 1개가 필요합니다.' };
+    const existing = await loadCountryEdit(id);
+    // 커버·갤러리를 새 인덱스에 맞춰 전체 재작성
+    const images: Record<string, string> = {};
+    data.covers.forEach((url, i) => { if (url) images[`th-${id}-${i + 1}`] = url; });
+    const catPhotos: Record<string, string[]> = {};
+    data.galleries.forEach((arr, i) => { if (arr && arr.length) catPhotos[String(i)] = arr; });
+    const merged = {
+      ...existing,
+      themes: data.themes.map((t) => ({ t: t.t, d: t.d })),
+      images,
+      catPhotos,
+    };
+    const { error } = await sb.from(CONTENT_TABLE).upsert(
+      { id, data: merged, updated_by: me.email, updated_at: new Date().toISOString() },
+      { onConflict: 'id' },
+    );
+    if (error) return { ok: false, error: error.message };
+    revalidatePath(`/${id}`);
+    revalidatePath('/admin/' + id);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
 /** 카테고리 커버 사진 교체 → Supabase Storage 업로드 + 편집본에 URL 기록 */
 export async function uploadCover(id: string, themeIndex: number, dataUrl: string): Promise<Result & { url?: string }> {
   try {
@@ -94,16 +130,18 @@ export async function uploadCover(id: string, themeIndex: number, dataUrl: strin
     if (buffer.byteLength > 8_000_000) return { ok: false, error: '이미지가 너무 큽니다 (최대 8MB).' };
 
     const slot = `th-${id}-${themeIndex + 1}`;
+    // 고유 파일명(재정렬 시 슬롯 간 파일 덮어쓰기 충돌 방지)
+    const file = `cover-${id}-${themeIndex}-${Date.now()}.jpg`;
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    const up = await fetch(`${url}/storage/v1/object/archive-photos/${slot}.jpg`, {
+    const up = await fetch(`${url}/storage/v1/object/archive-photos/${file}`, {
       method: 'POST',
       headers: { apikey: anon, Authorization: `Bearer ${anon}`, 'Content-Type': mime, 'x-upsert': 'true' },
       body: new Uint8Array(buffer),
     });
     if (!up.ok) return { ok: false, error: `업로드 실패 (${up.status})` };
 
-    const publicUrl = `${PHOTO_BASE}/${slot}.jpg?v=${Date.now()}`;
+    const publicUrl = `${PHOTO_BASE}/${file}`;
     const res = await applyCountryEdit(id, { images: { [slot]: publicUrl } }, me.email);
     if (!res.ok) return { ok: false, error: res.error };
     revalidatePath(`/${id}`);
@@ -128,6 +166,35 @@ export async function savePage(key: PageKey, content: Partial<PageContent>): Pro
     if (error) return { ok: false, error: error.message };
     revalidatePath(`/${key}`);
     revalidatePath(`/admin/page/${key}`);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** ── STORIES 소감문/이야기 (콘텐츠 관리자 이상) ── */
+export async function saveStories(list: Story[]): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    if (!sb) return { ok: false, error: '백엔드 미연결' };
+    const clean = (Array.isArray(list) ? list : [])
+      .filter((s) => (s.title?.trim() || s.body?.trim()))
+      .map((s) => ({
+        id: s.id || crypto.randomUUID().slice(0, 8),
+        title: (s.title ?? '').trim(),
+        author: s.author?.trim() || undefined,
+        country: s.country?.trim() || undefined,
+        date: s.date?.trim() || undefined,
+        kind: s.kind,
+        body: (s.body ?? '').trim(),
+      }));
+    const { error } = await sb.from(CONTENT_TABLE).upsert(
+      { id: STORIES_KEY, data: { list: clean }, updated_by: me.email, updated_at: new Date().toISOString() },
+      { onConflict: 'id' },
+    );
+    if (error) return { ok: false, error: error.message };
+    revalidatePath('/stories');
+    revalidatePath('/admin/stories');
     return { ok: true };
   } catch (err) {
     return { ok: false, error: (err as Error).message };

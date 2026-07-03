@@ -54,6 +54,7 @@ export default async function EditCountryPage({ params }: { params: Promise<{ co
         }}
         covers={covers}
         gallery={gallery}
+        photoBase={PHOTO_BASE}
       />
 
       <div style={{ marginTop: 16 }}>

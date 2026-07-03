@@ -68,11 +68,14 @@ function merge(base: Country, edit?: CountryEdit): Country {
     currency: edit.stats?.currency ?? base.currency,
     climate: edit.stats?.climate ?? base.climate,
     timezone: edit.stats?.timezone ?? base.timezone,
-    themes: base.themes.map((th, i) => ({
-      ...th,
-      t: edit.themes?.[i]?.t ?? th.t,
-      d: edit.themes?.[i]?.d ?? th.d,
-    })),
+    // 편집본에 themes 가 있으면 그 개수를 따른다(카테고리 추가/삭제 지원). 없으면 시드.
+    themes: (edit.themes && edit.themes.length
+      ? edit.themes.map((th, i) => ({
+          t: th.t ?? base.themes[i]?.t ?? '',
+          hint: base.themes[i]?.hint ?? '',
+          d: th.d ?? base.themes[i]?.d ?? '',
+        }))
+      : base.themes),
     timeline: edit.timeline && edit.timeline.length ? edit.timeline : base.timeline,
   };
 }
