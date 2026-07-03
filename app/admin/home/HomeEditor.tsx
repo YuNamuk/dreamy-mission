@@ -46,6 +46,7 @@ export default function HomeEditor({ initial, countries }: { initial: HomeConten
 
       <section className="admincard">
         <h2>선교 발자취</h2>
+        <p className="muted" style={{ fontSize: 12, margin: '2px 0 10px' }}>홈 화면에는 <b>최신 연도가 위</b>로 표시됩니다.</p>
         <div style={{ display: 'grid', gap: 8 }}>
           {h.journey.map((j, i) => (
             <div key={i} className="atl" style={{ gridTemplateColumns: '70px 120px 1fr' }}>

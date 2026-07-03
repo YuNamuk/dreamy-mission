@@ -57,11 +57,22 @@ export default function CountryEditor({ id, initial, covers, gallery }: { id: st
   function setItems(i: number, text: string) {
     setTimeline((p) => p.map((r, idx) => (idx === i ? { ...r, items: text.split('\n').map((s) => s.trim()).filter(Boolean) } : r)));
   }
+  function addYear() { setTimeline((p) => [...p, { y: '', items: [] }]); }
+  function delYear(i: number) { setTimeline((p) => p.filter((_, idx) => idx !== i)); }
+  function moveYear(i: number, dir: -1 | 1) {
+    setTimeline((p) => {
+      const a = [...p]; const j = i + dir;
+      if (j < 0 || j >= a.length) return p;
+      [a[i], a[j]] = [a[j], a[i]];
+      return a;
+    });
+  }
 
   function save() {
     setMsg(null);
     start(async () => {
-      const res = await saveCountryContent(id, { intro, themes, stats, timeline });
+      const cleanTimeline = timeline.filter((r) => r.y.trim() || r.items.length);
+      const res = await saveCountryContent(id, { intro, themes, stats, timeline: cleanTimeline });
       setMsg(res.ok ? '저장했습니다. 사이트에 반영됩니다.' : res.error ?? '저장 실패');
       if (res.ok) router.refresh();
     });
@@ -157,16 +168,24 @@ export default function CountryEditor({ id, initial, covers, gallery }: { id: st
       </section>
 
       {/* 연혁 */}
-      <section className="admincard">
-        <h2>연혁 <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>(항목은 줄바꿈으로 구분)</span></h2>
+      <section className="admincard" id="sec-timeline">
+        <h2>연혁 <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>· 연도별 활동. 사건은 한 줄에 하나씩</span></h2>
+        <p className="muted" style={{ fontSize: 12, margin: '2px 0 12px' }}>상세 페이지에는 <b>최신 연도가 위</b>로 표시됩니다. 순서는 ↑↓로 조정하세요.</p>
         <div style={{ display: 'grid', gap: 12 }}>
           {timeline.map((r, i) => (
-            <div key={i} className="atl">
-              <input className="ainput atl__y" value={r.y} onChange={(e) => setYear(i, e.target.value)} />
-              <textarea className="atextarea" rows={Math.max(2, r.items.length)} value={r.items.join('\n')} onChange={(e) => setItems(i, e.target.value)} />
+            <div key={i} className="acatwrap">
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
+                <input className="ainput" value={r.y} onChange={(e) => setYear(i, e.target.value)} placeholder="연도 (예: 2025)" style={{ width: 130, fontWeight: 700 }} />
+                <span style={{ flex: 1 }} />
+                <button className="abtn" onClick={() => moveYear(i, -1)} disabled={i === 0} title="위로">↑</button>
+                <button className="abtn" onClick={() => moveYear(i, 1)} disabled={i === timeline.length - 1} title="아래로">↓</button>
+                <button className="alink" onClick={() => delYear(i)}>삭제</button>
+              </div>
+              <textarea className="atextarea" rows={Math.max(2, r.items.length)} value={r.items.join('\n')} onChange={(e) => setItems(i, e.target.value)} placeholder="한 줄에 하나씩&#10;예: 겨자씨 초등학교 방문&#10;예: 교사 연수 진행" />
             </div>
           ))}
         </div>
+        <button className="abtn" style={{ marginTop: 12 }} onClick={addYear}>+ 연도 추가</button>
       </section>
 
       <div className="adminsave">

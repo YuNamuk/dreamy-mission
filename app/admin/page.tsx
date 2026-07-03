@@ -49,15 +49,27 @@ export default async function AdminHome() {
         </div>
       </header>
 
-      {/* 콘텐츠 편집 */}
+      <p className="muted" style={{ margin: '-6px 0 18px', fontSize: 13 }}>
+        편집한 내용은 <b>저장 즉시 사이트에 반영</b>됩니다. 아래에서 편집할 영역을 선택하세요.
+      </p>
+
+      {/* 홈 화면 */}
       <section className="admincard">
-        <h2>페이지 콘텐츠</h2>
-        <p className="muted">각 국가 페이지의 소개·카테고리 글·통계·사진을 수정합니다. 저장 즉시 사이트에 반영됩니다.</p>
+        <h2>① 홈 화면</h2>
+        <p className="muted">첫 화면의 문구와 카드 내용을 편집합니다.</p>
         <div className="adminlist">
           <Link href="/admin/home" className="adminlist__item">
-            <div><b>홈 (첫 화면)</b> <span className="muted">타이틀 · 선교 발자취 · 카드 문구</span></div>
+            <div><b>홈 (첫 화면)</b> <span className="muted">히어로 문구 · 선교 발자취 · 나라 카드 소개 · 우리가 그리는 세상</span></div>
             <span className="adminlist__go">편집 →</span>
           </Link>
+        </div>
+      </section>
+
+      {/* 선교지 상세 */}
+      <section className="admincard">
+        <h2>② 선교지 상세 <span className="muted" style={{ fontWeight: 400, fontSize: 13 }}>({COUNTRIES.length}개국)</span></h2>
+        <p className="muted">각 나라 페이지의 소개 · 국가정보 · 전시 카테고리(사진) · <b>연혁(추가·삭제)</b> · 방문 시기별 갤러리를 편집합니다.</p>
+        <div className="adminlist">
           {COUNTRIES.map((c) => (
             <Link key={c.id} href={`/admin/${c.id}`} className="adminlist__item">
               <div>
@@ -71,12 +83,12 @@ export default async function AdminHome() {
 
       {/* 메뉴 페이지 */}
       <section className="admincard">
-        <h2>메뉴 페이지</h2>
-        <p className="muted">상단 메뉴(ABOUT · MISSIONS · STORIES · ARCHIVE) 페이지의 제목·본문을 편집합니다.</p>
+        <h2>③ 메뉴 페이지</h2>
+        <p className="muted">상단 메뉴(ABOUT · MISSIONS · STORIES · ARCHIVE) 페이지의 라벨 · 제목 · 본문 섹션을 편집합니다.</p>
         <div className="adminlist">
           {PAGE_KEYS.map((k) => (
             <Link key={k} href={`/admin/pages/${k}`} className="adminlist__item">
-              <div><b>{PAGE_LABEL[k]}</b></div>
+              <div><b>{PAGE_LABEL[k]}</b> <span className="muted">/{k}</span></div>
               <span className="adminlist__go">편집 →</span>
             </Link>
           ))}
@@ -86,7 +98,7 @@ export default async function AdminHome() {
       {/* 사이트 설정 (전체 관리자) */}
       {admin.role === 'super' && (
         <section className="admincard">
-          <h2>사이트 설정 <span className="muted" style={{ fontWeight: 400, fontSize: 13 }}>(전체 관리자 전용)</span></h2>
+          <h2>④ 사이트 설정 <span className="muted" style={{ fontWeight: 400, fontSize: 13 }}>(전체 관리자 전용)</span></h2>
           <p className="muted">기본 지도 타일 · 로고 · 대표 문구 · 대표 성경구절을 설정합니다.</p>
           <div className="adminlist" style={{ marginTop: 10 }}>
             <Link href="/admin/settings" className="adminlist__item">
