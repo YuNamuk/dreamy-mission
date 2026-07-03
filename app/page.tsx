@@ -31,7 +31,8 @@ export default async function Home() {
 
   const journey = home.journey
     .filter((j) => byId[j.id])
-    .map((j) => ({ y: j.y, id: j.id, ko: byId[j.id].ko, en: byId[j.id].en, desc: j.desc }));
+    .map((j) => ({ y: j.y, id: j.id, ko: byId[j.id].ko, en: byId[j.id].en, desc: j.desc }))
+    .reverse(); // 최신 순
 
   return (
     <main>

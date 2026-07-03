@@ -91,7 +91,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
 
         <aside className="rail">
           <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 24 }}>연혁 · Chronicle</div>
-          {country.timeline.map((t, ti) => (
+          {[...country.timeline].reverse().map((t, ti) => (
             <div key={ti} style={{ display: 'grid', gridTemplateColumns: '52px 1fr', gap: 14, marginBottom: 22 }}>
               <div style={{ fontFamily: 'var(--f-disp)', fontSize: 16, fontWeight: 800, color: 'var(--sky)', letterSpacing: '.02em' }}>{t.y}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 5, paddingTop: 2 }}>
