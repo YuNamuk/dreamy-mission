@@ -71,6 +71,16 @@ export default function LocatorMap({ countryId }: { countryId: string }) {
         map.fitBounds(b, { padding: [24, 24] });
         map.setView(b.getCenter(), Math.max(2, map.getZoom() - 0.7), { animate: false });
         targetZoom = map.getZoom();
+
+        // 줌인할수록 하이라이트 페이드아웃 (저해상도 경계가 지형과 어긋나 어색해지므로)
+        const baseZoom = map.getZoom();
+        const updateHighlight = () => {
+          const z = map.getZoom();
+          const fade = Math.max(0, Math.min(1, 1 - (z - (baseZoom + 0.8)) / 1.8));
+          layer.setStyle({ opacity: 0.9 * fade, fillOpacity: 0.22 * fade });
+        };
+        map.on('zoom zoomend', updateHighlight);
+        updateHighlight();
       } catch {
         map.setView([20, 100], 3);
         targetZoom = 3;
