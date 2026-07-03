@@ -1,0 +1,272 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import { getAdmin, DEFAULT_SUPER, type AdminRole } from '@/lib/admin';
+import { supabase } from '@/lib/supabase';
+import { applyCountryEdit, loadCountryEdit, CONTENT_TABLE, type Visit } from '@/lib/content';
+import { findCountry } from '@/lib/countries';
+import { PHOTO_BASE } from '@/lib/uploaded-photos';
+import { supabase as sb } from '@/lib/supabase';
+import { HOME_KEY, loadHomeEdit, type HomeContent } from '@/lib/home';
+
+export interface Result {
+  ok: boolean;
+  error?: string;
+}
+
+async function requireAdmin(min: AdminRole) {
+  const a = await getAdmin();
+  if (!a) throw new Error('관리자 권한이 필요합니다.');
+  if (min === 'super' && a.role !== 'super') throw new Error('전체 관리자만 가능합니다.');
+  return a;
+}
+
+/** ── 관리자 관리 (전체 관리자 전용) ── */
+export async function addAdmin(email: string, role: AdminRole, name: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('super');
+    const e = email.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return { ok: false, error: '이메일 형식이 올바르지 않습니다.' };
+    if (!supabase) return { ok: false, error: '백엔드 미연결' };
+    const { error } = await supabase.from('admins').upsert(
+      { email: e, role: role === 'super' ? 'super' : 'content', name: name.trim() || null, added_by: me.email },
+      { onConflict: 'email' },
+    );
+    if (error) return { ok: false, error: error.message };
+    revalidatePath('/admin');
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+export async function removeAdmin(email: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('super');
+    const e = email.trim().toLowerCase();
+    if (e === DEFAULT_SUPER) return { ok: false, error: '기본 관리자는 삭제할 수 없습니다.' };
+    if (e === me.email) return { ok: false, error: '본인 계정은 삭제할 수 없습니다.' };
+    if (!supabase) return { ok: false, error: '백엔드 미연결' };
+    const { error } = await supabase.from('admins').delete().eq('email', e);
+    if (error) return { ok: false, error: error.message };
+    revalidatePath('/admin');
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** ── 콘텐츠 편집 (콘텐츠 관리자 이상) ── */
+export async function saveCountryContent(
+  id: string,
+  patch: {
+    intro?: string;
+    themes?: { t?: string; d?: string }[];
+    stats?: { capital?: string; pop?: string; area?: string; religion?: string };
+    timeline?: { y: string; items: string[] }[];
+  },
+): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    if (!findCountry(id)) return { ok: false, error: '알 수 없는 국가' };
+    const res = await applyCountryEdit(id, patch, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    revalidatePath('/');
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** 카테고리 커버 사진 교체 → Supabase Storage 업로드 + 편집본에 URL 기록 */
+export async function uploadCover(id: string, themeIndex: number, dataUrl: string): Promise<Result & { url?: string }> {
+  try {
+    const me = await requireAdmin('content');
+    if (!findCountry(id)) return { ok: false, error: '알 수 없는 국가' };
+    const m = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+    if (!m) return { ok: false, error: '유효하지 않은 이미지' };
+    const mime = m[1];
+    if (!mime.startsWith('image/')) return { ok: false, error: '이미지 파일만 가능합니다.' };
+    const buffer = Buffer.from(m[2], 'base64');
+    if (buffer.byteLength > 8_000_000) return { ok: false, error: '이미지가 너무 큽니다 (최대 8MB).' };
+
+    const slot = `th-${id}-${themeIndex + 1}`;
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const up = await fetch(`${url}/storage/v1/object/archive-photos/${slot}.jpg`, {
+      method: 'POST',
+      headers: { apikey: anon, Authorization: `Bearer ${anon}`, 'Content-Type': mime, 'x-upsert': 'true' },
+      body: new Uint8Array(buffer),
+    });
+    if (!up.ok) return { ok: false, error: `업로드 실패 (${up.status})` };
+
+    const publicUrl = `${PHOTO_BASE}/${slot}.jpg?v=${Date.now()}`;
+    const res = await applyCountryEdit(id, { images: { [slot]: publicUrl } }, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    return { ok: true, url: publicUrl };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** ── 홈 편집 (콘텐츠 관리자 이상) ── */
+export async function saveHome(patch: Partial<HomeContent>): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    if (!sb) return { ok: false, error: '백엔드 미연결' };
+    const existing = await loadHomeEdit();
+    const merged = { ...existing, ...patch };
+    const { error } = await sb.from(CONTENT_TABLE).upsert(
+      { id: HOME_KEY, data: merged, updated_by: me.email, updated_at: new Date().toISOString() },
+      { onConflict: 'id' },
+    );
+    if (error) return { ok: false, error: error.message };
+    revalidatePath('/');
+    revalidatePath('/admin/home');
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** ── 방문 시기별 갤러리 (콘텐츠 관리자 이상) ── */
+async function storagePut(path: string, mime: string, buffer: Buffer): Promise<string | null> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const up = await fetch(`${url}/storage/v1/object/archive-photos/${path}`, {
+    method: 'POST',
+    headers: { apikey: anon, Authorization: `Bearer ${anon}`, 'Content-Type': mime, 'x-upsert': 'true' },
+    body: new Uint8Array(buffer),
+  });
+  return up.ok ? `${PHOTO_BASE}/${path}` : null;
+}
+
+export async function addVisit(id: string, label: string, date: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    if (!findCountry(id)) return { ok: false, error: '알 수 없는 국가' };
+    if (!label.trim()) return { ok: false, error: '제목을 입력하세요.' };
+    const edit = await loadCountryEdit(id);
+    const visits: Visit[] = [...(edit.visits ?? []), { id: crypto.randomUUID().slice(0, 8), label: label.trim(), date: date.trim() || undefined, photos: [] }];
+    const res = await applyCountryEdit(id, { visits }, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    revalidatePath('/admin/' + id);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+export async function removeVisit(id: string, visitId: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    const edit = await loadCountryEdit(id);
+    const visits = (edit.visits ?? []).filter((v) => v.id !== visitId);
+    const res = await applyCountryEdit(id, { visits }, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    revalidatePath('/admin/' + id);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+export async function addVisitPhotos(id: string, visitId: string, dataUrls: string[]): Promise<Result & { added?: number }> {
+  try {
+    const me = await requireAdmin('content');
+    const edit = await loadCountryEdit(id);
+    const visits = [...(edit.visits ?? [])];
+    const vi = visits.findIndex((v) => v.id === visitId);
+    if (vi < 0) return { ok: false, error: '방문 항목을 찾을 수 없습니다.' };
+    const urls: string[] = [];
+    let n = 0;
+    for (const dataUrl of dataUrls.slice(0, 30)) {
+      const m = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+      if (!m || !m[1].startsWith('image/')) continue;
+      const buffer = Buffer.from(m[2], 'base64');
+      if (buffer.byteLength > 8_000_000) continue;
+      const path = `visit-${id}-${visitId}-${Date.now()}-${n++}.jpg`;
+      const url = await storagePut(path, m[1], buffer);
+      if (url) urls.push(url);
+    }
+    if (!urls.length) return { ok: false, error: '업로드된 사진이 없습니다.' };
+    visits[vi] = { ...visits[vi], photos: [...visits[vi].photos, ...urls] };
+    const res = await applyCountryEdit(id, { visits }, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    revalidatePath('/admin/' + id);
+    return { ok: true, added: urls.length };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** ── 카테고리 갤러리 사진 (콘텐츠 관리자 이상) ── */
+export async function addCatPhotos(id: string, themeIndex: number, dataUrls: string[]): Promise<Result & { added?: number }> {
+  try {
+    const me = await requireAdmin('content');
+    if (!findCountry(id)) return { ok: false, error: '알 수 없는 국가' };
+    const edit = await loadCountryEdit(id);
+    const catPhotos = { ...(edit.catPhotos ?? {}) };
+    const key = String(themeIndex);
+    const urls: string[] = [];
+    let n = 0;
+    for (const dataUrl of dataUrls.slice(0, 30)) {
+      const m = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+      if (!m || !m[1].startsWith('image/')) continue;
+      const buffer = Buffer.from(m[2], 'base64');
+      if (buffer.byteLength > 8_000_000) continue;
+      const path = `cat-${id}-${themeIndex}-${Date.now()}-${n++}.jpg`;
+      const url = await storagePut(path, m[1], buffer);
+      if (url) urls.push(url);
+    }
+    if (!urls.length) return { ok: false, error: '업로드된 사진이 없습니다.' };
+    catPhotos[key] = [...(catPhotos[key] ?? []), ...urls];
+    const res = await applyCountryEdit(id, { catPhotos }, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    revalidatePath('/admin/' + id);
+    return { ok: true, added: urls.length };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+export async function removeCatPhoto(id: string, themeIndex: number, url: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    const edit = await loadCountryEdit(id);
+    const catPhotos = { ...(edit.catPhotos ?? {}) };
+    const key = String(themeIndex);
+    catPhotos[key] = (catPhotos[key] ?? []).filter((p) => p !== url);
+    const res = await applyCountryEdit(id, { catPhotos }, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    revalidatePath('/admin/' + id);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+export async function removeVisitPhoto(id: string, visitId: string, url: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    const edit = await loadCountryEdit(id);
+    const visits = [...(edit.visits ?? [])];
+    const vi = visits.findIndex((v) => v.id === visitId);
+    if (vi < 0) return { ok: false, error: '방문 항목을 찾을 수 없습니다.' };
+    visits[vi] = { ...visits[vi], photos: visits[vi].photos.filter((p) => p !== url) };
+    const res = await applyCountryEdit(id, { visits }, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    revalidatePath('/admin/' + id);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
