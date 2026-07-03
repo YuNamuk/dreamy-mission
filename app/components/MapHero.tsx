@@ -30,10 +30,10 @@ export interface HeroText {
 }
 
 const VALUES = [
-  { icon: <IconFaith size={19} />, ko: '복음', en: 'Gospel' },
-  { icon: <IconEducation size={19} />, ko: '교육', en: 'Education' },
-  { icon: <IconService size={19} />, ko: '섬김', en: 'Service' },
-  { icon: <IconGospel size={19} />, ko: '사랑', en: 'Love' },
+  { icon: <IconFaith size={15} />, ko: '복음', en: 'Gospel' },
+  { icon: <IconEducation size={15} />, ko: '교육', en: 'Education' },
+  { icon: <IconService size={15} />, ko: '섬김', en: 'Service' },
+  { icon: <IconGospel size={15} />, ko: '사랑', en: 'Love' },
 ];
 
 const LAYERS = {
