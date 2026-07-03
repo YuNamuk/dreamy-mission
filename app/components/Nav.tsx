@@ -12,10 +12,11 @@ export interface NavCountry {
 
 const MENU = [
   { key: 'home', label: 'HOME', href: '/' },
-  { key: 'about', label: 'ABOUT', href: '/#about' },
-  { key: 'stories', label: 'STORIES', href: '/#stories' },
+  { key: 'about', label: 'ABOUT', href: '/about' },
+  { key: 'missions', label: 'MISSIONS', href: '/missions' },
+  { key: 'stories', label: 'STORIES', href: '/stories' },
   { key: 'map', label: 'MAP', href: '/#map' },
-  { key: 'archive', label: 'ARCHIVE', href: '/#stories' },
+  { key: 'archive', label: 'ARCHIVE', href: '/archive' },
 ];
 
 export default function Nav({
@@ -60,7 +61,7 @@ export default function Nav({
       {/* 데스크톱 메뉴 */}
       <div className="nav2__menu">
         <Link href="/" className={`nav2__item${active === 'home' ? ' is-active' : ''}`}>HOME</Link>
-        <Link href="/#about" className={`nav2__item${active === 'about' ? ' is-active' : ''}`}>ABOUT</Link>
+        <Link href="/about" className={`nav2__item${active === 'about' ? ' is-active' : ''}`}>ABOUT</Link>
 
         <div className="nav2__dd" ref={missionsRef}>
           <button
@@ -73,6 +74,7 @@ export default function Nav({
           </button>
           {missionsOpen && (
             <div className="nav2__ddpanel" onClick={() => setMissionsOpen(false)}>
+              <Link href="/missions" className="nav2__ddlink"><b>선교지 전체</b><span>Overview</span></Link>
               {countries.map((c) => (
                 <Link key={c.id} href={`/${c.id}`} className="nav2__ddlink">
                   <b>{c.ko}</b>
@@ -83,9 +85,9 @@ export default function Nav({
           )}
         </div>
 
-        <Link href="/#stories" className={`nav2__item${active === 'stories' ? ' is-active' : ''}`}>STORIES</Link>
+        <Link href="/stories" className={`nav2__item${active === 'stories' ? ' is-active' : ''}`}>STORIES</Link>
         <Link href="/#map" className={`nav2__item${active === 'map' ? ' is-active' : ''}`}>MAP</Link>
-        <Link href="/#stories" className={`nav2__item${active === 'archive' ? ' is-active' : ''}`}>ARCHIVE</Link>
+        <Link href="/archive" className={`nav2__item${active === 'archive' ? ' is-active' : ''}`}>ARCHIVE</Link>
       </div>
 
       {/* 우측: 언어 + 계정 */}

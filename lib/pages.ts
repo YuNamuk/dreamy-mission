@@ -1,0 +1,80 @@
+/**
+ * 범용 정적 페이지 콘텐츠 (ABOUT·STORIES·MISSIONS·ARCHIVE) — 기본값 + Supabase 오버레이.
+ * archive_content id = 'page_<key>'.
+ */
+import 'server-only';
+import { supabase } from './supabase';
+import { CONTENT_TABLE } from './content';
+
+export interface PageSection {
+  heading: string;
+  body: string;
+}
+export interface PageContent {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  sections: PageSection[];
+}
+
+export type PageKey = 'about' | 'stories' | 'missions' | 'archive';
+export const PAGE_KEYS: PageKey[] = ['about', 'stories', 'missions', 'archive'];
+export const PAGE_LABEL: Record<PageKey, string> = { about: 'ABOUT · 소개', stories: 'STORIES · 이야기', missions: 'MISSIONS · 선교지', archive: 'ARCHIVE · 아카이브' };
+
+const DEFAULTS: Record<PageKey, PageContent> = {
+  about: {
+    eyebrow: 'About · Missio Dei',
+    title: '선교를 그리다',
+    subtitle: '우리는 가만히 서서, 비어 있지 않은 공간(間)에 대하여',
+    sections: [
+      { heading: '행하기에 앞서, 보는 것', body: '교육선교는 우리가 무언가를 하러 가는 일이 아니다. 우리가 그 땅에 닿기 전에, 하나님은 이미 그곳에서 일하고 계셨다. 선교는 그 일하심을 바라보고 그 흐름에 참여하는 것 — 행하기에 앞서 보는 것이다.' },
+      { heading: '“가만히 서서 보라”', body: '“너희는 두려워하지 말고 가만히 서서 여호와께서 오늘 너희를 위하여 행하시는 구원을 보라” (출애굽기 14:13). 이 아카이브는 2022년부터 동행한 여섯 나라의 이야기와, 아직 오지 않은 여정을 담는다.' },
+      { heading: '드리미학교 교육선교', body: '드리미학교는 각 나라의 크리스천 리더를 양성하고, 복음의 공공성 원리에 따라 교육의 성장과 발전을 돕는다. 교사·학생 교류, 3P 교육, 인성교육, 지역 선교를 통해 다음 세대를 세운다.' },
+    ],
+  },
+  stories: {
+    eyebrow: 'Stories',
+    title: '선교 이야기',
+    subtitle: '동행한 여섯 나라, 그곳에서 만난 이야기들',
+    sections: [
+      { heading: '', body: '각 나라 페이지의 전시 카테고리와 “교육선교 방문 갤러리”에서 현장의 이야기와 사진을 만나볼 수 있습니다. 학생들의 선교 소감문과 계획서도 이곳에 차차 담아갑니다.' },
+    ],
+  },
+  missions: {
+    eyebrow: '2022 — Present · Six Lands',
+    title: '선교지',
+    subtitle: '한국 드리미학교에서 여섯 나라로 이어진 교육선교의 발자취',
+    sections: [],
+  },
+  archive: {
+    eyebrow: 'Archive',
+    title: '교육선교 아카이브',
+    subtitle: '드리미학교 배움관 1층 상설전 「선교를 그리다」',
+    sections: [
+      { heading: '', body: '2022년부터 이어온 여섯 나라 교육선교의 기록입니다. 아래 나라를 눌러 각 선교지의 소개·전시 카테고리·연혁·방문 갤러리를 만나보세요.' },
+    ],
+  },
+};
+
+export async function getPage(key: PageKey): Promise<PageContent> {
+  const def = DEFAULTS[key];
+  if (!supabase) return def;
+  try {
+    const { data } = await supabase.from(CONTENT_TABLE).select('data').eq('id', `page_${key}`).limit(1);
+    const e = (data?.[0]?.data ?? {}) as Partial<PageContent>;
+    return {
+      eyebrow: e.eyebrow ?? def.eyebrow,
+      title: e.title ?? def.title,
+      subtitle: e.subtitle ?? def.subtitle,
+      sections: e.sections?.length ? e.sections : def.sections,
+    };
+  } catch {
+    return def;
+  }
+}
+
+export async function loadPageEdit(key: PageKey): Promise<Partial<PageContent>> {
+  if (!supabase) return {};
+  const { data } = await supabase.from(CONTENT_TABLE).select('data').eq('id', `page_${key}`).limit(1);
+  return (data?.[0]?.data as Partial<PageContent>) ?? {};
+}

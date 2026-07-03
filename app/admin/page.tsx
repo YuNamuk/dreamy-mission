@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getUser } from '@/lib/session';
 import { getAdmin, listAdmins } from '@/lib/admin';
 import { COUNTRIES } from '@/lib/countries';
+import { PAGE_KEYS, PAGE_LABEL } from '@/lib/pages';
 import AdminManager from './AdminManager';
 
 export const dynamic = 'force-dynamic';
@@ -62,6 +63,20 @@ export default async function AdminHome() {
               <div>
                 <b>{c.ko}</b> <span className="muted">{c.en}</span>
               </div>
+              <span className="adminlist__go">편집 →</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 메뉴 페이지 */}
+      <section className="admincard">
+        <h2>메뉴 페이지</h2>
+        <p className="muted">상단 메뉴(ABOUT · MISSIONS · STORIES · ARCHIVE) 페이지의 제목·본문을 편집합니다.</p>
+        <div className="adminlist">
+          {PAGE_KEYS.map((k) => (
+            <Link key={k} href={`/admin/pages/${k}`} className="adminlist__item">
+              <div><b>{PAGE_LABEL[k]}</b></div>
               <span className="adminlist__go">편집 →</span>
             </Link>
           ))}

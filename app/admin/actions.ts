@@ -9,6 +9,7 @@ import { PHOTO_BASE } from '@/lib/uploaded-photos';
 import { supabase as sb } from '@/lib/supabase';
 import { HOME_KEY, loadHomeEdit, type HomeContent } from '@/lib/home';
 import { SETTINGS_KEY, loadSettingsEdit, type SiteSettings } from '@/lib/settings';
+import { loadPageEdit, type PageKey, type PageContent, PAGE_KEYS } from '@/lib/pages';
 
 export interface Result {
   ok: boolean;
@@ -107,6 +108,27 @@ export async function uploadCover(id: string, themeIndex: number, dataUrl: strin
     if (!res.ok) return { ok: false, error: res.error };
     revalidatePath(`/${id}`);
     return { ok: true, url: publicUrl };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** ── 정적 페이지 편집 (콘텐츠 관리자 이상) ── */
+export async function savePage(key: PageKey, content: Partial<PageContent>): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    if (!PAGE_KEYS.includes(key)) return { ok: false, error: '알 수 없는 페이지' };
+    if (!sb) return { ok: false, error: '백엔드 미연결' };
+    const existing = await loadPageEdit(key);
+    const merged = { ...existing, ...content };
+    const { error } = await sb.from(CONTENT_TABLE).upsert(
+      { id: `page_${key}`, data: merged, updated_by: me.email, updated_at: new Date().toISOString() },
+      { onConflict: 'id' },
+    );
+    if (error) return { ok: false, error: error.message };
+    revalidatePath(`/${key}`);
+    revalidatePath(`/admin/page/${key}`);
+    return { ok: true };
   } catch (err) {
     return { ok: false, error: (err as Error).message };
   }
