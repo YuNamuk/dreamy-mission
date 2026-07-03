@@ -1518,3 +1518,29 @@ img {
 .logobox--dark { background: var(--navy-ink); }
 .logobox img { max-height: 46px; max-width: 70%; object-fit: contain; }
 .logobox span { position: absolute; inset: auto 0 0 0; text-align: center; font-size: 11.5px; font-weight: 700; color: #fff; background: rgba(11,27,52,.72); padding: 5px; }
+
+/* ════════════════════════════════════════════════
+   국가 페이지 — 지도 실루엣 배경 + 국가정보 가로 행
+   ════════════════════════════════════════════════ */
+.country-hd { position: relative; overflow: hidden; }
+.country-hd__body { position: relative; z-index: 1; }
+.country-silhouette {
+  position: absolute; z-index: 0; pointer-events: none;
+  top: 60px; right: -70px; width: 560px; height: 520px;
+  background: var(--sky);
+  -webkit-mask: var(--shape) no-repeat right top / contain;
+  mask: var(--shape) no-repeat right top / contain;
+  opacity: 0.07;
+}
+
+.country-stats { display: flex; flex-direction: column; max-width: none; margin-top: 24px; padding: 0; border-top: none; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 10px 30px -26px rgba(14,36,56,.22); overflow: hidden; }
+.country-stats > .stat-row { display: grid; grid-template-columns: 200px 1fr; gap: 18px; padding: 15px 24px; border-top: 1px solid var(--line); border-left: none; align-items: baseline; }
+.country-stats > .stat-row:first-child { border-top: none; }
+.stat-row__label { display: flex; flex-direction: column; }
+.stat-row__label span { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.stat-row__label em { font-style: normal; font-family: var(--f-disp); font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink4); margin-top: 2px; }
+.stat-row__val { font-size: 15px; font-weight: 500; color: var(--ink2); line-height: 1.5; }
+@media (max-width: 640px) {
+  .country-stats > .stat-row { grid-template-columns: 1fr; gap: 4px; }
+  .country-silhouette { width: 360px; height: 340px; right: -90px; opacity: .05; }
+}

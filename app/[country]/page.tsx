@@ -41,25 +41,28 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
       <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active="missions" logo={settings.logoUrl} />
 
       {/* ── 벽면 헤더 ── */}
-      <section className="section--wide" style={{ padding: '120px 48px 0' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 22, flexWrap: 'wrap' }}>
-          <h1 style={{ margin: 0, fontFamily: 'var(--f-disp)', fontWeight: 500, fontSize: 'clamp(34px,4.6vw,72px)', lineHeight: 1, letterSpacing: '-.01em', color: 'var(--sky)' }}>
-            {country.en}
-          </h1>
-          <span style={{ fontSize: 'clamp(19px,2.4vw,28px)', fontWeight: 600, letterSpacing: '-.01em' }}>{country.ko}</span>
-          <span style={{ fontFamily: 'var(--f-disp)', fontSize: 15, fontWeight: 700, color: 'var(--ink4)', letterSpacing: '.06em' }}>
-            {indexLabel} / 06 · {country.years}
-          </span>
-        </div>
+      <section className="section--wide country-hd" style={{ padding: '120px 48px 0' }}>
+        <div className="country-silhouette" style={{ ['--shape' as string]: `url(/shapes/${id}.svg)` } as React.CSSProperties} aria-hidden />
+        <div className="country-hd__body">
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 22, flexWrap: 'wrap' }}>
+            <h1 style={{ margin: 0, fontFamily: 'var(--f-disp)', fontWeight: 500, fontSize: 'clamp(34px,4.6vw,72px)', lineHeight: 1, letterSpacing: '-.01em', color: 'var(--sky)' }}>
+              {country.en}
+            </h1>
+            <span style={{ fontSize: 'clamp(19px,2.4vw,28px)', fontWeight: 600, letterSpacing: '-.01em' }}>{country.ko}</span>
+            <span style={{ fontFamily: 'var(--f-disp)', fontSize: 15, fontWeight: 700, color: 'var(--ink4)', letterSpacing: '.06em' }}>
+              {indexLabel} / 06 · {country.years}
+            </span>
+          </div>
 
-        <p data-field="intro" style={{ margin: '30px 0 0', maxWidth: 960, fontSize: 16.5, lineHeight: 2, color: 'var(--ink2)', fontWeight: 300 }}>
-          {country.intro}
-        </p>
+          <p data-field="intro" style={{ margin: '30px 0 0', maxWidth: 960, fontSize: 16.5, lineHeight: 2, color: 'var(--ink2)', fontWeight: 300 }}>
+            {country.intro}
+          </p>
 
-        <div className="country-stats">
-          <Stat label="Capital · 수도" value={country.capital} />
-          <Stat label="Population · Area" value={`${country.pop} · ${country.area}`} />
-          <Stat label="Religion · 종교" value={country.religion} />
+          <div className="country-stats">
+            <StatRow ko="수도" en="Capital" value={country.capital} />
+            <StatRow ko="인구 · 면적" en="Population · Area" value={`${country.pop} · ${country.area}`} />
+            <StatRow ko="종교" en="Religion" value={country.religion} />
+          </div>
         </div>
       </section>
 
@@ -122,11 +125,14 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function StatRow({ ko, en, value }: { ko: string; en: string; value: string }) {
   return (
-    <div>
-      <div className="eyebrow" style={{ fontSize: 11, letterSpacing: '.16em', marginBottom: 5 }}>{label}</div>
-      <div style={{ fontSize: 14.5, fontWeight: 500 }}>{value}</div>
+    <div className="stat-row">
+      <div className="stat-row__label">
+        <span>{ko}</span>
+        <em>{en}</em>
+      </div>
+      <div className="stat-row__val">{value}</div>
     </div>
   );
 }
