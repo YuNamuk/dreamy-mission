@@ -1605,3 +1605,11 @@ img {
 .staticpage__body { margin: 44px 0 8px; max-width: 800px; display: grid; gap: 34px; }
 .pgsec h2 { margin: 0 0 12px; font-size: 20px; font-weight: 700; color: var(--sky); letter-spacing: -.01em; }
 .pgsec p { margin: 0 0 10px; font-size: 15.5px; line-height: 1.95; color: var(--ink2); font-weight: 300; }
+
+/* v16 — 홈 히어로 리파인: 제목 한 줄·두 색·작게 / 시 본문 크게·강조 / 나라 카드 태그라인 가독성 */
+.herox__h { font-size: clamp(23px, 2.5vw, 36px); line-height: 1.18; letter-spacing: -.01em; }
+.herox__sub { font-size: clamp(15px, 1.35vw, 18px); line-height: 1.9; max-width: 460px; margin-top: 16px; color: var(--ink2); font-weight: 300; }
+.herox__em { font-weight: 800; color: var(--navy); }
+/* 나라 카드: 실제 사역 태그라인이 두 줄로 읽히도록 글자 영역 확대 + 스크림 보정 */
+.ccard > .ccard__scrim { background: linear-gradient(90deg, #0a1a33 0%, #0a1a33 34%, rgba(10,26,51,.55) 56%, rgba(10,26,51,.1) 80%, transparent 92%) !important; }
+.ccard__desc { max-width: 60% !important; font-size: 10.5px !important; line-height: 1.45 !important; }

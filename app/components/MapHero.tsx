@@ -212,12 +212,14 @@ export default function MapHero({ countries, journey, hero, defaultLayer = 'terr
         <div className="herox__title">
           <h1 className="herox__h">
             {hero.l1}
+            {hero.l3 ? <>{' '}<span className="acc">{hero.l3}</span></> : null}
             {hero.l2 ? <><br />{hero.l2}</> : null}
-            {hero.l3 ? <><br /><span className="acc">{hero.l3}</span></> : null}
           </h1>
           <p className="herox__sub">
             {hero.sub.split('\n').filter(Boolean).map((line, i) => (
-              <span key={i} style={{ display: 'block' }}>{line}</span>
+              <span key={i} style={{ display: 'block' }}>
+                {line.split('**').map((part, j) => (j % 2 === 1 ? <b key={j} className="herox__em">{part}</b> : part))}
+              </span>
             ))}
           </p>
           <div className="valuechips">
