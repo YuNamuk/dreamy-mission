@@ -4,8 +4,8 @@ import { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 
 /**
- * 로케이터 미니맵 — 주변국을 배경으로, 대상 국가만 브랜드 컬러로 하이라이트.
- * 정적(비인터랙티브) 디자인 요소.
+ * 로케이터 미니맵 — 지형(terrain) 타일 위에 주변국을 배경으로, 대상 국가만 하이라이트.
+ * 줌/드래그 가능(휠은 페이지 스크롤 보호를 위해 비활성, +/-·더블클릭·핀치로 줌).
  */
 export default function LocatorMap({ countryId }: { countryId: string }) {
   const elRef = useRef<HTMLDivElement>(null);
@@ -19,25 +19,31 @@ export default function LocatorMap({ countryId }: { countryId: string }) {
       if (cancelled || !elRef.current || mapRef.current) return;
 
       const map = L.map(elRef.current, {
-        zoomControl: false, attributionControl: false,
-        dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
-        touchZoom: false, boxZoom: false, keyboard: false, zoomSnap: 0.1,
+        zoomControl: true,
+        attributionControl: false,
+        scrollWheelZoom: false, // 페이지 스크롤 보호
+        dragging: true,
+        doubleClickZoom: true,
+        touchZoom: true,
+        zoomSnap: 0.25,
+        minZoom: 2,
       });
       mapRef.current = map;
+      map.zoomControl.setPosition('bottomright');
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        subdomains: 'abcd', maxZoom: 12,
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 16,
       }).addTo(map);
 
       try {
         const gj = await fetch(`/geo/${countryId}.geo.json`).then((r) => r.json());
         const layer = L.geoJSON(gj, {
-          style: { color: '#0089c2', weight: 1.6, fillColor: '#00a7e1', fillOpacity: 0.3 },
+          interactive: false,
+          style: { color: '#0089c2', weight: 2, fillColor: '#00a7e1', fillOpacity: 0.22 },
         }).addTo(map);
         const b = layer.getBounds();
-        map.fitBounds(b, { padding: [22, 22] });
-        // 주변국이 보이도록 살짝 축소
-        map.setView(b.getCenter(), Math.max(2, map.getZoom() - 0.8), { animate: false });
+        map.fitBounds(b, { padding: [24, 24] });
+        map.setView(b.getCenter(), Math.max(2, map.getZoom() - 0.7), { animate: false });
       } catch {
         map.setView([20, 100], 3);
       }

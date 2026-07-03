@@ -1589,3 +1589,10 @@ img {
   .chero__left { padding: 28px 22px 26px; }
   .chero__map { min-height: 300px; border-left: none; border-top: 1px solid var(--line); }
 }
+
+/* 로케이터 줌 컨트롤 클린 스타일 */
+.locmap .leaflet-bar { border: none !important; box-shadow: 0 6px 16px -8px rgba(14,36,56,.35) !important; border-radius: 9px !important; overflow: hidden; }
+.locmap .leaflet-bar a { border: none !important; background: #fff !important; color: var(--navy) !important; width: 30px !important; height: 30px !important; line-height: 30px !important; font-weight: 600; }
+.locmap .leaflet-bar a + a { border-top: 1px solid #eef3f7 !important; }
+.locmap .leaflet-bar a:hover { background: var(--sky-soft) !important; color: var(--sky) !important; }
+.locmap .leaflet-control-zoom { margin: 0 12px 12px 0 !important; }
