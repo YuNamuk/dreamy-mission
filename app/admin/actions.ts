@@ -63,7 +63,7 @@ export async function saveCountryContent(
   patch: {
     intro?: string;
     themes?: { t?: string; d?: string }[];
-    stats?: { capital?: string; pop?: string; area?: string; religion?: string };
+    stats?: { capital?: string; pop?: string; area?: string; religion?: string; language?: string; government?: string; currency?: string; climate?: string; timezone?: string };
     timeline?: { y: string; items: string[] }[];
   },
 ): Promise<Result> {

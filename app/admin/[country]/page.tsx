@@ -46,7 +46,10 @@ export default async function EditCountryPage({ params }: { params: Promise<{ co
         initial={{
           intro: country.intro,
           themes: country.themes.map((t) => ({ t: t.t, d: t.d })),
-          stats: { capital: country.capital, pop: country.pop, area: country.area, religion: country.religion },
+          stats: {
+            capital: country.capital, pop: country.pop, area: country.area, religion: country.religion,
+            language: country.language, government: country.government, currency: country.currency, climate: country.climate, timezone: country.timezone,
+          },
           timeline: country.timeline,
         }}
         covers={covers}

@@ -27,7 +27,7 @@ export interface CountryEdit {
   intro?: string;
   themes?: { t?: string; d?: string }[];
   timeline?: { y: string; items: string[] }[];
-  stats?: { capital?: string; pop?: string; area?: string; religion?: string };
+  stats?: { capital?: string; pop?: string; area?: string; religion?: string; language?: string; government?: string; currency?: string; climate?: string; timezone?: string };
   /** 슬롯 id → 이미지 URL */
   images?: Record<string, string>;
   /** 카테고리(테마 index) → 갤러리 사진 URL 배열 (관리자 업로드) */
@@ -63,6 +63,11 @@ function merge(base: Country, edit?: CountryEdit): Country {
     pop: edit.stats?.pop ?? base.pop,
     area: edit.stats?.area ?? base.area,
     religion: edit.stats?.religion ?? base.religion,
+    language: edit.stats?.language ?? base.language,
+    government: edit.stats?.government ?? base.government,
+    currency: edit.stats?.currency ?? base.currency,
+    climate: edit.stats?.climate ?? base.climate,
+    timezone: edit.stats?.timezone ?? base.timezone,
     themes: base.themes.map((th, i) => ({
       ...th,
       t: edit.themes?.[i]?.t ?? th.t,

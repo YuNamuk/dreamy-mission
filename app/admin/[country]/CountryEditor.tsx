@@ -7,7 +7,7 @@ import { saveCountryContent, uploadCover, addCatPhotos, removeCatPhoto } from '.
 interface Initial {
   intro: string;
   themes: { t: string; d: string }[];
-  stats: { capital: string; pop: string; area: string; religion: string };
+  stats: { capital: string; pop: string; area: string; religion: string; language: string; government: string; currency: string; climate: string; timezone: string };
   timeline: { y: string; items: string[] }[];
 }
 
@@ -100,9 +100,14 @@ export default function CountryEditor({ id, initial, covers, gallery }: { id: st
         <h2>국가 정보</h2>
         <div className="agrid2">
           <label>수도<input className="ainput" value={stats.capital} onChange={(e) => setStats({ ...stats, capital: e.target.value })} /></label>
-          <label>인구·면적<input className="ainput" value={stats.pop} onChange={(e) => setStats({ ...stats, pop: e.target.value })} placeholder="인구" /></label>
+          <label>인구<input className="ainput" value={stats.pop} onChange={(e) => setStats({ ...stats, pop: e.target.value })} /></label>
           <label>면적<input className="ainput" value={stats.area} onChange={(e) => setStats({ ...stats, area: e.target.value })} /></label>
+          <label>언어<input className="ainput" value={stats.language} onChange={(e) => setStats({ ...stats, language: e.target.value })} /></label>
           <label>종교<input className="ainput" value={stats.religion} onChange={(e) => setStats({ ...stats, religion: e.target.value })} /></label>
+          <label>정치체제<input className="ainput" value={stats.government} onChange={(e) => setStats({ ...stats, government: e.target.value })} /></label>
+          <label>통화<input className="ainput" value={stats.currency} onChange={(e) => setStats({ ...stats, currency: e.target.value })} /></label>
+          <label>기후<input className="ainput" value={stats.climate} onChange={(e) => setStats({ ...stats, climate: e.target.value })} /></label>
+          <label>시차<input className="ainput" value={stats.timezone} onChange={(e) => setStats({ ...stats, timezone: e.target.value })} /></label>
         </div>
       </section>
 

@@ -54,14 +54,27 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
             </span>
           </div>
 
-          <p data-field="intro" style={{ margin: '30px 0 0', maxWidth: 960, fontSize: 16.5, lineHeight: 2, color: 'var(--ink2)', fontWeight: 300 }}>
+          <p data-field="intro" style={{ margin: '30px 0 0', maxWidth: 720, fontSize: 16.5, lineHeight: 2, color: 'var(--ink2)', fontWeight: 300 }}>
             {country.intro}
           </p>
 
-          <div className="country-stats">
-            <StatRow ko="수도" en="Capital" value={country.capital} />
-            <StatRow ko="인구 · 면적" en="Population · Area" value={`${country.pop} · ${country.area}`} />
-            <StatRow ko="종교" en="Religion" value={country.religion} />
+          <div className="country-facts">
+            {([
+              ['수도', country.capital],
+              ['인구', country.pop],
+              ['면적', country.area],
+              ['언어', country.language],
+              ['종교', country.religion],
+              ['정치체제', country.government],
+              ['통화', country.currency],
+              ['기후', country.climate],
+              ['시차', country.timezone],
+            ] as [string, string][]).map(([label, value]) => (
+              <div className="fact" key={label}>
+                <div className="fact__label">{label}</div>
+                <div className="fact__val">{value}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -125,14 +138,3 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
   );
 }
 
-function StatRow({ ko, en, value }: { ko: string; en: string; value: string }) {
-  return (
-    <div className="stat-row">
-      <div className="stat-row__label">
-        <span>{ko}</span>
-        <em>{en}</em>
-      </div>
-      <div className="stat-row__val">{value}</div>
-    </div>
-  );
-}

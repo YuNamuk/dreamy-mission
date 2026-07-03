@@ -28,6 +28,11 @@ export interface Country {
   pop: string;
   area: string;
   religion: string;
+  language: string;
+  government: string;
+  currency: string;
+  climate: string;
+  timezone: string;
   intro: string;
   themes: Theme[];
   timeline: TimelineRow[];
@@ -53,6 +58,11 @@ export const COUNTRIES: Country[] = [
     id: 'mongolia', ko: '몽골', en: 'Mongolia', local: 'Монгол', years: '2021—', x: 60, y: 15,
     capital: '울란바토르 (Ulaanbaatar)', pop: '354만 명', area: '156.4만 ㎢ · 한반도의 7.1배',
     religion: '라마교 51.7% · 무교 40.6% · 이슬람교 3.2% · 기독교 1.3%',
+    language: '몽골어',
+    government: '이원집정부제 공화국',
+    currency: '투그릭 (MNT)',
+    climate: '대륙성 건조 기후 · 혹한의 겨울',
+    timezone: '한국보다 1시간 느림',
     intro: '러시아와 중국 사이의 드넓은 내륙국. 드리미학교는 몽골의 크리스천 리더를 양성하고, 복음의 공공성 원리에 따라 공립학교 교육의 성장과 발전을 지원한다. 밝은미래학교와의 협력, 3P Festival, 인성교육 교재 출판, 지역 선교와 교사 연수로 교사와 학생의 성장을 돕는다.',
     themes: [
       { t: '3P EDU Festival', hint: '3P 페스티벌 사진', d: '울란바토르 한 구의 다섯 학교로 시작해 전 지역으로 확대된 프로젝트 중심 교육 축제. 학생·교사를 초청해 결과물을 나누고 상호 배움을 얻으며, 배움과 나눔·만남과 성장의 장을 제공하고 창조세계를 사랑하도록 돕는다.' },
@@ -73,6 +83,11 @@ export const COUNTRIES: Country[] = [
     id: 'philippines', ko: '필리핀', en: 'Philippines', local: 'Pilipinas', years: '2022—', x: 83, y: 40,
     capital: '메트로 마닐라 (Metro Manila)', pop: '1억 1,559만 명', area: '30만 ㎢ · 한반도의 1.3배',
     religion: '천주교 79% · 기독교 7% · 이슬람교 6% 등',
+    language: '필리핀어(타갈로그) · 영어',
+    government: '대통령중심제 공화국',
+    currency: '필리핀 페소 (PHP)',
+    climate: '열대 몬순 · 우기와 건기',
+    timezone: '한국보다 1시간 느림',
     intro: '급격한 도시화와 경제적 격차 속에 빈곤과 교육 불균형으로 소외된 계층이 배움의 기회를 잃은 땅. 마닐라 외곽 산이시드로에 드리미학교가 세워져 교육적 교류로 현지 리더들에게 도전을 준다. 바로 이곳에서 하나님의 꿈이 시작되었다.',
     themes: [
       { t: 'Dreamy School Philippines', hint: '필리핀 드리미학교 사진', d: '마닐라 빈민 이주촌 몬탈반에 개교한 필리핀 드리미학교는 열악한 교육 환경 속에 세워진 희망의 터전이다. 양질의 기독교 교육을 제공하며 필리핀의 미래를 이끌어갈 다음 세대를 양육하는 것을 비전으로 삼는다.' },
@@ -93,6 +108,11 @@ export const COUNTRIES: Country[] = [
     id: 'cambodia', ko: '캄보디아', en: 'Cambodia', local: 'កម្ពុជា', years: '2023—', x: 63, y: 41,
     capital: '프놈펜 (Phnom Penh)', pop: '1,805만 명', area: '18.1만 ㎢ · 한반도의 0.8배',
     religion: '불교 95% · 기독교 3% · 기타 2%',
+    language: '크메르어',
+    government: '입헌군주제',
+    currency: '리엘 (KHR) · 미국 달러 통용',
+    climate: '열대 몬순',
+    timezone: '한국보다 2시간 느림',
     intro: '힌두교와 대승불교의 찬란한 앙코르 시대를 거쳐 상좌부 불교로 정착했으나, 킬링필드의 종교 말살 비극을 딛고 일어나 현재는 불교를 국교로 재건한 땅. 씨엠립을 중심으로 교육과 의료가 어우러진 커뮤니티를 세워 건강한 가정과 다음 세대를 그리스도께로 인도한다.',
     themes: [
       { t: '겨자씨 초등학교', hint: '겨자씨 초등학교 사진', d: '2009년 씨엠립에 7명으로 시작해 지금은 1~6학년 6개 학급 90여 명이 재학한다. 독서수업·성경캠프·Book Fest, 졸업생과의 한국어·문화 캠프로 아이들이 자신의 미래를 상상하도록 돕는다.' },
@@ -112,6 +132,11 @@ export const COUNTRIES: Country[] = [
     id: 'indonesia', ko: '인도네시아', en: 'Indonesia', local: 'Indonesia', years: '2024—', x: 66, y: 53,
     capital: '자카르타 (Jakarta)', pop: '2억 8,720만 명', area: '191.7만 ㎢ · 한반도의 약 9배',
     religion: '이슬람 87% · 기독교 7% · 천주교 3% · 힌두 2% · 불교 1%',
+    language: '인도네시아어',
+    government: '대통령중심제 공화국',
+    currency: '루피아 (IDR)',
+    climate: '열대 우림 기후',
+    timezone: '한국보다 2시간 느림 (자카르타)',
     intro: '인구 2억 8천만의 다인종·다종교 국가. 자카르타의 JIU와 CGA는 기독교 세계관으로 다음 세대를 양성한다. 드리미학교는 교육 철학을 공유하며 교사·학생 교류로 교육 선교의 지평을 넓힌다.',
     themes: [
       { t: 'JIU & CGA', hint: 'JIU·CGA 캠퍼스 사진', d: '자카르타의 JIU(대학)와 CGA(1~12학년 기독교 학교)는 기독교 세계관으로 다음 세대를 양성한다. 애터미의 후원으로 완공된 Danvit Hall에 ‘Dreamy Library’를 조성해 초·중·고와 대학생이 함께 머무는 배움과 교류의 공간을 마련했다.' },
@@ -134,6 +159,11 @@ export const COUNTRIES: Country[] = [
     id: 'india', ko: '인도', en: 'India', local: 'भारत', years: '2019—', x: 37, y: 35,
     capital: '뉴델리 (New Delhi)', pop: '약 14억 3천만 명', area: '328만 ㎢ · 한반도의 약 15배',
     religion: '힌두교 79.8% · 이슬람교 14.2% · 기독교 2.3% 등',
+    language: '힌디어 · 영어 등 (공용어 22개)',
+    government: '의원내각제 연방공화국',
+    currency: '인도 루피 (INR)',
+    climate: '열대 몬순 · 지역 차 큼',
+    timezone: '한국보다 3시간 30분 느림',
     intro: '다신교와 다언어의 광활한 아대륙. 방갈로르와 나갈랜드, 마니푸르에 세워진 드리미 학교들이 고아와 소외된 아이들에게 배움의 집이 되어 준다.',
     themes: [
       { t: 'Dreamy School · Bangalore', hint: '방갈로르 드리미학교 사진', d: '2019년 개교. 드리미학교 교사가 파견 근무하고, 인도 현지 교사 두 명이 한국에서 함께 일하며 교육을 교류한다.' },
@@ -151,6 +181,11 @@ export const COUNTRIES: Country[] = [
     id: 'pakistan', ko: '파키스탄', en: 'Pakistan', local: 'پاکستان', years: '2016—', x: 29, y: 26,
     capital: '이슬라마바드 (Islamabad)', pop: '2억 4,500만 명', area: '79.6만 ㎢ · 한반도의 약 3.5배',
     religion: '이슬람교 96.4% (수니 다수) · 기독교 1.6% · 힌두교 1% 등',
+    language: '우르두어 · 영어',
+    government: '의원내각제 연방공화국',
+    currency: '파키스탄 루피 (PKR)',
+    climate: '건조 · 반건조 기후',
+    timezone: '한국보다 4시간 느림',
     intro: '인구의 96%가 무슬림인 땅에서, 소수자와 기독교 공동체를 위한 대학 PGI가 세워졌다. 2011년 순교한 소수자민족부 장관 샤바즈 바티의 뜻을 이어, 사랑과 평화·정의·섬김의 공동체를 짓는다.',
     themes: [
       { t: 'Pakistan Global Institute', hint: 'PGI 캠퍼스 사진', d: '파키스탄 건국 이래 외국인이 처음으로 직접 설립한 고등교육기관. 소수자와 기독교 공동체를 위해, 순교한 샤바즈 바티 장관의 뜻을 이어 세워졌다. 2022년 캠퍼스 완공, 2023년 정부 인증 대학으로 개교했다.' },
