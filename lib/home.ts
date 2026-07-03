@@ -33,7 +33,7 @@ export const HOME_DEFAULT: HomeContent = {
   heroLine1: '드리미학교',
   heroLine2: '',
   heroLine3: '교육선교',
-  heroSub: '성공이 아닌 **섬김**을,\n나의 일이 아닌 **하나님의 일하심**을,\n선교는 **사랑하는 것**임을,\n배워갑니다.',
+  heroSub: '성공이 아닌 섬김을,\n나의 일이 아닌 하나님의 일하심을,\n선교는 사랑하는 것임을,\n배워갑니다.',
   journey: [
     { y: '2021', id: 'mongolia', desc: '밝은미래학교 협력 · 인턴 교사 파송 · 3P 교육' },
     { y: '2022', id: 'philippines', desc: '필리핀 드리미학교 건축 · 교사 훈련 · 학생 교육선교' },
