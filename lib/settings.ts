@@ -4,6 +4,7 @@
 import 'server-only';
 import { supabase } from './supabase';
 import { CONTENT_TABLE } from './content';
+import { BASE_LOCALE, overlay, type Locale } from './i18n';
 
 export type MapTile = 'terrain' | 'satellite' | 'simple';
 
@@ -27,22 +28,38 @@ export const SETTINGS_DEFAULT: SiteSettings = {
   logoWhiteUrl: null,
 };
 
-export async function getSettings(): Promise<SiteSettings> {
-  if (!supabase) return SETTINGS_DEFAULT;
-  try {
-    const { data } = await supabase.from(CONTENT_TABLE).select('data').eq('id', SETTINGS_KEY).limit(1);
-    const e = (data?.[0]?.data ?? {}) as Partial<SiteSettings>;
-    return {
-      mapTile: (['terrain', 'satellite', 'simple'] as const).includes(e.mapTile as MapTile) ? (e.mapTile as MapTile) : SETTINGS_DEFAULT.mapTile,
-      tagline: e.tagline ?? SETTINGS_DEFAULT.tagline,
-      verse: e.verse ?? SETTINGS_DEFAULT.verse,
-      verseRef: e.verseRef ?? SETTINGS_DEFAULT.verseRef,
-      logoUrl: e.logoUrl ?? SETTINGS_DEFAULT.logoUrl,
-      logoWhiteUrl: e.logoWhiteUrl ?? SETTINGS_DEFAULT.logoWhiteUrl,
-    };
-  } catch {
-    return SETTINGS_DEFAULT;
+const SETTINGS_I18N: Record<Locale, Partial<SiteSettings>> = {
+  en: {
+    tagline: 'Dreamy School Education Mission Archive · Drawing the Mission',
+    verse: 'Ye are the light of the world… let your light so shine before men, that they may see your good works, and glorify your Father which is in heaven',
+    verseRef: 'Matthew 5:14–16',
+  },
+};
+
+export async function getSettings(locale: Locale = BASE_LOCALE): Promise<SiteSettings> {
+  let base = SETTINGS_DEFAULT;
+  let dbI18n: Record<string, unknown> | undefined;
+  if (supabase) {
+    try {
+      const { data } = await supabase.from(CONTENT_TABLE).select('data').eq('id', SETTINGS_KEY).limit(1);
+      const e = (data?.[0]?.data ?? {}) as Partial<SiteSettings> & { i18n?: Record<string, unknown> };
+      base = {
+        mapTile: (['terrain', 'satellite', 'simple'] as const).includes(e.mapTile as MapTile) ? (e.mapTile as MapTile) : SETTINGS_DEFAULT.mapTile,
+        tagline: e.tagline ?? SETTINGS_DEFAULT.tagline,
+        verse: e.verse ?? SETTINGS_DEFAULT.verse,
+        verseRef: e.verseRef ?? SETTINGS_DEFAULT.verseRef,
+        logoUrl: e.logoUrl ?? SETTINGS_DEFAULT.logoUrl,
+        logoWhiteUrl: e.logoWhiteUrl ?? SETTINGS_DEFAULT.logoWhiteUrl,
+      };
+      dbI18n = e.i18n;
+    } catch {
+      base = SETTINGS_DEFAULT;
+    }
   }
+  if (locale === BASE_LOCALE) return base;
+  let out = overlay(base, SETTINGS_I18N[locale]);
+  out = overlay(out, dbI18n?.[locale]);
+  return out;
 }
 
 export async function loadSettingsEdit(): Promise<Partial<SiteSettings>> {

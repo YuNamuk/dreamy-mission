@@ -1,8 +1,9 @@
 import { getSettings } from '@/lib/settings';
+import { getLocale } from '@/lib/i18n';
 
 /** 사이트 공통 네이비 푸터 — 로고 · 대표 성경구절 · 대표 문구 (사이트 설정에서 관리). */
 export default async function Footer() {
-  const s = await getSettings();
+  const s = await getSettings(await getLocale());
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { DreamiUser } from '@/lib/dreami';
+import { LOCALES, LOCALE_SHORT, LOCALE_LABEL, LANG_COOKIE } from '@/lib/locales';
 
 export interface NavCountry {
   id: string;
@@ -24,26 +25,39 @@ export default function Nav({
   countries = [],
   active,
   logo,
+  locale = 'ko',
 }: {
   user: DreamiUser | null;
   countries?: NavCountry[];
   active?: string;
   logo?: string | null;
+  locale?: string;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [missionsOpen, setMissionsOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const missionsRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
       if (missionsRef.current && !missionsRef.current.contains(e.target as Node)) setMissionsOpen(false);
       if (userRef.current && !userRef.current.contains(e.target as Node)) setUserOpen(false);
+      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
     }
     document.addEventListener('click', onDoc);
     return () => document.removeEventListener('click', onDoc);
   }, []);
+
+  const tt = (ko: string, en: string) => (locale === 'ko' ? ko : en);
+  const nameBig = (c: NavCountry) => (locale === 'ko' ? c.ko : c.en);
+  const nameSub = (c: NavCountry) => (locale === 'ko' ? c.en : c.ko);
+  function setLang(l: string) {
+    document.cookie = `${LANG_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
+    window.location.reload();
+  }
 
   const initial = (user?.name || user?.email || '·').trim().charAt(0).toUpperCase();
 
@@ -74,11 +88,11 @@ export default function Nav({
           </button>
           {missionsOpen && (
             <div className="nav2__ddpanel" onClick={() => setMissionsOpen(false)}>
-              <Link href="/missions" className="nav2__ddlink"><b>선교지 전체</b><span>Overview</span></Link>
+              <Link href="/missions" className="nav2__ddlink"><b>{tt('선교지 전체', 'All Fields')}</b><span>Overview</span></Link>
               {countries.map((c) => (
                 <Link key={c.id} href={`/${c.id}`} className="nav2__ddlink">
-                  <b>{c.ko}</b>
-                  <span>{c.en}</span>
+                  <b>{nameBig(c)}</b>
+                  <span>{nameSub(c)}</span>
                 </Link>
               ))}
             </div>
@@ -92,7 +106,21 @@ export default function Nav({
 
       {/* 우측: 언어 + 계정 */}
       <div className="nav2__end">
-        <span className="nav2__kr" title="한국어">KR</span>
+        <div className="nav2__dd" ref={langRef}>
+          <button className="nav2__lang" onClick={() => setLangOpen((v) => !v)} aria-expanded={langOpen} aria-label="Language">
+            {LOCALE_SHORT[locale] ?? locale.toUpperCase()}
+            <svg width="10" height="10" viewBox="0 0 12 12" style={{ marginLeft: 4 }}><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          {langOpen && (
+            <div className="nav2__ddpanel nav2__ddpanel--right">
+              {LOCALES.map((l) => (
+                <button key={l} className={`nav2__ddlink nav2__langopt${l === locale ? ' is-active' : ''}`} onClick={() => setLang(l)}>
+                  <b>{LOCALE_LABEL[l] ?? l}</b><span>{LOCALE_SHORT[l] ?? l.toUpperCase()}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         {user ? (
           <div className="nav2__dd" ref={userRef}>
             <button className="nav2__avatar" onClick={() => setUserOpen((v) => !v)} title={user.name ?? user.email} aria-label="계정">
@@ -104,8 +132,8 @@ export default function Nav({
                   <b>{user.name ?? user.email}</b>
                   <span>{user.email}{user.role ? ` · ${user.role}` : ''}</span>
                 </div>
-                <Link href="/admin" className="nav2__ddlink">관리자</Link>
-                <a href="/api/auth/logout" className="nav2__ddlink">로그아웃</a>
+                <Link href="/admin" className="nav2__ddlink">{tt('관리자', 'Admin')}</Link>
+                <a href="/api/auth/logout" className="nav2__ddlink">{tt('로그아웃', 'Sign out')}</a>
               </div>
             )}
           </div>
@@ -129,12 +157,20 @@ export default function Nav({
             <span>MISSIONS</span>
             <div className="nav2__mcountries">
               {countries.map((c) => (
-                <Link key={c.id} href={`/${c.id}`} className="nav2__mchip">{c.ko}</Link>
+                <Link key={c.id} href={`/${c.id}`} className="nav2__mchip">{nameBig(c)}</Link>
               ))}
             </div>
           </div>
-          {!user && <a href="/api/auth/login" className="nav2__mlink">학생 로그인</a>}
-          {user && <a href="/api/auth/logout" className="nav2__mlink">로그아웃</a>}
+          <div className="nav2__mgroup">
+            <span>LANGUAGE</span>
+            <div className="nav2__mcountries">
+              {LOCALES.map((l) => (
+                <button key={l} className={`nav2__mchip${l === locale ? ' is-active' : ''}`} onClick={() => setLang(l)}>{LOCALE_LABEL[l] ?? l}</button>
+              ))}
+            </div>
+          </div>
+          {!user && <a href="/api/auth/login" className="nav2__mlink">{tt('학생 로그인', 'Sign in')}</a>}
+          {user && <a href="/api/auth/logout" className="nav2__mlink">{tt('로그아웃', 'Sign out')}</a>}
         </div>
       )}
     </nav>

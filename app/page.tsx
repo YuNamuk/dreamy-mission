@@ -4,6 +4,7 @@ import { getCountries } from '@/lib/content';
 import { getHome } from '@/lib/home';
 import { getSettings } from '@/lib/settings';
 import { resolvePhoto } from '@/lib/photos';
+import { getLocale, makeT } from '@/lib/i18n';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import MapHero from './components/MapHero';
@@ -16,7 +17,9 @@ const DRAW_ICONS = [<IconEducation key="e" size={22} />, <IconCommunity key="c" 
 const DRAW_SLOTS = ['draw-education', 'draw-community', 'draw-service', 'draw-faith'];
 
 export default async function Home() {
-  const [user, countries, home, settings] = await Promise.all([getUser(), getCountries(), getHome(), getSettings()]);
+  const locale = await getLocale();
+  const t = makeT(locale);
+  const [user, countries, home, settings] = await Promise.all([getUser(), getCountries(locale), getHome(locale), getSettings()]);
   const byId = Object.fromEntries(countries.map((c) => [c.id, c]));
   const navCountries = countries.map((c) => ({ id: c.id, ko: c.ko, en: c.en }));
 
@@ -36,7 +39,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Nav user={user} countries={navCountries} active="home" logo={settings.logoUrl} />
+      <Nav user={user} countries={navCountries} active="home" logo={settings.logoUrl} locale={locale} />
 
       {/* ── 히어로: 풀블리드 지도 + 타이틀(좌)·발자취(우) 오버레이 ── */}
       <div id="map">
@@ -45,6 +48,7 @@ export default async function Home() {
           journey={journey}
           hero={{ l1: home.heroLine1, l2: home.heroLine2, l3: home.heroLine3, sub: home.heroSub }}
           defaultLayer={settings.mapTile}
+          ui={{ detail: t('cta.detail'), inProgress: t('status.inProgress'), journey: t('label.journey') }}
         />
       </div>
 
@@ -63,10 +67,10 @@ export default async function Home() {
                   <span className="ccard__scrim" />
                 </>
               )}
-              <span className="ccard__en">{c.en}</span>
-              <span className="ccard__ko">{c.ko}</span>
+              <span className="ccard__en">{locale === 'ko' ? c.en : c.ko}</span>
+              <span className="ccard__ko">{locale === 'ko' ? c.ko : c.en}</span>
               <span className="ccard__desc">{home.taglines[id]}</span>
-              <span className="ccard__go">자세히 보기 →</span>
+              <span className="ccard__go">{t('cta.detail')}</span>
             </Link>
           );
         })}
@@ -79,7 +83,7 @@ export default async function Home() {
             <h2>{home.drawsTitle}</h2>
             <p>{home.drawsSub}</p>
             <Link href="/philippines" className="draws__btn">
-              선교 이야기 보기
+              {t('cta.stories')}
             </Link>
           </div>
           <div className="draw-cards">

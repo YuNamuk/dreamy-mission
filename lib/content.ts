@@ -11,6 +11,8 @@
  */
 import { supabase } from './supabase';
 import { COUNTRIES, type Country } from './countries';
+import { COUNTRY_I18N } from './countries.en';
+import { BASE_LOCALE, overlay, type Locale } from './i18n';
 
 export const CONTENT_TABLE = 'archive_content';
 
@@ -34,6 +36,16 @@ export interface CountryEdit {
   catPhotos?: Record<string, string[]>;
   /** 방문 시기별 갤러리 */
   visits?: Visit[];
+  /** 언어별 번역 오버레이: locale → 같은 모양의 부분값(intro/stats/themes/timeline …) */
+  i18n?: Record<string, unknown>;
+}
+
+/** 국가 콘텐츠에 언어 오버레이 적용 (base=ko 병합 결과 위에 시드 EN → DB 번역 순으로) */
+function localizeCountry(base: Country, edit: CountryEdit | undefined, locale: Locale): Country {
+  if (locale === BASE_LOCALE) return base;
+  let out = overlay(base, COUNTRY_I18N[base.id]?.[locale]);
+  out = overlay(out, (edit?.i18n as Record<string, unknown> | undefined)?.[locale]);
+  return out;
 }
 
 export type EditMap = Record<string, CountryEdit>;
@@ -116,12 +128,12 @@ export async function applyCountryEdit(
   return { ok: true };
 }
 
-export async function getCountries(): Promise<Country[]> {
+export async function getCountries(locale: Locale = BASE_LOCALE): Promise<Country[]> {
   const { edits } = await loadEdits();
-  return COUNTRIES.map((c) => merge(c, edits[c.id]));
+  return COUNTRIES.map((c) => localizeCountry(merge(c, edits[c.id]), edits[c.id], locale));
 }
 
-export async function getCountry(id: string): Promise<{
+export async function getCountry(id: string, locale: Locale = BASE_LOCALE): Promise<{
   country: Country | null;
   images: Record<string, string>;
   catPhotos: Record<string, string[]>;
@@ -131,5 +143,6 @@ export async function getCountry(id: string): Promise<{
   if (!base) return { country: null, images: {}, catPhotos: {}, visits: [] };
   const { edits } = await loadEdits();
   const edit = edits[id];
-  return { country: merge(base, edit), images: edit?.images ?? {}, catPhotos: edit?.catPhotos ?? {}, visits: edit?.visits ?? [] };
+  const merged = localizeCountry(merge(base, edit), edit, locale);
+  return { country: merged, images: edit?.images ?? {}, catPhotos: edit?.catPhotos ?? {}, visits: edit?.visits ?? [] };
 }

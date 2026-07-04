@@ -5,6 +5,7 @@
 import 'server-only';
 import { supabase } from './supabase';
 import { CONTENT_TABLE } from './content';
+import { BASE_LOCALE, overlay, type Locale } from './i18n';
 
 export interface PageSection {
   heading: string;
@@ -56,21 +57,64 @@ const DEFAULTS: Record<PageKey, PageContent> = {
   },
 };
 
-export async function getPage(key: PageKey): Promise<PageContent> {
+/** 페이지 기본값의 영어 시드(부분 오버레이). 없는 값은 ko로 폴백. */
+const DEFAULTS_I18N: Partial<Record<PageKey, Record<Locale, Partial<PageContent>>>> = {
+  about: {
+    en: {
+      title: 'Drawing the Mission',
+      subtitle: 'We stand still, and consider the space (間) that is not empty',
+      sections: [
+        { heading: 'Seeing, before doing', body: 'Education mission is not about us going somewhere to do something. Before we ever reached that land, God was already at work there. Mission is to behold that work and join its current — to see before we do.' },
+        { heading: '“Stand still and see”', body: '“Fear not, stand still, and see the salvation of the LORD, which he will shew to you to day” (Exodus 14:13). This archive holds the stories of six lands walked since 2022, and the journeys yet to come.' },
+        { heading: 'Dreamy School Education Mission', body: 'Dreamy School raises up Christian leaders in each land and, by the principle of the public nature of the gospel, helps education grow. Through teacher–student exchange, 3P education, character education, and local mission, we build the next generation.' },
+      ],
+    },
+  },
+  stories: {
+    en: {
+      title: 'Mission Stories',
+      subtitle: 'Six lands walked together, and the stories met there',
+      sections: [{ heading: '', body: 'In each country’s exhibition categories and “Mission Visit galleries,” you can meet the stories and photos from the field. Students’ mission reflections and plans will also be gathered here over time.' }],
+    },
+  },
+  missions: {
+    en: {
+      title: 'Mission Fields',
+      subtitle: 'The footsteps of education mission, from Dreamy School in Korea to six lands',
+    },
+  },
+  archive: {
+    en: {
+      title: 'Education Mission Archive',
+      subtitle: 'Permanent exhibition “Drawing the Mission,” 1F of the Dreamy School learning hall',
+      sections: [{ heading: '', body: 'A record of education mission across six lands since 2022. Tap a country below to meet each field’s introduction, exhibition categories, chronicle, and visit gallery.' }],
+    },
+  },
+};
+
+export async function getPage(key: PageKey, locale: Locale = BASE_LOCALE): Promise<PageContent> {
   const def = DEFAULTS[key];
-  if (!supabase) return def;
-  try {
-    const { data } = await supabase.from(CONTENT_TABLE).select('data').eq('id', `page_${key}`).limit(1);
-    const e = (data?.[0]?.data ?? {}) as Partial<PageContent>;
-    return {
-      eyebrow: e.eyebrow ?? def.eyebrow,
-      title: e.title ?? def.title,
-      subtitle: e.subtitle ?? def.subtitle,
-      sections: e.sections?.length ? e.sections : def.sections,
-    };
-  } catch {
-    return def;
+  let base = def;
+  let dbI18n: Record<string, unknown> | undefined;
+  if (supabase) {
+    try {
+      const { data } = await supabase.from(CONTENT_TABLE).select('data').eq('id', `page_${key}`).limit(1);
+      const e = (data?.[0]?.data ?? {}) as Partial<PageContent> & { i18n?: Record<string, unknown> };
+      base = {
+        eyebrow: e.eyebrow ?? def.eyebrow,
+        title: e.title ?? def.title,
+        subtitle: e.subtitle ?? def.subtitle,
+        sections: e.sections?.length ? e.sections : def.sections,
+      };
+      dbI18n = e.i18n;
+    } catch {
+      base = def;
+    }
   }
+  if (locale === BASE_LOCALE) return base;
+  let out = overlay(base, DEFAULTS_I18N[key]?.[locale]);
+  out = overlay(out, dbI18n?.[locale]);
+  return out;
 }
 
 export async function loadPageEdit(key: PageKey): Promise<Partial<PageContent>> {

@@ -6,6 +6,7 @@ import { getSettings } from '@/lib/settings';
 import { COUNTRIES, countryIndex } from '@/lib/countries';
 import { resolvePhoto } from '@/lib/photos';
 import { PHOTO_BASE } from '@/lib/uploaded-photos';
+import { getLocale, makeT } from '@/lib/i18n';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
 import EditController from '../components/EditController';
@@ -17,7 +18,9 @@ export const dynamic = 'force-dynamic';
 
 export default async function CountryPage({ params }: { params: Promise<{ country: string }> }) {
   const { country: id } = await params;
-  const [user, { country, images, catPhotos, visits }, settings] = await Promise.all([getUser(), getCountry(id), getSettings()]);
+  const locale = await getLocale();
+  const t = makeT(locale);
+  const [user, { country, images, catPhotos, visits }, settings] = await Promise.all([getUser(), getCountry(id, locale), getSettings(locale)]);
   if (!country) notFound();
   const hasVisits = visits.some((v) => v.photos.length > 0);
 
@@ -25,6 +28,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
   const prev = COUNTRIES[(idx - 1 + COUNTRIES.length) % COUNTRIES.length];
   const next = COUNTRIES[(idx + 1) % COUNTRIES.length];
   const indexLabel = String(idx + 1).padStart(2, '0');
+  const cname = (c: { ko: string; en: string }) => (locale === 'ko' ? c.ko : c.en);
 
   const cats: Category[] = country.themes.map((th, i) => {
     const n = i + 1;
@@ -39,7 +43,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
 
   return (
     <main id="country-root">
-      <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active="missions" logo={settings.logoUrl} />
+      <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active="missions" logo={settings.logoUrl} locale={locale} />
 
       {/* ── 통합 히어로 카드: 이름 · 설명 · 국가정보 · 위치 지도 ── */}
       <section className="section--wide" style={{ padding: '108px 48px 0' }}>
@@ -55,15 +59,15 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
 
             <div className="country-facts">
               {([
-                ['수도', country.capital],
-                ['인구', country.pop],
-                ['면적', country.area],
-                ['언어', country.language],
-                ['종교', country.religion],
-                ['정치체제', country.government],
-                ['통화', country.currency],
-                ['기후', country.climate],
-                ['시차', country.timezone],
+                [t('facts.capital'), country.capital],
+                [t('facts.pop'), country.pop],
+                [t('facts.area'), country.area],
+                [t('facts.language'), country.language],
+                [t('facts.religion'), country.religion],
+                [t('facts.government'), country.government],
+                [t('facts.currency'), country.currency],
+                [t('facts.climate'), country.climate],
+                [t('facts.timezone'), country.timezone],
               ] as [string, string][]).map(([label, value]) => (
                 <div className="fact" key={label}>
                   <div className="fact__label">{label}</div>
@@ -75,7 +79,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
 
           <div className="chero__map">
             <LocatorMap countryId={id} />
-            <div className="chero__pin">{country.ko}</div>
+            <div className="chero__pin">{cname(country)}</div>
           </div>
         </div>
       </section>
@@ -84,13 +88,13 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
       <section className="section--wide country-body" style={{ padding: '48px 48px 0' }}>
         <div>
           <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 20 }}>
-            전시 카테고리 · Categories <span style={{ color: 'var(--ink4)', fontWeight: 500 }}>— 눌러서 사진 보기</span>
+            {t('label.categories')} <span style={{ color: 'var(--ink4)', fontWeight: 500 }}>{t('label.visitsHint')}</span>
           </div>
           <CategoryGallery categories={cats} />
         </div>
 
         <aside className="rail">
-          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 24 }}>연혁 · Chronicle</div>
+          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 24 }}>{t('label.chronicle')}</div>
           {[...country.timeline].reverse().map((t, ti) => (
             <div key={ti} style={{ display: 'grid', gridTemplateColumns: '52px 1fr', gap: 14, marginBottom: 22 }}>
               <div style={{ fontFamily: 'var(--f-disp)', fontSize: 16, fontWeight: 800, color: 'var(--sky)', letterSpacing: '.02em' }}>{t.y}</div>
@@ -111,7 +115,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
       {hasVisits && (
         <section className="section--wide" style={{ padding: '18px 48px 0' }}>
           <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 20 }}>
-            교육선교 방문 · Mission Visits <span style={{ color: 'var(--ink4)', fontWeight: 500 }}>— 눌러서 사진 보기</span>
+            {t('label.visits')} <span style={{ color: 'var(--ink4)', fontWeight: 500 }}>{t('label.visitsHint')}</span>
           </div>
           <VisitGallery visits={visits} />
         </section>
@@ -120,15 +124,15 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
       {/* ── 국가 내비 ── */}
       <nav className="section--wide country-nav" style={{ margin: '56px auto 0', padding: '32px 48px 72px', borderTop: '1px solid var(--line)' }}>
         <Link href={`/${prev.id}`} style={{ textAlign: 'left' }}>
-          <div style={{ fontFamily: 'var(--f-disp)', fontSize: 11.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--ink4)' }}>← 이전</div>
-          <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4 }}>{prev.ko}</div>
+          <div style={{ fontFamily: 'var(--f-disp)', fontSize: 11.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--ink4)' }}>{t('nav.prev')}</div>
+          <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4 }}>{cname(prev)}</div>
         </Link>
         <Link href="/" className="pill" style={{ padding: '11px 24px', textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 800 }}>
-          지도로 돌아가기
+          {t('cta.backToMap')}
         </Link>
         <Link href={`/${next.id}`} style={{ textAlign: 'right' }}>
-          <div style={{ fontFamily: 'var(--f-disp)', fontSize: 11.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--ink4)' }}>다음 →</div>
-          <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4 }}>{next.ko}</div>
+          <div style={{ fontFamily: 'var(--f-disp)', fontSize: 11.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--ink4)' }}>{t('nav.next')}</div>
+          <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4 }}>{cname(next)}</div>
         </Link>
       </nav>
 

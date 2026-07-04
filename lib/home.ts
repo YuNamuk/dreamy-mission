@@ -5,6 +5,7 @@
 import 'server-only';
 import { supabase } from './supabase';
 import { CONTENT_TABLE } from './content';
+import { BASE_LOCALE, overlay, type Locale } from './i18n';
 
 export interface HomeJourney {
   y: string;
@@ -63,26 +64,67 @@ export const HOME_DEFAULT: HomeContent = {
   drawsSub: '모든 아이들이 존중받고 배우며, 하나님의 사랑 안에서 꿈을 이루는 세상.',
 };
 
-export async function getHome(): Promise<HomeContent> {
-  if (!supabase) return HOME_DEFAULT;
-  try {
-    const { data } = await supabase.from(CONTENT_TABLE).select('data').eq('id', HOME_KEY).limit(1);
-    const e = (data?.[0]?.data ?? {}) as Partial<HomeContent>;
-    return {
-      heroLine1: e.heroLine1 ?? HOME_DEFAULT.heroLine1,
-      heroLine2: e.heroLine2 ?? HOME_DEFAULT.heroLine2,
-      heroLine3: e.heroLine3 ?? HOME_DEFAULT.heroLine3,
-      heroSub: e.heroSub ?? HOME_DEFAULT.heroSub,
-      journey: e.journey?.length ? e.journey : HOME_DEFAULT.journey,
-      taglines: { ...HOME_DEFAULT.taglines, ...(e.taglines ?? {}) },
-      cardImages: { ...(e.cardImages ?? {}) },
-      draws: e.draws?.length === 4 ? e.draws : HOME_DEFAULT.draws,
-      drawsTitle: e.drawsTitle ?? HOME_DEFAULT.drawsTitle,
-      drawsSub: e.drawsSub ?? HOME_DEFAULT.drawsSub,
-    };
-  } catch {
-    return HOME_DEFAULT;
+/** 홈 기본값 영어 시드(부분 오버레이) — 부분 구조라 느슨한 타입 사용 */
+const HOME_DEFAULT_I18N: Record<Locale, Record<string, unknown>> = {
+  en: {
+    heroLine1: 'Dreamy School',
+    heroLine3: 'Education Mission',
+    heroSub: 'Not success but service,\nnot my work but God’s working,\nthat mission is to love —\nthis we are learning.',
+    taglines: {
+      mongolia: 'Partnering with Bright Future School, we help Mongolia’s public education grow through the 3P Festival and teacher training.',
+      philippines: 'We built the Philippine Dreamy School in a Manila slum and walk with the children of Smokey Mountain through education.',
+      cambodia: 'Alongside the Mustard Seed school and kindergarten in Siem Reap, we are building the Dream Vill community of education and care.',
+      indonesia: 'Sharing an educational philosophy with JIU·CGA in Jakarta, we grow together through teacher and student exchange.',
+      india: 'In Bangalore, Nagaland, and Manipur, we become a home of learning for orphaned and marginalized children.',
+      pakistan: 'We are building PGI, a university for minority and Christian communities, and partner through teacher training.',
+    },
+    journey: [
+      { desc: 'Partnered with Bright Future School · sent intern teachers · 3P education' },
+      { desc: 'Built the Philippine Dreamy School · teacher training · student mission' },
+      { desc: 'Partnered with NIBC · envisioned the Dream Vill town project' },
+      { desc: 'First meeting with CGA · 26 teachers visited Korea · $400k gift' },
+      { desc: 'Bangalore·Manipur exchange · library·IT·art education' },
+      { desc: 'Partnered with PGI · founded a high school · 82 teachers trained' },
+    ],
+    draws: [
+      { ko: 'Education', d: 'Children opening their dreams through learning' },
+      { ko: 'Community', d: 'A community that grows and builds together' },
+      { ko: 'Service', d: 'Small hands gathered make a great change' },
+      { ko: 'Faith', d: 'Becoming light and salt that brighten the world with the gospel' },
+    ],
+    drawsTitle: 'The World We Draw',
+    drawsSub: 'A world where every child is respected and learns, and fulfills their dreams within God’s love.',
+  },
+};
+
+export async function getHome(locale: Locale = BASE_LOCALE): Promise<HomeContent> {
+  let base = HOME_DEFAULT;
+  let dbI18n: Record<string, unknown> | undefined;
+  if (supabase) {
+    try {
+      const { data } = await supabase.from(CONTENT_TABLE).select('data').eq('id', HOME_KEY).limit(1);
+      const e = (data?.[0]?.data ?? {}) as Partial<HomeContent> & { i18n?: Record<string, unknown> };
+      base = {
+        heroLine1: e.heroLine1 ?? HOME_DEFAULT.heroLine1,
+        heroLine2: e.heroLine2 ?? HOME_DEFAULT.heroLine2,
+        heroLine3: e.heroLine3 ?? HOME_DEFAULT.heroLine3,
+        heroSub: e.heroSub ?? HOME_DEFAULT.heroSub,
+        journey: e.journey?.length ? e.journey : HOME_DEFAULT.journey,
+        taglines: { ...HOME_DEFAULT.taglines, ...(e.taglines ?? {}) },
+        cardImages: { ...(e.cardImages ?? {}) },
+        draws: e.draws?.length === 4 ? e.draws : HOME_DEFAULT.draws,
+        drawsTitle: e.drawsTitle ?? HOME_DEFAULT.drawsTitle,
+        drawsSub: e.drawsSub ?? HOME_DEFAULT.drawsSub,
+      };
+      dbI18n = e.i18n;
+    } catch {
+      base = HOME_DEFAULT;
+    }
   }
+  if (locale === BASE_LOCALE) return base;
+  let out = overlay(base, HOME_DEFAULT_I18N[locale]);
+  out = overlay(out, dbI18n?.[locale]);
+  return out;
 }
 
 export async function loadHomeEdit(): Promise<Partial<HomeContent>> {
