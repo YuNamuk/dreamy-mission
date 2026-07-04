@@ -37,7 +37,11 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" className={`${display.variable} ${notoKr.variable}`}>
-      <body>{children}</body>
+      <body>
+        {/* 새로고침 시 이전 스크롤 위치 복원 방지 → 항상 최상단(히어로)부터 표시 */}
+        <script dangerouslySetInnerHTML={{ __html: "if('scrollRestoration' in history){history.scrollRestoration='manual';}" }} />
+        {children}
+      </body>
     </html>
   );
 }
