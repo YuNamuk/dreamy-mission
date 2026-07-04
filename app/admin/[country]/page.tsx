@@ -3,13 +3,17 @@ import { notFound } from 'next/navigation';
 import { getAdmin } from '@/lib/admin';
 import { getCountry } from '@/lib/content';
 import { PHOTO_BASE } from '@/lib/uploaded-photos';
+import { LOCALES, BASE_LOCALE } from '@/lib/locales';
 import CountryEditor from './CountryEditor';
 import VisitManager from './VisitManager';
+import AdminLangTabs from '../AdminLangTabs';
 
 export const dynamic = 'force-dynamic';
 
-export default async function EditCountryPage({ params }: { params: Promise<{ country: string }> }) {
+export default async function EditCountryPage({ params, searchParams }: { params: Promise<{ country: string }>; searchParams: Promise<{ lang?: string }> }) {
   const { country: id } = await params;
+  const sp = await searchParams;
+  const lang = sp.lang && LOCALES.includes(sp.lang) ? sp.lang : BASE_LOCALE;
   const admin = await getAdmin();
   if (!admin) {
     return (
@@ -22,7 +26,7 @@ export default async function EditCountryPage({ params }: { params: Promise<{ co
       </main>
     );
   }
-  const { country, images, catPhotos, visits } = await getCountry(id);
+  const { country, images, catPhotos, visits } = await getCountry(id, lang);
   if (!country) notFound();
 
   const covers = country.themes.map((_, i) => images[`th-${id}-${i + 1}`] || `${PHOTO_BASE}/th-${id}-${i + 1}.jpg`);
@@ -37,12 +41,16 @@ export default async function EditCountryPage({ params }: { params: Promise<{ co
         </div>
         <div className="adminhead__right">
           <Link className="abtn" href={`/${id}`} target="_blank">페이지 보기 ↗</Link>
-          <Link className="abtn" href="/admin">← 목록</Link>
         </div>
       </header>
 
+      <AdminLangTabs current={lang} />
+      {lang !== BASE_LOCALE && <div className="adminlangnote">번역 모드입니다. 비워두면 한국어 원문이 표시됩니다. (사진·카테고리 구성·방문 갤러리는 언어 공통이라 한국어 탭에서 관리)</div>}
+
       <CountryEditor
+        key={lang}
         id={id}
+        locale={lang}
         initial={{
           intro: country.intro,
           themes: country.themes.map((t) => ({ t: t.t, d: t.d })),
@@ -57,9 +65,11 @@ export default async function EditCountryPage({ params }: { params: Promise<{ co
         photoBase={PHOTO_BASE}
       />
 
-      <div style={{ marginTop: 16 }}>
-        <VisitManager id={id} initial={visits} />
-      </div>
+      {lang === BASE_LOCALE && (
+        <div style={{ marginTop: 16 }}>
+          <VisitManager id={id} initial={visits} />
+        </div>
+      )}
     </main>
   );
 }

@@ -2,11 +2,15 @@ import Link from 'next/link';
 import { getAdmin } from '@/lib/admin';
 import { getStories } from '@/lib/stories';
 import { COUNTRIES } from '@/lib/countries';
+import { LOCALES, BASE_LOCALE } from '@/lib/locales';
 import StoriesEditor from './StoriesEditor';
+import AdminLangTabs from '../AdminLangTabs';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminStories() {
+export default async function AdminStories({ searchParams }: { searchParams: Promise<{ lang?: string }> }) {
+  const sp = await searchParams;
+  const lang = sp.lang && LOCALES.includes(sp.lang) ? sp.lang : BASE_LOCALE;
   const admin = await getAdmin();
   if (!admin) {
     return (
@@ -18,7 +22,7 @@ export default async function AdminStories() {
       </main>
     );
   }
-  const stories = await getStories();
+  const stories = await getStories(lang);
 
   return (
     <main className="adminwrap">
@@ -29,10 +33,11 @@ export default async function AdminStories() {
         </div>
         <div className="adminhead__right">
           <Link className="abtn" href="/stories" target="_blank">페이지 보기 ↗</Link>
-          <Link className="abtn" href="/admin">← 목록</Link>
         </div>
       </header>
-      <StoriesEditor initial={stories} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko }))} />
+      <AdminLangTabs current={lang} />
+      {lang !== BASE_LOCALE && <div className="adminlangnote">번역 모드입니다. 한국어 탭에서 만든 이야기의 제목·내용을 번역합니다. (이야기 추가·삭제·나라·종류는 한국어 탭에서)</div>}
+      <StoriesEditor key={lang} initial={stories} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko }))} locale={lang} />
     </main>
   );
 }

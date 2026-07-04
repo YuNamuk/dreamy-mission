@@ -11,7 +11,8 @@ interface Initial {
   timeline: { y: string; items: string[] }[];
 }
 
-export default function CountryEditor({ id, initial, covers, gallery, photoBase }: { id: string; initial: Initial; covers: string[]; gallery: string[][]; photoBase: string }) {
+export default function CountryEditor({ id, initial, covers, gallery, photoBase, locale = 'ko' }: { id: string; initial: Initial; covers: string[]; gallery: string[][]; photoBase: string; locale?: string }) {
+  const isBase = locale === 'ko';
   const [intro, setIntro] = useState(initial.intro);
   const [themes, setThemes] = useState(initial.themes);
   const [stats, setStats] = useState(initial.stats);
@@ -104,7 +105,7 @@ export default function CountryEditor({ id, initial, covers, gallery, photoBase 
     setMsg(null);
     start(async () => {
       const cleanTimeline = timeline.filter((r) => r.y.trim() || r.items.length);
-      const res = await saveCountryContent(id, { intro, themes, stats, timeline: cleanTimeline });
+      const res = await saveCountryContent(id, { intro, themes, stats, timeline: cleanTimeline }, locale);
       setMsg(res.ok ? '저장했습니다. 사이트에 반영됩니다.' : res.error ?? '저장 실패');
       if (res.ok) router.refresh();
     });
@@ -156,30 +157,34 @@ export default function CountryEditor({ id, initial, covers, gallery, photoBase 
 
       {/* 카테고리 */}
       <section className="admincard">
-        <h2>전시 카테고리 <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>· 추가·삭제·순서변경은 즉시 저장됩니다</span></h2>
+        <h2>전시 카테고리 {isBase && <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>· 추가·삭제·순서변경은 즉시 저장됩니다</span>}</h2>
         <div style={{ display: 'grid', gap: 16 }}>
           {themes.map((th, i) => (
             <div key={i} className="acatwrap">
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10 }}>
                 <span className="muted" style={{ fontSize: 12, fontWeight: 700 }}>카테고리 {String(i + 1).padStart(2, '0')}</span>
                 <span style={{ flex: 1 }} />
-                <button className="abtn" onClick={() => moveCategory(i, -1)} disabled={i === 0 || pending} title="위로">↑</button>
-                <button className="abtn" onClick={() => moveCategory(i, 1)} disabled={i === themes.length - 1 || pending} title="아래로">↓</button>
-                <button className="alink" onClick={() => removeCategory(i)} disabled={pending}>삭제</button>
+                {isBase && <>
+                  <button className="abtn" onClick={() => moveCategory(i, -1)} disabled={i === 0 || pending} title="위로">↑</button>
+                  <button className="abtn" onClick={() => moveCategory(i, 1)} disabled={i === themes.length - 1 || pending} title="아래로">↓</button>
+                  <button className="alink" onClick={() => removeCategory(i)} disabled={pending}>삭제</button>
+                </>}
               </div>
-              <div className="acat">
+              <div className="acat" style={isBase ? undefined : { gridTemplateColumns: '1fr' }}>
+                {isBase && (
                 <div className="acat__media" onClick={() => pickCover(i)} title="클릭해서 커버 교체">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={coverUrls[i]} alt="" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0'; }} />
                   <span className="acat__change">커버 교체</span>
                   <input ref={(el) => { fileRefs.current[i] = el; }} type="file" accept="image/*" hidden onChange={(e) => onCover(i, e.target.files?.[0])} />
                 </div>
+                )}
                 <div className="acat__body">
                   <input className="ainput" value={th.t} onChange={(e) => setTheme(i, 't', e.target.value)} placeholder="카테고리 제목" style={{ fontWeight: 700 }} />
                   <textarea className="atextarea" rows={4} value={th.d} onChange={(e) => setTheme(i, 'd', e.target.value)} placeholder="설명" />
                 </div>
               </div>
-              <div className="acat__gallery">
+              {isBase && <div className="acat__gallery">
                 <div className="acat__gallery-hd">
                   <span className="muted" style={{ fontSize: 12.5 }}>
                     갤러리 사진 {gal[i]?.length ?? 0}장{(gal[i]?.length ?? 0) === 0 && ' · 미등록 시 기본 3장 자동 표시'}
@@ -200,11 +205,11 @@ export default function CountryEditor({ id, initial, covers, gallery, photoBase 
                     ))}
                   </div>
                 )}
-              </div>
+              </div>}
             </div>
           ))}
         </div>
-        <button className="abtn" style={{ marginTop: 14 }} onClick={addCategory} disabled={pending}>+ 카테고리 추가</button>
+        {isBase && <button className="abtn" style={{ marginTop: 14 }} onClick={addCategory} disabled={pending}>+ 카테고리 추가</button>}
       </section>
 
       {/* 연혁 */}

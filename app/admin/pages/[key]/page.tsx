@@ -2,12 +2,15 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAdmin } from '@/lib/admin';
 import { getPage, PAGE_KEYS, PAGE_LABEL, type PageKey } from '@/lib/pages';
+import { LOCALES, BASE_LOCALE } from '@/lib/locales';
 import PageEditor from './PageEditor';
+import AdminLangTabs from '../../AdminLangTabs';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminPageEdit({ params }: { params: Promise<{ key: string }> }) {
+export default async function AdminPageEdit({ params, searchParams }: { params: Promise<{ key: string }>; searchParams: Promise<{ lang?: string }> }) {
   const { key } = await params;
+  const lang = (await searchParams).lang && LOCALES.includes((await searchParams).lang!) ? (await searchParams).lang! : BASE_LOCALE;
   if (!PAGE_KEYS.includes(key as PageKey)) notFound();
   const admin = await getAdmin();
   if (!admin) {
@@ -20,7 +23,7 @@ export default async function AdminPageEdit({ params }: { params: Promise<{ key:
       </main>
     );
   }
-  const content = await getPage(key as PageKey);
+  const content = await getPage(key as PageKey, lang);
 
   return (
     <main className="adminwrap">
@@ -31,10 +34,11 @@ export default async function AdminPageEdit({ params }: { params: Promise<{ key:
         </div>
         <div className="adminhead__right">
           <Link className="abtn" href={`/${key}`} target="_blank">페이지 보기 ↗</Link>
-          <Link className="abtn" href="/admin">← 목록</Link>
         </div>
       </header>
-      <PageEditor pageKey={key as PageKey} initial={content} />
+      <AdminLangTabs current={lang} />
+      {lang !== BASE_LOCALE && <div className="adminlangnote">번역 모드입니다. 비워두면 한국어 원문이 표시됩니다.</div>}
+      <PageEditor key={lang} pageKey={key as PageKey} initial={content} locale={lang} />
     </main>
   );
 }

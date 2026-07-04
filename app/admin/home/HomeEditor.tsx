@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { saveHome, uploadHomeCard } from '../actions';
 import type { HomeContent } from '@/lib/home';
 
-export default function HomeEditor({ initial, countries, cardThumbs }: { initial: HomeContent; countries: { id: string; ko: string; en: string }[]; cardThumbs: Record<string, string> }) {
+export default function HomeEditor({ initial, countries, cardThumbs, locale = 'ko' }: { initial: HomeContent; countries: { id: string; ko: string; en: string }[]; cardThumbs: Record<string, string>; locale?: string }) {
+  const isBase = locale === 'ko';
   const [h, setH] = useState<HomeContent>(initial);
   const [thumbs, setThumbs] = useState<Record<string, string>>(cardThumbs);
   const [cardBusy, setCardBusy] = useState<string | null>(null);
@@ -48,7 +49,7 @@ export default function HomeEditor({ initial, countries, cardThumbs }: { initial
   function save() {
     setMsg(null);
     start(async () => {
-      const res = await saveHome(h);
+      const res = await saveHome(h, locale);
       setMsg(res.ok ? '저장했습니다. 홈에 반영됩니다.' : res.error ?? '저장 실패');
       if (res.ok) router.refresh();
     });
@@ -86,7 +87,8 @@ export default function HomeEditor({ initial, countries, cardThumbs }: { initial
         <h2>나라 카드 <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>· 이미지 + 한 줄 소개</span></h2>
         <div style={{ display: 'grid', gap: 12 }}>
           {countries.map((c) => (
-            <div key={c.id} style={{ display: 'grid', gridTemplateColumns: '96px 1fr', gap: 12, alignItems: 'start' }}>
+            <div key={c.id} style={{ display: 'grid', gridTemplateColumns: isBase ? '96px 1fr' : '1fr', gap: 12, alignItems: 'start' }}>
+              {isBase && (
               <div
                 className="acat__media"
                 style={{ height: 66, aspectRatio: 'auto' }}
@@ -98,6 +100,7 @@ export default function HomeEditor({ initial, countries, cardThumbs }: { initial
                 <span className="acat__change">{cardBusy === c.id ? '업로드…' : '이미지 교체'}</span>
                 <input ref={(el) => { cardRefs.current[c.id] = el; }} type="file" accept="image/*" hidden onChange={(e) => onCardFile(c.id, e.target.files?.[0])} />
               </div>
+              )}
               <div style={{ display: 'grid', gap: 6 }}>
                 <div style={{ fontSize: 12, color: 'var(--ink3)', fontWeight: 700 }}>{c.ko} <span className="muted" style={{ fontWeight: 400 }}>{c.en}</span></div>
                 <input className="ainput" value={h.taglines[c.id] ?? ''} onChange={(e) => setTagline(c.id, e.target.value)} placeholder="한 줄 소개" />

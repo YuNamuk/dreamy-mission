@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { savePage } from '../../actions';
 import type { PageContent, PageKey } from '@/lib/pages';
 
-export default function PageEditor({ pageKey, initial }: { pageKey: PageKey; initial: PageContent }) {
+export default function PageEditor({ pageKey, initial, locale = 'ko' }: { pageKey: PageKey; initial: PageContent; locale?: string }) {
   const [c, setC] = useState<PageContent>(initial);
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -29,7 +29,7 @@ export default function PageEditor({ pageKey, initial }: { pageKey: PageKey; ini
   function save() {
     setMsg(null);
     start(async () => {
-      const res = await savePage(pageKey, c);
+      const res = await savePage(pageKey, c, locale);
       setMsg(res.ok ? '저장했습니다. 페이지에 반영됩니다.' : res.error ?? '저장 실패');
       if (res.ok) router.refresh();
     });

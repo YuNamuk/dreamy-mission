@@ -11,6 +11,27 @@ import { HOME_KEY, loadHomeEdit, type HomeContent } from '@/lib/home';
 import { SETTINGS_KEY, loadSettingsEdit, type SiteSettings } from '@/lib/settings';
 import { loadPageEdit, type PageKey, type PageContent, PAGE_KEYS } from '@/lib/pages';
 import { STORIES_KEY, type Story } from '@/lib/stories';
+import { BASE_LOCALE } from '@/lib/locales';
+
+/** archive_content 문서의 원본 data 로드 (번역 오버레이 병합용) */
+async function loadDoc(id: string): Promise<Record<string, unknown>> {
+  if (!sb) return {};
+  const { data } = await sb.from(CONTENT_TABLE).select('data').eq('id', id).limit(1);
+  return (data?.[0]?.data as Record<string, unknown>) ?? {};
+}
+
+/** 문서의 data.i18n[locale] 에 번역 patch 를 병합 저장 */
+async function saveTranslation(id: string, patch: Record<string, unknown>, locale: string, email: string): Promise<string | null> {
+  if (!sb) return '백엔드 미연결';
+  const doc = await loadDoc(id);
+  const i18n = { ...((doc.i18n as Record<string, unknown>) ?? {}) };
+  i18n[locale] = { ...((i18n[locale] as Record<string, unknown>) ?? {}), ...patch };
+  const { error } = await sb.from(CONTENT_TABLE).upsert(
+    { id, data: { ...doc, i18n }, updated_by: email, updated_at: new Date().toISOString() },
+    { onConflict: 'id' },
+  );
+  return error ? error.message : null;
+}
 
 export interface Result {
   ok: boolean;
@@ -68,12 +89,23 @@ export async function saveCountryContent(
     stats?: { capital?: string; pop?: string; area?: string; religion?: string; language?: string; government?: string; currency?: string; climate?: string; timezone?: string };
     timeline?: { y: string; items: string[] }[];
   },
+  locale: string = BASE_LOCALE,
 ): Promise<Result> {
   try {
     const me = await requireAdmin('content');
     if (!findCountry(id)) return { ok: false, error: '알 수 없는 국가' };
-    const res = await applyCountryEdit(id, patch, me.email);
-    if (!res.ok) return { ok: false, error: res.error };
+    if (locale !== BASE_LOCALE) {
+      // 번역: 국가 오버레이는 Country 모양(통계는 최상위 필드)으로 저장
+      const flat: Record<string, unknown> = { ...(patch.stats ?? {}) };
+      if (patch.intro !== undefined) flat.intro = patch.intro;
+      if (patch.themes) flat.themes = patch.themes;
+      if (patch.timeline) flat.timeline = patch.timeline;
+      const err = await saveTranslation(id, flat, locale, me.email);
+      if (err) return { ok: false, error: err };
+    } else {
+      const res = await applyCountryEdit(id, patch, me.email);
+      if (!res.ok) return { ok: false, error: res.error };
+    }
     revalidatePath(`/${id}`);
     revalidatePath('/');
     return { ok: true };
@@ -152,20 +184,25 @@ export async function uploadCover(id: string, themeIndex: number, dataUrl: strin
 }
 
 /** ── 정적 페이지 편집 (콘텐츠 관리자 이상) ── */
-export async function savePage(key: PageKey, content: Partial<PageContent>): Promise<Result> {
+export async function savePage(key: PageKey, content: Partial<PageContent>, locale: string = BASE_LOCALE): Promise<Result> {
   try {
     const me = await requireAdmin('content');
     if (!PAGE_KEYS.includes(key)) return { ok: false, error: '알 수 없는 페이지' };
     if (!sb) return { ok: false, error: '백엔드 미연결' };
-    const existing = await loadPageEdit(key);
-    const merged = { ...existing, ...content };
-    const { error } = await sb.from(CONTENT_TABLE).upsert(
-      { id: `page_${key}`, data: merged, updated_by: me.email, updated_at: new Date().toISOString() },
-      { onConflict: 'id' },
-    );
-    if (error) return { ok: false, error: error.message };
+    if (locale !== BASE_LOCALE) {
+      const err = await saveTranslation(`page_${key}`, content as Record<string, unknown>, locale, me.email);
+      if (err) return { ok: false, error: err };
+    } else {
+      const existing = await loadPageEdit(key);
+      const merged = { ...existing, ...content };
+      const { error } = await sb.from(CONTENT_TABLE).upsert(
+        { id: `page_${key}`, data: merged, updated_by: me.email, updated_at: new Date().toISOString() },
+        { onConflict: 'id' },
+      );
+      if (error) return { ok: false, error: error.message };
+    }
     revalidatePath(`/${key}`);
-    revalidatePath(`/admin/page/${key}`);
+    revalidatePath(`/admin/pages/${key}`);
     return { ok: true };
   } catch (err) {
     return { ok: false, error: (err as Error).message };
@@ -173,10 +210,24 @@ export async function savePage(key: PageKey, content: Partial<PageContent>): Pro
 }
 
 /** ── STORIES 소감문/이야기 (콘텐츠 관리자 이상) ── */
-export async function saveStories(list: Story[]): Promise<Result> {
+export async function saveStories(list: Story[], locale: string = BASE_LOCALE): Promise<Result> {
   try {
     const me = await requireAdmin('content');
     if (!sb) return { ok: false, error: '백엔드 미연결' };
+    if (locale !== BASE_LOCALE) {
+      // 번역: 같은 순서의 목록으로 title/body/author/date 만 저장(index 정렬 오버레이)
+      const tlist = (Array.isArray(list) ? list : []).map((s) => ({
+        title: (s.title ?? '').trim(),
+        author: s.author?.trim() || undefined,
+        date: s.date?.trim() || undefined,
+        body: (s.body ?? '').trim(),
+      }));
+      const err = await saveTranslation(STORIES_KEY, { list: tlist }, locale, me.email);
+      if (err) return { ok: false, error: err };
+      revalidatePath('/stories');
+      revalidatePath('/admin/stories');
+      return { ok: true };
+    }
     const clean = (Array.isArray(list) ? list : [])
       .filter((s) => (s.title?.trim() || s.body?.trim()))
       .map((s) => ({
@@ -188,8 +239,9 @@ export async function saveStories(list: Story[]): Promise<Result> {
         kind: s.kind,
         body: (s.body ?? '').trim(),
       }));
+    const existing = await loadDoc(STORIES_KEY);
     const { error } = await sb.from(CONTENT_TABLE).upsert(
-      { id: STORIES_KEY, data: { list: clean }, updated_by: me.email, updated_at: new Date().toISOString() },
+      { id: STORIES_KEY, data: { ...existing, list: clean }, updated_by: me.email, updated_at: new Date().toISOString() },
       { onConflict: 'id' },
     );
     if (error) return { ok: false, error: error.message };
@@ -246,17 +298,22 @@ export async function uploadLogo(kind: 'color' | 'white', dataUrl: string): Prom
 }
 
 /** ── 홈 편집 (콘텐츠 관리자 이상) ── */
-export async function saveHome(patch: Partial<HomeContent>): Promise<Result> {
+export async function saveHome(patch: Partial<HomeContent>, locale: string = BASE_LOCALE): Promise<Result> {
   try {
     const me = await requireAdmin('content');
     if (!sb) return { ok: false, error: '백엔드 미연결' };
-    const existing = await loadHomeEdit();
-    const merged = { ...existing, ...patch };
-    const { error } = await sb.from(CONTENT_TABLE).upsert(
-      { id: HOME_KEY, data: merged, updated_by: me.email, updated_at: new Date().toISOString() },
-      { onConflict: 'id' },
-    );
-    if (error) return { ok: false, error: error.message };
+    if (locale !== BASE_LOCALE) {
+      const err = await saveTranslation(HOME_KEY, patch as Record<string, unknown>, locale, me.email);
+      if (err) return { ok: false, error: err };
+    } else {
+      const existing = await loadHomeEdit();
+      const merged = { ...existing, ...patch };
+      const { error } = await sb.from(CONTENT_TABLE).upsert(
+        { id: HOME_KEY, data: merged, updated_by: me.email, updated_at: new Date().toISOString() },
+        { onConflict: 'id' },
+      );
+      if (error) return { ok: false, error: error.message };
+    }
     revalidatePath('/');
     revalidatePath('/admin/home');
     return { ok: true };
