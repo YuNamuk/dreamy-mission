@@ -479,7 +479,54 @@ export async function removeVisitPhoto(id: string, visitId: string, url: string)
     const visits = [...(edit.visits ?? [])];
     const vi = visits.findIndex((v) => v.id === visitId);
     if (vi < 0) return { ok: false, error: '방문 항목을 찾을 수 없습니다.' };
-    visits[vi] = { ...visits[vi], photos: visits[vi].photos.filter((p) => p !== url) };
+    const photos = visits[vi].photos.filter((p) => p !== url);
+    // 삭제한 사진이 커버였으면 커버 해제(=첫 사진으로 폴백)
+    const cover = visits[vi].cover === url ? undefined : visits[vi].cover;
+    visits[vi] = { ...visits[vi], photos, cover };
+    const res = await applyCountryEdit(id, { visits }, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    revalidatePath('/admin/' + id);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** 방문 커버(대표) 사진 지정 */
+export async function setVisitCover(id: string, visitId: string, url: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    const edit = await loadCountryEdit(id);
+    const visits = [...(edit.visits ?? [])];
+    const vi = visits.findIndex((v) => v.id === visitId);
+    if (vi < 0) return { ok: false, error: '방문 항목을 찾을 수 없습니다.' };
+    if (!visits[vi].photos.includes(url)) return { ok: false, error: '해당 사진이 없습니다.' };
+    visits[vi] = { ...visits[vi], cover: url };
+    const res = await applyCountryEdit(id, { visits }, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    revalidatePath('/admin/' + id);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+/** 방문 사진 순서 이동 (dir: -1 앞으로, +1 뒤로) */
+export async function moveVisitPhoto(id: string, visitId: string, url: string, dir: -1 | 1): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    const edit = await loadCountryEdit(id);
+    const visits = [...(edit.visits ?? [])];
+    const vi = visits.findIndex((v) => v.id === visitId);
+    if (vi < 0) return { ok: false, error: '방문 항목을 찾을 수 없습니다.' };
+    const photos = [...visits[vi].photos];
+    const i = photos.indexOf(url);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= photos.length) return { ok: true };
+    [photos[i], photos[j]] = [photos[j], photos[i]];
+    visits[vi] = { ...visits[vi], photos };
     const res = await applyCountryEdit(id, { visits }, me.email);
     if (!res.ok) return { ok: false, error: res.error };
     revalidatePath(`/${id}`);

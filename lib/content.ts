@@ -22,6 +22,8 @@ export interface Visit {
   label: string;
   date?: string;
   photos: string[];
+  /** 대표(커버) 사진 URL — 없으면 photos[0] */
+  cover?: string;
 }
 
 /** 편집 가능한 필드만 담는 오버레이 */

@@ -32,11 +32,13 @@ export default function VisitGallery({ visits }: { visits: Visit[] }) {
       <div className="visitgrid">
         {shown.map((vs) => {
           const realIdx = visits.indexOf(vs);
+          const cover = vs.cover && vs.photos.includes(vs.cover) ? vs.cover : vs.photos[0];
+          const coverIdx = Math.max(0, vs.photos.indexOf(cover));
           return (
-            <button key={vs.id} className="vcard" onClick={() => { setPi(0); setOpen(realIdx); }}>
+            <button key={vs.id} className="vcard" onClick={() => { setPi(coverIdx); setOpen(realIdx); }}>
               <div className="vcard__media">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={vs.photos[0]} alt="" loading="lazy" />
+                <img src={cover} alt="" loading="lazy" />
                 <span className="vcard__scrim" />
                 <span className="vcard__count">{vs.photos.length}장</span>
                 <div className="vcard__cap">

@@ -1706,3 +1706,14 @@ img {
   .chero__map { min-height: 260px; }
   .section--wide { padding-left: 18px !important; padding-right: 18px !important; }
 }
+
+/* v23 — 방문 갤러리 커버 지정·순서 컨트롤 */
+.avisit__ph.is-cover { outline: 2px solid var(--sky); outline-offset: -2px; }
+.avisit__coverbadge { position: absolute; top: 4px; left: 4px; z-index: 2; font-family: var(--f-disp); font-size: 9px; font-weight: 800; letter-spacing: .04em; color: #fff; background: var(--sky); border-radius: 999px; padding: 2px 7px; }
+.avisit__tools { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; gap: 2px; padding: 4px; background: linear-gradient(0deg, rgba(11,27,52,.78), transparent); opacity: 0; transition: opacity .15s ease; }
+.avisit__ph:hover .avisit__tools { opacity: 1; }
+.avisit__tools button { width: 22px; height: 22px; border: none; border-radius: 6px; background: rgba(255,255,255,.92); color: var(--navy); font-size: 13px; font-weight: 800; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.avisit__tools button:hover:not(:disabled) { background: #fff; color: var(--sky); }
+.avisit__tools button.is-on { background: var(--sky); color: #fff; }
+.avisit__tools button:disabled { opacity: .4; cursor: default; }
+@media (hover: none) { .avisit__tools { opacity: 1; } }

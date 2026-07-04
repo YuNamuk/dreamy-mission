@@ -2,11 +2,11 @@
 
 import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { addVisit, removeVisit, addVisitPhotos, removeVisitPhoto } from '../actions';
+import { addVisit, removeVisit, addVisitPhotos, removeVisitPhoto, setVisitCover, moveVisitPhoto } from '../actions';
 import type { Visit } from '@/lib/content';
 
 export default function VisitManager({ id, initial }: { id: string; initial: Visit[] }) {
-  const [visits] = useState(initial);
+  const visits = initial; // 서버 새로고침(router.refresh) 시 최신 목록 반영
   const [label, setLabel] = useState('');
   const [date, setDate] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
@@ -34,6 +34,18 @@ export default function VisitManager({ id, initial }: { id: string; initial: Vis
   function delPhoto(vid: string, url: string) {
     start(async () => {
       const res = await removeVisitPhoto(id, vid, url);
+      if (res.ok) router.refresh(); else setMsg(res.error ?? '실패');
+    });
+  }
+  function makeCover(vid: string, url: string) {
+    start(async () => {
+      const res = await setVisitCover(id, vid, url);
+      if (res.ok) { setMsg('커버로 지정했습니다.'); router.refresh(); } else setMsg(res.error ?? '실패');
+    });
+  }
+  function movePhoto(vid: string, url: string, dir: -1 | 1) {
+    start(async () => {
+      const res = await moveVisitPhoto(id, vid, url, dir);
       if (res.ok) router.refresh(); else setMsg(res.error ?? '실패');
     });
   }
@@ -84,15 +96,27 @@ export default function VisitManager({ id, initial }: { id: string; initial: Vis
               </div>
             </div>
             {v.photos.length > 0 && (
-              <div className="avisit__grid">
-                {v.photos.map((p) => (
-                  <div key={p} className="avisit__ph">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p} alt="" />
-                    <button className="avisit__del" onClick={() => delPhoto(v.id, p)} title="삭제">✕</button>
-                  </div>
-                ))}
-              </div>
+              <>
+                <div className="muted" style={{ fontSize: 12, margin: '2px 0 8px' }}>★ 커버 지정 · ‹ › 순서 변경 · ✕ 삭제 <span style={{ marginLeft: 6 }}>(커버 미지정 시 첫 사진)</span></div>
+                <div className="avisit__grid">
+                  {v.photos.map((p, pi) => {
+                    const isCover = (v.cover ?? v.photos[0]) === p;
+                    return (
+                      <div key={p} className={`avisit__ph${isCover ? ' is-cover' : ''}`}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={p} alt="" />
+                        {isCover && <span className="avisit__coverbadge">커버</span>}
+                        <div className="avisit__tools">
+                          <button onClick={() => movePhoto(v.id, p, -1)} disabled={pi === 0 || pending} title="앞으로">‹</button>
+                          <button className={isCover ? 'is-on' : ''} onClick={() => makeCover(v.id, p)} disabled={pending} title="커버로 지정">★</button>
+                          <button onClick={() => movePhoto(v.id, p, 1)} disabled={pi === v.photos.length - 1 || pending} title="뒤로">›</button>
+                        </div>
+                        <button className="avisit__del" onClick={() => delPhoto(v.id, p)} title="삭제">✕</button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
         ))}
