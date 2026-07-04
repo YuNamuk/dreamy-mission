@@ -265,6 +265,34 @@ export async function saveHome(patch: Partial<HomeContent>): Promise<Result> {
   }
 }
 
+/** 홈 나라 카드 이미지 교체 → Storage 업로드 + 홈(__home__) cardImages[id] 기록 */
+export async function uploadHomeCard(id: string, dataUrl: string): Promise<Result & { url?: string }> {
+  try {
+    const me = await requireAdmin('content');
+    if (!findCountry(id)) return { ok: false, error: '알 수 없는 국가' };
+    if (!sb) return { ok: false, error: '백엔드 미연결' };
+    const m = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+    if (!m || !m[1].startsWith('image/')) return { ok: false, error: '이미지 파일만 가능합니다.' };
+    const buffer = Buffer.from(m[2], 'base64');
+    if (buffer.byteLength > 8_000_000) return { ok: false, error: '이미지가 너무 큽니다 (최대 8MB).' };
+    const publicUrl = await storagePut(`homecard-${id}-${Date.now()}.jpg`, m[1], buffer);
+    if (!publicUrl) return { ok: false, error: '업로드 실패' };
+
+    const existing = await loadHomeEdit();
+    const cardImages = { ...(existing.cardImages ?? {}), [id]: publicUrl };
+    const { error } = await sb.from(CONTENT_TABLE).upsert(
+      { id: HOME_KEY, data: { ...existing, cardImages }, updated_by: me.email, updated_at: new Date().toISOString() },
+      { onConflict: 'id' },
+    );
+    if (error) return { ok: false, error: error.message };
+    revalidatePath('/');
+    revalidatePath('/admin/home');
+    return { ok: true, url: publicUrl };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
 /** ── 방문 시기별 갤러리 (콘텐츠 관리자 이상) ── */
 async function storagePut(path: string, mime: string, buffer: Buffer): Promise<string | null> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;

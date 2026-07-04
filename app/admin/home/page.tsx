@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getAdmin } from '@/lib/admin';
 import { getHome } from '@/lib/home';
 import { COUNTRIES } from '@/lib/countries';
+import { resolvePhoto } from '@/lib/photos';
 import HomeEditor from './HomeEditor';
 
 export const dynamic = 'force-dynamic';
@@ -20,6 +21,10 @@ export default async function AdminHomeEdit() {
     );
   }
   const home = await getHome();
+  const cardThumbs: Record<string, string> = {};
+  for (const c of COUNTRIES) {
+    cardThumbs[c.id] = home.cardImages?.[c.id] ?? resolvePhoto(`card-${c.id}`) ?? resolvePhoto(`th-${c.id}-1`) ?? '';
+  }
 
   return (
     <main className="adminwrap">
@@ -33,7 +38,7 @@ export default async function AdminHomeEdit() {
           <Link className="abtn" href="/admin">← 목록</Link>
         </div>
       </header>
-      <HomeEditor initial={home} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} />
+      <HomeEditor initial={home} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} cardThumbs={cardThumbs} />
     </main>
   );
 }

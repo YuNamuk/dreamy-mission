@@ -1,16 +1,40 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { saveHome } from '../actions';
+import { saveHome, uploadHomeCard } from '../actions';
 import type { HomeContent } from '@/lib/home';
 
-export default function HomeEditor({ initial, countries }: { initial: HomeContent; countries: { id: string; ko: string; en: string }[] }) {
+export default function HomeEditor({ initial, countries, cardThumbs }: { initial: HomeContent; countries: { id: string; ko: string; en: string }[]; cardThumbs: Record<string, string> }) {
   const [h, setH] = useState<HomeContent>(initial);
+  const [thumbs, setThumbs] = useState<Record<string, string>>(cardThumbs);
+  const [cardBusy, setCardBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  const cardRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const router = useRouter();
   const koOf = (id: string) => countries.find((c) => c.id === id)?.ko ?? id;
+
+  function onCardFile(id: string, file: File | undefined) {
+    if (!file) return;
+    if (file.size > 8_000_000) { setMsg('이미지가 너무 큽니다 (최대 8MB).'); return; }
+    setCardBusy(id); setMsg(null);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      start(async () => {
+        const res = await uploadHomeCard(id, dataUrl);
+        setCardBusy(null);
+        if (res.ok && res.url) {
+          setThumbs((p) => ({ ...p, [id]: res.url! }));
+          setH((p) => ({ ...p, cardImages: { ...p.cardImages, [id]: res.url! } }));
+          setMsg('카드 이미지를 교체했습니다.'); router.refresh();
+        }
+        else setMsg(res.error ?? '업로드 실패');
+      });
+    };
+    reader.readAsDataURL(file);
+  }
 
   function set<K extends keyof HomeContent>(k: K, v: HomeContent[K]) { setH((p) => ({ ...p, [k]: v })); }
   function setJourney(i: number, k: 'y' | 'desc', v: string) {
@@ -59,12 +83,25 @@ export default function HomeEditor({ initial, countries }: { initial: HomeConten
       </section>
 
       <section className="admincard">
-        <h2>나라 카드 한 줄 소개</h2>
-        <div style={{ display: 'grid', gap: 8 }}>
+        <h2>나라 카드 <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>· 이미지 + 한 줄 소개</span></h2>
+        <div style={{ display: 'grid', gap: 12 }}>
           {countries.map((c) => (
-            <div key={c.id} className="atl" style={{ gridTemplateColumns: '110px 1fr' }}>
-              <input className="ainput" value={c.ko} disabled style={{ background: 'var(--wash)' }} />
-              <input className="ainput" value={h.taglines[c.id] ?? ''} onChange={(e) => setTagline(c.id, e.target.value)} />
+            <div key={c.id} style={{ display: 'grid', gridTemplateColumns: '96px 1fr', gap: 12, alignItems: 'start' }}>
+              <div
+                className="acat__media"
+                style={{ height: 66, aspectRatio: 'auto' }}
+                onClick={() => cardRefs.current[c.id]?.click()}
+                title="클릭해서 카드 이미지 교체"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {thumbs[c.id] ? <img src={thumbs[c.id]} alt="" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0'; }} /> : null}
+                <span className="acat__change">{cardBusy === c.id ? '업로드…' : '이미지 교체'}</span>
+                <input ref={(el) => { cardRefs.current[c.id] = el; }} type="file" accept="image/*" hidden onChange={(e) => onCardFile(c.id, e.target.files?.[0])} />
+              </div>
+              <div style={{ display: 'grid', gap: 6 }}>
+                <div style={{ fontSize: 12, color: 'var(--ink3)', fontWeight: 700 }}>{c.ko} <span className="muted" style={{ fontWeight: 400 }}>{c.en}</span></div>
+                <input className="ainput" value={h.taglines[c.id] ?? ''} onChange={(e) => setTagline(c.id, e.target.value)} placeholder="한 줄 소개" />
+              </div>
             </div>
           ))}
         </div>

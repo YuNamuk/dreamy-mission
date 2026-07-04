@@ -22,6 +22,8 @@ export interface HomeContent {
   heroSub: string;
   journey: HomeJourney[];
   taglines: Record<string, string>;
+  /** 나라 카드 이미지 오버라이드: 국가 id → 이미지 URL (관리자 업로드) */
+  cardImages: Record<string, string>;
   draws: HomeDraw[]; // 4개 (아이콘은 순서 고정: 교육·공동체·섬김·신앙)
   drawsTitle: string;
   drawsSub: string;
@@ -50,6 +52,7 @@ export const HOME_DEFAULT: HomeContent = {
     india: '방갈로르·나갈랜드·마니푸르에서 고아와 소외된 아이들의 배움의 집이 됩니다.',
     pakistan: '소수자와 기독교 공동체를 위한 대학 PGI를 세우고, 교사연수로 동역합니다.',
   },
+  cardImages: {},
   draws: [
     { ko: '교육', d: '배움으로 꿈을 여는 아이들' },
     { ko: '공동체', d: '함께 자라고 함께 만들어가는 공동체' },
@@ -72,6 +75,7 @@ export async function getHome(): Promise<HomeContent> {
       heroSub: e.heroSub ?? HOME_DEFAULT.heroSub,
       journey: e.journey?.length ? e.journey : HOME_DEFAULT.journey,
       taglines: { ...HOME_DEFAULT.taglines, ...(e.taglines ?? {}) },
+      cardImages: { ...(e.cardImages ?? {}) },
       draws: e.draws?.length === 4 ? e.draws : HOME_DEFAULT.draws,
       drawsTitle: e.drawsTitle ?? HOME_DEFAULT.drawsTitle,
       drawsSub: e.drawsSub ?? HOME_DEFAULT.drawsSub,

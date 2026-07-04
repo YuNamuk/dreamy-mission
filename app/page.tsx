@@ -53,7 +53,7 @@ export default async function Home() {
         {CARD_ORDER.map((id) => {
           const c = byId[id];
           if (!c) return null;
-          const img = resolvePhoto(`card-${id}`) ?? resolvePhoto(`th-${id}-1`);
+          const img = home.cardImages?.[id] ?? resolvePhoto(`card-${id}`) ?? resolvePhoto(`th-${id}-1`);
           return (
             <Link key={id} href={`/${id}`} className="ccard">
               {img && (
