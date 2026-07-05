@@ -24,6 +24,7 @@ export default async function AdminPageEdit({ params, searchParams }: { params: 
     );
   }
   const content = await getPage(key as PageKey, lang);
+  const refData = lang !== BASE_LOCALE ? await getPage(key as PageKey, BASE_LOCALE) : undefined;
 
   return (
     <main className="adminwrap">
@@ -38,7 +39,7 @@ export default async function AdminPageEdit({ params, searchParams }: { params: 
       </header>
       <AdminLangTabs current={lang} />
       {lang !== BASE_LOCALE && <div className="adminlangnote">번역 모드입니다. 비워두면 한국어 원문이 표시됩니다.</div>}
-      <PageEditor key={lang} pageKey={key as PageKey} initial={content} locale={lang} />
+      <PageEditor key={lang} pageKey={key as PageKey} initial={content} locale={lang} refData={refData} />
     </main>
   );
 }

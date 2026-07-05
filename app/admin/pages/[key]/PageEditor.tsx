@@ -4,8 +4,9 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { savePage } from '../../actions';
 import type { PageContent, PageKey } from '@/lib/pages';
+import RefText from '../../RefText';
 
-export default function PageEditor({ pageKey, initial, locale = 'ko' }: { pageKey: PageKey; initial: PageContent; locale?: string }) {
+export default function PageEditor({ pageKey, initial, locale = 'ko', refData }: { pageKey: PageKey; initial: PageContent; locale?: string; refData?: PageContent }) {
   const [c, setC] = useState<PageContent>(initial);
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -40,12 +41,15 @@ export default function PageEditor({ pageKey, initial, locale = 'ko' }: { pageKe
       <section className="admincard">
         <h2>제목</h2>
         <label style={{ display: 'block', fontSize: 12, color: 'var(--ink3)', fontWeight: 600 }}>상단 라벨(eyebrow)
+          {refData && <RefText>{refData.eyebrow}</RefText>}
           <input className="ainput" style={{ width: '100%', marginTop: 4 }} value={c.eyebrow} onChange={(e) => setF('eyebrow', e.target.value)} />
         </label>
         <label style={{ display: 'block', fontSize: 12, color: 'var(--ink3)', fontWeight: 600, marginTop: 10 }}>제목
+          {refData && <RefText>{refData.title}</RefText>}
           <input className="ainput" style={{ width: '100%', marginTop: 4 }} value={c.title} onChange={(e) => setF('title', e.target.value)} />
         </label>
         <label style={{ display: 'block', fontSize: 12, color: 'var(--ink3)', fontWeight: 600, marginTop: 10 }}>부제
+          {refData && <RefText>{refData.subtitle}</RefText>}
           <textarea className="atextarea" rows={2} value={c.subtitle} onChange={(e) => setF('subtitle', e.target.value)} />
         </label>
       </section>
@@ -61,6 +65,7 @@ export default function PageEditor({ pageKey, initial, locale = 'ko' }: { pageKe
                 <button className="abtn" onClick={() => move(i, 1)} disabled={i === c.sections.length - 1} title="아래로">↓</button>
                 <button className="alink" onClick={() => delSec(i)}>삭제</button>
               </div>
+              {refData?.sections?.[i] && <RefText>{[refData.sections[i].heading, refData.sections[i].body].filter(Boolean).join('\n')}</RefText>}
               <textarea className="atextarea" rows={4} value={s.body} onChange={(e) => setSec(i, 'body', e.target.value)} placeholder="내용" />
             </div>
           ))}

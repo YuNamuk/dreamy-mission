@@ -28,6 +28,16 @@ export default async function EditCountryPage({ params, searchParams }: { params
   }
   const { country, images, catPhotos, visits } = await getCountry(id, lang);
   if (!country) notFound();
+  const refCountry = lang !== BASE_LOCALE ? (await getCountry(id, BASE_LOCALE)).country : null;
+  const refData = refCountry ? {
+    intro: refCountry.intro,
+    themes: refCountry.themes.map((t) => ({ t: t.t, d: t.d })),
+    stats: {
+      capital: refCountry.capital, pop: refCountry.pop, area: refCountry.area, religion: refCountry.religion,
+      language: refCountry.language, government: refCountry.government, currency: refCountry.currency, climate: refCountry.climate, timezone: refCountry.timezone,
+    },
+    timeline: refCountry.timeline,
+  } : undefined;
 
   const covers = country.themes.map((_, i) => images[`th-${id}-${i + 1}`] || `${PHOTO_BASE}/th-${id}-${i + 1}.jpg`);
   const gallery = country.themes.map((_, i) => catPhotos[String(i)] ?? []);
@@ -62,6 +72,7 @@ export default async function EditCountryPage({ params, searchParams }: { params
           address: country.address ?? '',
           site: country.site,
         }}
+        refData={refData}
         covers={covers}
         gallery={gallery}
         photoBase={PHOTO_BASE}

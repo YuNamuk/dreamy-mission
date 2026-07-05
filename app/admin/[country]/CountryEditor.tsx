@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { saveCountryContent, saveCountryStructure, uploadCover, addCatPhotos, removeCatPhoto, geocodeCountry } from '../actions';
+import RefText from '../RefText';
 
 interface Initial {
   intro: string;
@@ -13,7 +14,7 @@ interface Initial {
   site?: [number, number];
 }
 
-export default function CountryEditor({ id, initial, covers, gallery, photoBase, locale = 'ko' }: { id: string; initial: Initial; covers: string[]; gallery: string[][]; photoBase: string; locale?: string }) {
+export default function CountryEditor({ id, initial, covers, gallery, photoBase, locale = 'ko', refData }: { id: string; initial: Initial; covers: string[]; gallery: string[][]; photoBase: string; locale?: string; refData?: Omit<Initial, 'address' | 'site'> }) {
   const isBase = locale === 'ko';
   const [intro, setIntro] = useState(initial.intro);
   const [themes, setThemes] = useState(initial.themes);
@@ -153,6 +154,7 @@ export default function CountryEditor({ id, initial, covers, gallery, photoBase,
       {/* 소개 */}
       <section className="admincard">
         <h2>선교지 소개</h2>
+        {refData && <RefText>{refData.intro}</RefText>}
         <textarea className="atextarea" rows={4} value={intro} onChange={(e) => setIntro(e.target.value)} />
       </section>
 
@@ -160,15 +162,15 @@ export default function CountryEditor({ id, initial, covers, gallery, photoBase,
       <section className="admincard">
         <h2>국가 정보</h2>
         <div className="agrid2">
-          <label>수도<input className="ainput" value={stats.capital} onChange={(e) => setStats({ ...stats, capital: e.target.value })} /></label>
-          <label>인구<input className="ainput" value={stats.pop} onChange={(e) => setStats({ ...stats, pop: e.target.value })} /></label>
-          <label>면적<input className="ainput" value={stats.area} onChange={(e) => setStats({ ...stats, area: e.target.value })} /></label>
-          <label>언어<input className="ainput" value={stats.language} onChange={(e) => setStats({ ...stats, language: e.target.value })} /></label>
-          <label>종교<input className="ainput" value={stats.religion} onChange={(e) => setStats({ ...stats, religion: e.target.value })} /></label>
-          <label>정치체제<input className="ainput" value={stats.government} onChange={(e) => setStats({ ...stats, government: e.target.value })} /></label>
-          <label>통화<input className="ainput" value={stats.currency} onChange={(e) => setStats({ ...stats, currency: e.target.value })} /></label>
-          <label>기후<input className="ainput" value={stats.climate} onChange={(e) => setStats({ ...stats, climate: e.target.value })} /></label>
-          <label>시차<input className="ainput" value={stats.timezone} onChange={(e) => setStats({ ...stats, timezone: e.target.value })} /></label>
+          <label>수도{refData && <RefText>{refData.stats.capital}</RefText>}<input className="ainput" value={stats.capital} onChange={(e) => setStats({ ...stats, capital: e.target.value })} /></label>
+          <label>인구{refData && <RefText>{refData.stats.pop}</RefText>}<input className="ainput" value={stats.pop} onChange={(e) => setStats({ ...stats, pop: e.target.value })} /></label>
+          <label>면적{refData && <RefText>{refData.stats.area}</RefText>}<input className="ainput" value={stats.area} onChange={(e) => setStats({ ...stats, area: e.target.value })} /></label>
+          <label>언어{refData && <RefText>{refData.stats.language}</RefText>}<input className="ainput" value={stats.language} onChange={(e) => setStats({ ...stats, language: e.target.value })} /></label>
+          <label>종교{refData && <RefText>{refData.stats.religion}</RefText>}<input className="ainput" value={stats.religion} onChange={(e) => setStats({ ...stats, religion: e.target.value })} /></label>
+          <label>정치체제{refData && <RefText>{refData.stats.government}</RefText>}<input className="ainput" value={stats.government} onChange={(e) => setStats({ ...stats, government: e.target.value })} /></label>
+          <label>통화{refData && <RefText>{refData.stats.currency}</RefText>}<input className="ainput" value={stats.currency} onChange={(e) => setStats({ ...stats, currency: e.target.value })} /></label>
+          <label>기후{refData && <RefText>{refData.stats.climate}</RefText>}<input className="ainput" value={stats.climate} onChange={(e) => setStats({ ...stats, climate: e.target.value })} /></label>
+          <label>시차{refData && <RefText>{refData.stats.timezone}</RefText>}<input className="ainput" value={stats.timezone} onChange={(e) => setStats({ ...stats, timezone: e.target.value })} /></label>
         </div>
       </section>
 
@@ -211,7 +213,9 @@ export default function CountryEditor({ id, initial, covers, gallery, photoBase,
                 </div>
                 )}
                 <div className="acat__body">
+                  {refData?.themes?.[i] && <RefText>{refData.themes[i].t}</RefText>}
                   <input className="ainput" value={th.t} onChange={(e) => setTheme(i, 't', e.target.value)} placeholder="카테고리 제목" style={{ fontWeight: 700 }} />
+                  {refData?.themes?.[i] && <RefText>{refData.themes[i].d}</RefText>}
                   <textarea className="atextarea" rows={4} value={th.d} onChange={(e) => setTheme(i, 'd', e.target.value)} placeholder="설명" />
                 </div>
               </div>
@@ -257,6 +261,7 @@ export default function CountryEditor({ id, initial, covers, gallery, photoBase,
                 <button className="abtn" onClick={() => moveYear(i, 1)} disabled={i === timeline.length - 1} title="아래로">↓</button>
                 <button className="alink" onClick={() => delYear(i)}>삭제</button>
               </div>
+              {refData?.timeline?.find((t) => t.y === r.y) && <RefText>{refData.timeline.find((t) => t.y === r.y)!.items.join('\n')}</RefText>}
               <textarea className="atextarea" rows={Math.max(2, r.items.length)} value={r.items.join('\n')} onChange={(e) => setItems(i, e.target.value)} placeholder="한 줄에 하나씩&#10;예: 겨자씨 초등학교 방문&#10;예: 교사 연수 진행" />
             </div>
           ))}

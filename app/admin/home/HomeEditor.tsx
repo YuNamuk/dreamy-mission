@@ -4,8 +4,9 @@ import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { saveHome, uploadHomeCard } from '../actions';
 import type { HomeContent } from '@/lib/home';
+import RefText from '../RefText';
 
-export default function HomeEditor({ initial, countries, cardThumbs, locale = 'ko' }: { initial: HomeContent; countries: { id: string; ko: string; en: string }[]; cardThumbs: Record<string, string>; locale?: string }) {
+export default function HomeEditor({ initial, countries, cardThumbs, locale = 'ko', refData }: { initial: HomeContent; countries: { id: string; ko: string; en: string }[]; cardThumbs: Record<string, string>; locale?: string; refData?: HomeContent }) {
   const isBase = locale === 'ko';
   const [h, setH] = useState<HomeContent>(initial);
   const [thumbs, setThumbs] = useState<Record<string, string>>(cardThumbs);
@@ -60,12 +61,13 @@ export default function HomeEditor({ initial, countries, cardThumbs, locale = 'k
       <section className="admincard">
         <h2>히어로 타이틀</h2>
         <div className="agrid2">
-          <label>1줄<input className="ainput" value={h.heroLine1} onChange={(e) => set('heroLine1', e.target.value)} /></label>
-          <label>2줄<input className="ainput" value={h.heroLine2} onChange={(e) => set('heroLine2', e.target.value)} /></label>
-          <label>3줄 (파란 강조)<input className="ainput" value={h.heroLine3} onChange={(e) => set('heroLine3', e.target.value)} /></label>
+          <label>1줄{refData && <RefText>{refData.heroLine1}</RefText>}<input className="ainput" value={h.heroLine1} onChange={(e) => set('heroLine1', e.target.value)} /></label>
+          <label>2줄{refData && <RefText>{refData.heroLine2}</RefText>}<input className="ainput" value={h.heroLine2} onChange={(e) => set('heroLine2', e.target.value)} /></label>
+          <label>3줄 (파란 강조){refData && <RefText>{refData.heroLine3}</RefText>}<input className="ainput" value={h.heroLine3} onChange={(e) => set('heroLine3', e.target.value)} /></label>
         </div>
         <label style={{ display: 'block', marginTop: 10, fontSize: 12, color: 'var(--ink3)', fontWeight: 600 }}>소개 문구
-          <textarea className="atextarea" rows={2} value={h.heroSub} onChange={(e) => set('heroSub', e.target.value)} />
+          {refData && <RefText>{refData.heroSub}</RefText>}
+          <textarea className="atextarea" rows={3} value={h.heroSub} onChange={(e) => set('heroSub', e.target.value)} />
         </label>
       </section>
 
@@ -74,10 +76,13 @@ export default function HomeEditor({ initial, countries, cardThumbs, locale = 'k
         <p className="muted" style={{ fontSize: 12, margin: '2px 0 10px' }}>홈 화면에는 <b>최신 연도가 위</b>로 표시됩니다.</p>
         <div style={{ display: 'grid', gap: 8 }}>
           {h.journey.map((j, i) => (
-            <div key={i} className="atl" style={{ gridTemplateColumns: '70px 120px 1fr' }}>
-              <input className="ainput" value={j.y} onChange={(e) => setJourney(i, 'y', e.target.value)} />
-              <input className="ainput" value={koOf(j.id)} disabled style={{ background: 'var(--wash)' }} />
-              <input className="ainput" value={j.desc} onChange={(e) => setJourney(i, 'desc', e.target.value)} />
+            <div key={i}>
+              {refData?.journey?.[i] && <RefText>{refData.journey[i].desc}</RefText>}
+              <div className="atl" style={{ gridTemplateColumns: '70px 120px 1fr' }}>
+                <input className="ainput" value={j.y} onChange={(e) => setJourney(i, 'y', e.target.value)} />
+                <input className="ainput" value={koOf(j.id)} disabled style={{ background: 'var(--wash)' }} />
+                <input className="ainput" value={j.desc} onChange={(e) => setJourney(i, 'desc', e.target.value)} />
+              </div>
             </div>
           ))}
         </div>
@@ -103,6 +108,7 @@ export default function HomeEditor({ initial, countries, cardThumbs, locale = 'k
               )}
               <div style={{ display: 'grid', gap: 6 }}>
                 <div style={{ fontSize: 12, color: 'var(--ink3)', fontWeight: 700 }}>{c.ko} <span className="muted" style={{ fontWeight: 400 }}>{c.en}</span></div>
+                {refData && <RefText>{refData.taglines[c.id]}</RefText>}
                 <input className="ainput" value={h.taglines[c.id] ?? ''} onChange={(e) => setTagline(c.id, e.target.value)} placeholder="한 줄 소개" />
               </div>
             </div>
@@ -113,14 +119,17 @@ export default function HomeEditor({ initial, countries, cardThumbs, locale = 'k
       <section className="admincard">
         <h2>우리가 그리는 세상</h2>
         <div className="agrid2">
-          <label>제목<input className="ainput" value={h.drawsTitle} onChange={(e) => set('drawsTitle', e.target.value)} /></label>
-          <label>부제<input className="ainput" value={h.drawsSub} onChange={(e) => set('drawsSub', e.target.value)} /></label>
+          <label>제목{refData && <RefText>{refData.drawsTitle}</RefText>}<input className="ainput" value={h.drawsTitle} onChange={(e) => set('drawsTitle', e.target.value)} /></label>
+          <label>부제{refData && <RefText>{refData.drawsSub}</RefText>}<input className="ainput" value={h.drawsSub} onChange={(e) => set('drawsSub', e.target.value)} /></label>
         </div>
         <div style={{ display: 'grid', gap: 8, marginTop: 10 }}>
           {h.draws.map((d, i) => (
-            <div key={i} className="atl" style={{ gridTemplateColumns: '110px 1fr' }}>
-              <input className="ainput" value={d.ko} onChange={(e) => setDraw(i, 'ko', e.target.value)} />
-              <input className="ainput" value={d.d} onChange={(e) => setDraw(i, 'd', e.target.value)} />
+            <div key={i}>
+              {refData?.draws?.[i] && <RefText>{[refData.draws[i].ko, refData.draws[i].d].filter(Boolean).join(' · ')}</RefText>}
+              <div className="atl" style={{ gridTemplateColumns: '110px 1fr' }}>
+                <input className="ainput" value={d.ko} onChange={(e) => setDraw(i, 'ko', e.target.value)} />
+                <input className="ainput" value={d.d} onChange={(e) => setDraw(i, 'd', e.target.value)} />
+              </div>
             </div>
           ))}
         </div>

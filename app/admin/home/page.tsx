@@ -25,6 +25,7 @@ export default async function AdminHomeEdit({ searchParams }: { searchParams: Pr
     );
   }
   const home = await getHome(lang);
+  const refHome = lang !== BASE_LOCALE ? await getHome(BASE_LOCALE) : undefined;
   const cardThumbs: Record<string, string> = {};
   for (const c of COUNTRIES) {
     cardThumbs[c.id] = home.cardImages?.[c.id] ?? resolvePhoto(`card-${c.id}`) ?? resolvePhoto(`th-${c.id}-1`) ?? '';
@@ -43,7 +44,7 @@ export default async function AdminHomeEdit({ searchParams }: { searchParams: Pr
       </header>
       <AdminLangTabs current={lang} />
       {lang !== BASE_LOCALE && <div className="adminlangnote">번역 모드입니다. 비워두면 한국어 원문이 표시됩니다. (이미지는 언어 공통이라 한국어 탭에서 관리)</div>}
-      <HomeEditor key={lang} initial={home} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} cardThumbs={cardThumbs} locale={lang} />
+      <HomeEditor key={lang} initial={home} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} cardThumbs={cardThumbs} locale={lang} refData={refHome} />
     </main>
   );
 }

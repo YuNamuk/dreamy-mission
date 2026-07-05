@@ -23,6 +23,7 @@ export default async function AdminStories({ searchParams }: { searchParams: Pro
     );
   }
   const stories = await getStories(lang);
+  const refStories = lang !== BASE_LOCALE ? await getStories(BASE_LOCALE) : undefined;
 
   return (
     <main className="adminwrap">
@@ -37,7 +38,7 @@ export default async function AdminStories({ searchParams }: { searchParams: Pro
       </header>
       <AdminLangTabs current={lang} />
       {lang !== BASE_LOCALE && <div className="adminlangnote">번역 모드입니다. 한국어 탭에서 만든 이야기의 제목·내용을 번역합니다. (이야기 추가·삭제·나라·종류는 한국어 탭에서)</div>}
-      <StoriesEditor key={lang} initial={stories} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko }))} locale={lang} />
+      <StoriesEditor key={lang} initial={stories} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko }))} locale={lang} refData={refStories} />
     </main>
   );
 }

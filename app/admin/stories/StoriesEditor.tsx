@@ -4,10 +4,11 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { saveStories } from '../actions';
 import type { Story } from '@/lib/stories';
+import RefText from '../RefText';
 
 const KINDS: Story['kind'][] = ['소감문', '계획서', '이야기'];
 
-export default function StoriesEditor({ initial, countries, locale = 'ko' }: { initial: Story[]; countries: { id: string; ko: string }[]; locale?: string }) {
+export default function StoriesEditor({ initial, countries, locale = 'ko', refData }: { initial: Story[]; countries: { id: string; ko: string }[]; locale?: string; refData?: Story[] }) {
   const isBase = locale === 'ko';
   const [list, setList] = useState<Story[]>(initial);
   const [msg, setMsg] = useState<string | null>(null);
@@ -58,6 +59,7 @@ export default function StoriesEditor({ initial, countries, locale = 'ko' }: { i
                   <button className="alink" onClick={() => del(i)}>삭제</button>
                 </>}
               </div>
+              {refData?.[i] && <RefText>{refData[i].title}</RefText>}
               <input className="ainput" style={{ width: '100%', fontWeight: 700 }} value={s.title} onChange={(e) => upd(i, 'title', e.target.value)} placeholder="제목" />
               <div className="agrid2" style={{ marginTop: 8 }}>
                 <label>작성자<input className="ainput" value={s.author ?? ''} onChange={(e) => upd(i, 'author', e.target.value)} placeholder="이름 (선택)" /></label>
@@ -74,6 +76,7 @@ export default function StoriesEditor({ initial, countries, locale = 'ko' }: { i
                   </select>
                 </label>}
               </div>
+              {refData?.[i] && <RefText>{refData[i].body}</RefText>}
               <textarea className="atextarea" style={{ marginTop: 8 }} rows={6} value={s.body} onChange={(e) => upd(i, 'body', e.target.value)} placeholder="내용 (문단은 줄바꿈으로 구분)" />
             </div>
           ))}
