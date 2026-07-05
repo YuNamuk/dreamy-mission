@@ -59,6 +59,8 @@ export default async function EditCountryPage({ params, searchParams }: { params
             language: country.language, government: country.government, currency: country.currency, climate: country.climate, timezone: country.timezone,
           },
           timeline: country.timeline,
+          address: country.address ?? '',
+          site: country.site,
         }}
         covers={covers}
         gallery={gallery}

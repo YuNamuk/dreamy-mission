@@ -7,9 +7,11 @@ import 'leaflet/dist/leaflet.css';
  * 로케이터 미니맵 — 지형(terrain) 타일 위에 대상 국가를 하이라이트.
  * 휠 줌은 홈 지도와 동일한 방식(커서 앵커 고정 + 프레임 지수감쇠 lerp).
  */
-export default function LocatorMap({ countryId }: { countryId: string }) {
+export default function LocatorMap({ countryId, site }: { countryId: string; site?: [number, number] }) {
   const elRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import('leaflet').Map | null>(null);
+  const lat = site?.[0];
+  const lng = site?.[1];
 
   useEffect(() => {
     let ro: ResizeObserver | null = null;
@@ -82,8 +84,14 @@ export default function LocatorMap({ countryId }: { countryId: string }) {
         map.on('zoom zoomend', updateHighlight);
         updateHighlight();
       } catch {
-        map.setView([20, 100], 3);
-        targetZoom = 3;
+        if (lat != null && lng != null) { map.setView([lat, lng], 5); targetZoom = 5; }
+        else { map.setView([20, 100], 3); targetZoom = 3; }
+      }
+
+      // 사역지 핀
+      if (lat != null && lng != null) {
+        L.marker([lat, lng], { interactive: false, icon: L.divIcon({ className: '', iconSize: [0, 0], iconAnchor: [0, 0],
+          html: '<div style="transform:translate(-50%,-50%)"><span style="display:block;width:15px;height:15px;border-radius:50%;background:#2f6fd0;border:3px solid #fff;box-shadow:0 3px 10px rgba(14,36,56,.45)"></span></div>' }) }).addTo(map);
       }
 
       ro = new ResizeObserver(() => map.invalidateSize());
@@ -98,7 +106,7 @@ export default function LocatorMap({ countryId }: { countryId: string }) {
       if (onWheel && elRef.current) elRef.current.removeEventListener('wheel', onWheel);
       if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
     };
-  }, [countryId]);
+  }, [countryId, lat, lng]);
 
   return <div ref={elRef} className="locmap" aria-label="위치 지도" />;
 }

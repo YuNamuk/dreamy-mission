@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import 'leaflet/dist/leaflet.css';
-import { LATLNG, SEOUL_LATLNG } from '@/lib/countries';
+import { SEOUL_LATLNG } from '@/lib/countries';
 import { IconGospel, IconEducation, IconService, IconFaith } from './icons';
 
 export interface HeroCountry {
@@ -14,6 +14,8 @@ export interface HeroCountry {
   pin: string | null;
   summary: string;
   status?: { year: string; items: string[] };
+  /** 지도 표기 좌표 [위도, 경도] */
+  site?: [number, number];
 }
 export interface JourneyRow {
   y: string;
@@ -126,18 +128,18 @@ export default function MapHero({ countries, journey, hero, defaultLayer = 'terr
       elRef.current.addEventListener('wheel', onWheel, { passive: false });
       map.on('zoomend', () => { if (!raf) targetZoom = map.getZoom(); });
 
-      const dests = countries.map((c) => LATLNG[c.id]).filter(Boolean) as [number, number][];
+      const dests = countries.map((c) => c.site).filter(Boolean) as [number, number][];
       for (const c of countries) {
-        const d = LATLNG[c.id]; if (!d) continue;
-        L.polyline(curve(SEOUL_LATLNG, d), { color: '#ffffff', weight: 1.6, opacity: 0.9, dashArray: '1 8', lineCap: 'round', interactive: false }).addTo(map);
-        L.polyline(curve(SEOUL_LATLNG, d), { color: '#2f6fd0', weight: 1.1, opacity: 0.55, dashArray: '1 8', lineCap: 'round', interactive: false }).addTo(map);
+        const d = c.site; if (!d) continue;
+        L.polyline(curve(SEOUL_LATLNG, d), { color: '#ffffff', weight: 2.6, opacity: 0.95, dashArray: '2 7', lineCap: 'round', interactive: false }).addTo(map);
+        L.polyline(curve(SEOUL_LATLNG, d), { color: '#2f6fd0', weight: 1.9, opacity: 0.9, dashArray: '2 7', lineCap: 'round', interactive: false }).addTo(map);
       }
 
       L.marker(SEOUL_LATLNG, { interactive: false, icon: L.divIcon({ className: '', iconSize: [0, 0], iconAnchor: [0, 0],
         html: '<div style="transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:12px;height:12px;border-radius:50%;background:#2f6fd0;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div><div style="font-size:11px;font-weight:800;color:#0e2a52;white-space:nowrap;background:rgba(255,255,255,.9);padding:1px 8px;border-radius:999px;box-shadow:0 2px 6px rgba(14,36,56,.15)">드리미학교</div></div>' }) }).addTo(map);
 
       for (const c of countries) {
-        const d = LATLNG[c.id]; if (!d) continue;
+        const d = c.site; if (!d) continue;
         const dir = LABEL_DIR[c.id] || 'right';
         const dot = c.pin
           ? `<img src="${c.pin}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;border:2.5px solid #fff;box-shadow:0 3px 12px rgba(14,36,56,.4)"/>`

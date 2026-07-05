@@ -36,21 +36,35 @@ export interface Country {
   intro: string;
   themes: Theme[];
   timeline: TimelineRow[];
+  /** 사역지 주소(표시·지오코딩용) — 병합 시 채워짐 */
+  address?: string;
+  /** 지도 표기 좌표 [위도, 경도] — 병합 시 채워짐 */
+  site?: [number, number];
 }
 
-/** 서울(드리미학교) 원점 — 추상 arc 시작점 */
+/** 드리미학교(천안) 원점 — 추상 arc 시작점 */
 export const SEOUL = { x: 76, y: 23 };
 const VBH = 64;
 
-/** 실제 지도(Leaflet)용 좌표 [위도, 경도] */
-export const SEOUL_LATLNG: [number, number] = [37.5, 127.03];
+/** 실제 지도(Leaflet)용 좌표 [위도, 경도] — 사역지 주소 지오코딩 기반 (관리자에서 수정 가능) */
+export const SEOUL_LATLNG: [number, number] = [36.805, 127.3193]; // 드리미학교(천안 병천면 봉항로 89)
 export const LATLNG: Record<string, [number, number]> = {
-  mongolia: [47.92, 106.92], // 울란바토르
-  philippines: [14.6, 120.98], // 메트로 마닐라
-  cambodia: [13.36, 103.85], // 씨엠립 (사역지)
-  indonesia: [-6.21, 106.85], // 자카르타
-  india: [28.61, 77.21], // 뉴델리
-  pakistan: [33.69, 73.06], // 이슬라마바드
+  mongolia: [48.06, 106.66], // 울란바토르 송기노하이르한구
+  philippines: [14.7614, 121.153], // 리잘 로드리게스(San Isidro)
+  cambodia: [13.3599, 103.8615], // 씨엠립 Treak
+  indonesia: [-6.352, 107.1819], // 브카시 델타마스(Cikarang)
+  india: [28.61, 77.21], // 뉴델리 (주소 미지정)
+  pakistan: [33.4831, 73.1261], // 라왈핀디 Rawat
+};
+
+/** 각 나라 사역지 기본 주소(시드) — 관리자에서 수정 시 편집본이 우선 */
+export const SEED_ADDRESS: Record<string, string> = {
+  mongolia: 'Songinokhairkhan District, 19th Khoroo, Ulaanbaatar, Mongolia',
+  philippines: 'Lot 23 Block 2 PSD 56216 Sitio Tanag, Brgy. San Isidro, Rodriguez, Rizal, Philippines',
+  cambodia: '140 Group 5 Treak, Krong Siem Reap, Cambodia',
+  indonesia: 'K-Eduplex, Jl. Ganesha 2, Lot B1, Deltamas, Central Cikarang, Bekasi Regency, West Java 17530, Indonesia',
+  india: '',
+  pakistan: 'Moza Bagga Sheikhan, Near Police Training School, Rawat, Rawalpindi, Pakistan',
 };
 
 export const COUNTRIES: Country[] = [

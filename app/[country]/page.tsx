@@ -78,7 +78,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
           </div>
 
           <div className="chero__map">
-            <LocatorMap countryId={id} />
+            <LocatorMap countryId={id} site={country.site} />
             <div className="chero__pin">{cname(country)}</div>
           </div>
         </div>

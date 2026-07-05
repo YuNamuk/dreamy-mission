@@ -149,6 +149,29 @@ export async function saveCountryStructure(
   }
 }
 
+/** 사역지 주소 → 좌표(지오코딩, OpenStreetMap Nominatim) → 편집본에 주소·좌표 저장 */
+export async function geocodeCountry(id: string, address: string): Promise<Result & { latlng?: [number, number]; place?: string }> {
+  try {
+    const me = await requireAdmin('content');
+    if (!findCountry(id)) return { ok: false, error: '알 수 없는 국가' };
+    const q = address.trim();
+    if (!q) return { ok: false, error: '주소를 입력하세요.' };
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`;
+    const r = await fetch(url, { headers: { 'User-Agent': 'dreamy-mission/1.0 (mission.dreamyedu.net)', 'Accept-Language': 'en' } });
+    if (!r.ok) return { ok: false, error: `지오코딩 실패 (${r.status})` };
+    const data = (await r.json()) as Array<{ lat: string; lon: string; display_name: string }>;
+    if (!data.length) return { ok: false, error: '주소로 위치를 찾지 못했습니다. 더 간단한 주소(구·시·국가)로 시도해 보세요.' };
+    const latlng: [number, number] = [Number(Number(data[0].lat).toFixed(5)), Number(Number(data[0].lon).toFixed(5))];
+    const res = await applyCountryEdit(id, { address: q, latlng }, me.email);
+    if (!res.ok) return { ok: false, error: res.error };
+    revalidatePath(`/${id}`);
+    revalidatePath('/');
+    return { ok: true, latlng, place: data[0].display_name };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
 /** 카테고리 커버 사진 교체 → Supabase Storage 업로드 + 편집본에 URL 기록 */
 export async function uploadCover(id: string, themeIndex: number, dataUrl: string): Promise<Result & { url?: string }> {
   try {

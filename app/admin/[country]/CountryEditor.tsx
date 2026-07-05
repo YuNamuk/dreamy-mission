@@ -2,13 +2,15 @@
 
 import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { saveCountryContent, saveCountryStructure, uploadCover, addCatPhotos, removeCatPhoto } from '../actions';
+import { saveCountryContent, saveCountryStructure, uploadCover, addCatPhotos, removeCatPhoto, geocodeCountry } from '../actions';
 
 interface Initial {
   intro: string;
   themes: { t: string; d: string }[];
   stats: { capital: string; pop: string; area: string; religion: string; language: string; government: string; currency: string; climate: string; timezone: string };
   timeline: { y: string; items: string[] }[];
+  address?: string;
+  site?: [number, number];
 }
 
 export default function CountryEditor({ id, initial, covers, gallery, photoBase, locale = 'ko' }: { id: string; initial: Initial; covers: string[]; gallery: string[][]; photoBase: string; locale?: string }) {
@@ -17,6 +19,9 @@ export default function CountryEditor({ id, initial, covers, gallery, photoBase,
   const [themes, setThemes] = useState(initial.themes);
   const [stats, setStats] = useState(initial.stats);
   const [timeline, setTimeline] = useState(initial.timeline);
+  const [address, setAddress] = useState(initial.address ?? '');
+  const [site, setSite] = useState<[number, number] | undefined>(initial.site);
+  const [geoMsg, setGeoMsg] = useState<string | null>(null);
   const [coverUrls, setCoverUrls] = useState(covers);
   const [gal, setGal] = useState(gallery);
   const [galBusy, setGalBusy] = useState<number | null>(null);
@@ -111,6 +116,18 @@ export default function CountryEditor({ id, initial, covers, gallery, photoBase,
     });
   }
 
+  function findCoords() {
+    setGeoMsg(null);
+    start(async () => {
+      const res = await geocodeCountry(id, address);
+      if (res.ok && res.latlng) {
+        setSite(res.latlng);
+        setGeoMsg(`좌표를 찾았습니다 → ${res.latlng[0]}, ${res.latlng[1]}${res.place ? ` · ${res.place}` : ''}`);
+        router.refresh();
+      } else setGeoMsg(res.error ?? '실패');
+    });
+  }
+
   function pickCover(i: number) {
     fileRefs.current[i]?.click();
   }
@@ -154,6 +171,20 @@ export default function CountryEditor({ id, initial, covers, gallery, photoBase,
           <label>시차<input className="ainput" value={stats.timezone} onChange={(e) => setStats({ ...stats, timezone: e.target.value })} /></label>
         </div>
       </section>
+
+      {/* 지도 표기 위치 (언어 공통) */}
+      {isBase && (
+        <section className="admincard">
+          <h2>지도 표기 위치 <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>· 사역지 주소로 좌표 찾기</span></h2>
+          <p className="muted">주소를 입력하고 <b>좌표 찾기</b>를 누르면 지도에 표기할 위치를 자동으로 찾습니다. 첫 화면 지도의 이 나라 위치와 발자취 선, 나라 페이지 지도가 이 좌표를 따릅니다.</p>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+            <input className="ainput" style={{ flex: 1, minWidth: 260 }} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="사역지 주소 (예: San Isidro, Rodriguez, Rizal, Philippines)" />
+            <button className="abtn abtn--primary" onClick={findCoords} disabled={pending || !address.trim()}>{pending ? '찾는 중…' : '좌표 찾기'}</button>
+          </div>
+          {site && <div className="muted" style={{ fontSize: 12.5, marginTop: 8 }}>현재 좌표: <b>{site[0]}, {site[1]}</b> <a href={`https://www.openstreetmap.org/?mlat=${site[0]}&mlon=${site[1]}#map=13/${site[0]}/${site[1]}`} target="_blank" rel="noreferrer" style={{ marginLeft: 8, color: 'var(--sky)' }}>지도에서 보기 ↗</a></div>}
+          {geoMsg && <div className="amsg" style={{ marginTop: 6 }}>{geoMsg}</div>}
+        </section>
+      )}
 
       {/* 카테고리 */}
       <section className="admincard">

@@ -28,6 +28,7 @@ export default async function Home() {
     ko: c.ko,
     en: c.en,
     pin: resolvePhoto(`card-${c.id}`),
+    site: c.site,
     summary: home.taglines[c.id] ?? c.intro.slice(0, 60),
     status: c.timeline.length ? { year: c.timeline[c.timeline.length - 1].y, items: c.timeline[c.timeline.length - 1].items.slice(0, 3) } : undefined,
   }));

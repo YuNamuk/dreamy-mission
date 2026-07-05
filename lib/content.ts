@@ -10,7 +10,7 @@
  * 없어도 사이트는 시드로 정상 동작한다.
  */
 import { supabase } from './supabase';
-import { COUNTRIES, type Country } from './countries';
+import { COUNTRIES, LATLNG, SEED_ADDRESS, type Country } from './countries';
 import { COUNTRY_I18N } from './countries.en';
 import { BASE_LOCALE, overlay, type Locale } from './i18n';
 
@@ -38,6 +38,10 @@ export interface CountryEdit {
   catPhotos?: Record<string, string[]>;
   /** 방문 시기별 갤러리 */
   visits?: Visit[];
+  /** 사역지 주소(관리자 입력) */
+  address?: string;
+  /** 주소 지오코딩 결과 좌표 [위도, 경도] */
+  latlng?: [number, number];
   /** 언어별 번역 오버레이: locale → 같은 모양의 부분값(intro/stats/themes/timeline …) */
   i18n?: Record<string, unknown>;
 }
@@ -69,7 +73,7 @@ export async function loadEdits(): Promise<{ edits: EditMap; tableReady: boolean
 
 /** 시드 + 편집본 병합 */
 function merge(base: Country, edit?: CountryEdit): Country {
-  if (!edit) return base;
+  if (!edit) return { ...base, address: SEED_ADDRESS[base.id] ?? '', site: LATLNG[base.id] };
   return {
     ...base,
     intro: edit.intro ?? base.intro,
@@ -91,6 +95,8 @@ function merge(base: Country, edit?: CountryEdit): Country {
         }))
       : base.themes),
     timeline: edit.timeline && edit.timeline.length ? edit.timeline : base.timeline,
+    address: edit.address ?? SEED_ADDRESS[base.id] ?? '',
+    site: (Array.isArray(edit.latlng) && edit.latlng.length === 2 ? edit.latlng : LATLNG[base.id]) as [number, number] | undefined,
   };
 }
 
@@ -118,6 +124,8 @@ export async function applyCountryEdit(
     ...(patch.images ? { images: { ...(existing.images ?? {}), ...patch.images } } : {}),
     ...(patch.catPhotos ? { catPhotos: patch.catPhotos } : {}),
     ...(patch.visits ? { visits: patch.visits } : {}),
+    ...(patch.address !== undefined ? { address: patch.address } : {}),
+    ...(patch.latlng ? { latlng: patch.latlng } : {}),
   };
   const { error } = await supabase.from(CONTENT_TABLE).upsert(
     { id, data: merged, updated_by: updatedBy, updated_at: new Date().toISOString() },
