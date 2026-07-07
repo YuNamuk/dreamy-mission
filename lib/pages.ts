@@ -28,6 +28,7 @@ const DEFAULTS: Record<PageKey, PageContent> = {
     title: '선교를 그리다',
     subtitle: '우리는 가만히 서서, 비어 있지 않은 공간(間)에 대하여',
     sections: [
+      { heading: '드리미학교의 선교', body: '드리미학교의 선교는 성공이 아닌 섬김이다. 우리는 학교를 세우고 교사를 세우며, 배움의 바통을 다음 세대에게 건넨다. 이 모든 여정은 나의 일이 아니라 하나님의 일하심에 참여하는 것이다. 그리고 그 참여의 다른 이름은, 한 영혼을 사랑하는 것이다.' },
       { heading: '행하기에 앞서, 보는 것', body: '교육선교는 우리가 무언가를 하러 가는 일이 아니다. 우리가 그 땅에 닿기 전에, 하나님은 이미 그곳에서 일하고 계셨다. 선교는 그 일하심을 바라보고 그 흐름에 참여하는 것 — 행하기에 앞서 보는 것이다.' },
       { heading: '“가만히 서서 보라”', body: '“너희는 두려워하지 말고 가만히 서서 여호와께서 오늘 너희를 위하여 행하시는 구원을 보라” (출애굽기 14:13). 이 아카이브는 2022년부터 동행한 여섯 나라의 이야기와, 아직 오지 않은 여정을 담는다.' },
       { heading: '드리미학교 교육선교', body: '드리미학교는 각 나라의 크리스천 리더를 양성하고, 복음의 공공성 원리에 따라 교육의 성장과 발전을 돕는다. 교사·학생 교류, 3P 교육, 인성교육, 지역 선교를 통해 다음 세대를 세운다.' },
@@ -64,6 +65,7 @@ const DEFAULTS_I18N: Partial<Record<PageKey, Record<Locale, Partial<PageContent>
       title: 'Drawing the Mission',
       subtitle: 'We stand still, and consider the space (間) that is not empty',
       sections: [
+        { heading: 'Dreamy School’s Mission', body: 'Dreamy School’s mission is service, not success. We build schools and raise teachers, and hand the baton of learning to the next generation. This whole journey is not my work but participation in God’s working. And that participation has another name: to love one soul.' },
         { heading: 'Seeing, before doing', body: 'Education mission is not about us going somewhere to do something. Before we ever reached that land, God was already at work there. Mission is to behold that work and join its current — to see before we do.' },
         { heading: '“Stand still and see”', body: '“Fear not, stand still, and see the salvation of the LORD, which he will shew to you to day” (Exodus 14:13). This archive holds the stories of six lands walked since 2022, and the journeys yet to come.' },
         { heading: 'Dreamy School Education Mission', body: 'Dreamy School raises up Christian leaders in each land and, by the principle of the public nature of the gospel, helps education grow. Through teacher–student exchange, 3P education, character education, and local mission, we build the next generation.' },
