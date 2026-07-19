@@ -1768,8 +1768,14 @@ img {
   .galcard__cap b { font-size: 14px; }
 }
 
-/* v26 — 스티키 푸터: 공개 페이지(main 직계)에서 콘텐츠가 짧아도 푸터를 화면 맨 아래로 */
+/* v26 — 공개 페이지: 한 화면에 담기 + 푸터 화면 맨 아래 */
 body > main { display: flex; flex-direction: column; min-height: 100svh; }
-body > main > .site-footer { margin-top: auto; }
-/* 히어로 등 주요 블록이 flex 축소되지 않도록 */
+body > main > .site-footer { margin-top: auto; } /* 콘텐츠 페이지: 짧으면 푸터를 바닥으로 */
 body > main > * { flex-shrink: 0; }
+
+@media (min-width: 901px) {
+  /* 홈: 지도가 남는 공간을 채워 지도+카드+그리는세상+푸터가 한 화면에, 빈 공간 없이 */
+  body > main:has(#map) > .site-footer { margin-top: 0; }
+  #map { flex: 1 1 auto; min-height: 520px; display: flex; flex-direction: column; }
+  #map > .herox { flex: 1 1 auto; height: auto; min-height: 400px; }
+}
