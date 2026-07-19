@@ -5,9 +5,11 @@ import type { Season } from '@/lib/gallery';
 import { thumb, downloadUrl } from '@/lib/img';
 
 interface UI { open: string; download: string; downloadAll: string; photos: string; empty: string; back: string; }
+interface CInfo { ko: string; en: string; flag: string }
 
-export default function GalleryView({ seasons, names, ui }: { seasons: Season[]; names: Record<string, string>; ui: UI }) {
-  const countryName = (id?: string) => (id ? names[id] : undefined);
+export default function GalleryView({ seasons, cinfo, ui }: { seasons: Season[]; cinfo: Record<string, CInfo>; ui: UI }) {
+  const ci = (id?: string): CInfo | undefined => (id ? cinfo[id] : undefined);
+  const countryName = (id?: string) => (id ? cinfo[id]?.ko : undefined);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [pi, setPi] = useState<number | null>(null);
   const touchX = useRef<number | null>(null);
@@ -51,19 +53,24 @@ export default function GalleryView({ seasons, names, ui }: { seasons: Season[];
   return (
     <>
       <div className="galgrid">
-        {seasons.map((s, i) => (
-          <button key={s.id} className="galcard" onClick={() => { setOpenIdx(i); setPi(null); }}>
-            {/* 대표 사진 — 원본 비율 유지(벽 전시 형태) */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="galcard__cover" src={thumb(coverOf(s), 700)} alt="" loading="lazy" />
-            <span className="galcard__scrim" />
-            <span className="galcard__count">{s.photos.length}</span>
-            <div className="galcard__cap">
-              <div className="galcard__meta">{s.date && <span>{s.date}</span>}{s.country && countryName(s.country) && <span>{countryName(s.country)}</span>}</div>
-              <b>{s.title}</b>
-            </div>
-          </button>
-        ))}
+        {seasons.map((s, i) => {
+          const info = ci(s.country);
+          return (
+            <button key={s.id} className="galcard" onClick={() => { setOpenIdx(i); setPi(null); }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="galcard__cover" src={thumb(coverOf(s), 640)} alt="" loading="lazy" />
+              <span className="galcard__scrim" />
+              <span className="galcard__count">{s.photos.length}</span>
+              <div className="galcard__cap">
+                <div className="galcard__meta">
+                  {info && <><span className="galcard__flag">{info.flag}</span><span>{info.ko}</span><i>{info.en}</i></>}
+                  {s.date && <span className="galcard__date">· {s.date}</span>}
+                </div>
+                <b>{s.title}</b>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       {/* 시즌 열람 오버레이 */}

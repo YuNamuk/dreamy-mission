@@ -34,7 +34,7 @@ function seedSeasons(locale: Locale): Season[] {
     return {
       id: `seed-${c.id}`,
       title: locale === BASE_LOCALE ? `${name} 교육선교` : `${name} Education Mission`,
-      date: '샘플',
+      date: '2026.05',
       country: c.id,
       cover: photos[0],
       photos,
