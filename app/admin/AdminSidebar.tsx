@@ -38,6 +38,7 @@ export default function AdminSidebar({ role, email, countries, pages }: Props) {
 
       <div className="adminside__grp">
         <div className="adminside__lbl">콘텐츠</div>
+        <Item href="/admin/gallery">교육선교 갤러리</Item>
         <Item href="/admin/stories">STORIES 이야기</Item>
         {pages.map((p) => (
           <Item key={p.key} href={`/admin/pages/${p.key}`}>{p.label}</Item>

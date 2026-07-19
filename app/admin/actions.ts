@@ -11,6 +11,7 @@ import { HOME_KEY, loadHomeEdit, type HomeContent } from '@/lib/home';
 import { SETTINGS_KEY, loadSettingsEdit, type SiteSettings } from '@/lib/settings';
 import { loadPageEdit, type PageKey, type PageContent, PAGE_KEYS } from '@/lib/pages';
 import { STORIES_KEY, type Story } from '@/lib/stories';
+import { GALLERY_KEY, loadGalleryRaw, type Season } from '@/lib/gallery';
 import { BASE_LOCALE } from '@/lib/locales';
 
 /** archive_content 문서의 원본 data 로드 (번역 오버레이 병합용) */
@@ -274,6 +275,115 @@ export async function saveStories(list: Story[], locale: string = BASE_LOCALE): 
   } catch (err) {
     return { ok: false, error: (err as Error).message };
   }
+}
+
+/** ── 교육선교 갤러리 (콘텐츠 관리자 이상) ── */
+async function saveGallerySeasons(seasons: Season[], byEmail: string): Promise<Result> {
+  if (!sb) return { ok: false, error: '백엔드 미연결' };
+  // i18n 오버레이는 보존하고 seasons 만 교체
+  const { data } = await sb.from(CONTENT_TABLE).select('data').eq('id', GALLERY_KEY).limit(1);
+  const existing = (data?.[0]?.data ?? {}) as Record<string, unknown>;
+  const { error } = await sb.from(CONTENT_TABLE).upsert(
+    { id: GALLERY_KEY, data: { ...existing, seasons }, updated_by: byEmail, updated_at: new Date().toISOString() },
+    { onConflict: 'id' },
+  );
+  if (error) return { ok: false, error: error.message };
+  revalidatePath('/gallery');
+  revalidatePath('/admin/gallery');
+  for (const s of seasons) if (s.country) revalidatePath(`/${s.country}`);
+  return { ok: true };
+}
+
+export async function addSeason(title: string, date: string, country: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    if (!title.trim()) return { ok: false, error: '제목을 입력하세요.' };
+    const { seasons } = await loadGalleryRaw();
+    const next: Season[] = [...seasons, { id: crypto.randomUUID().slice(0, 8), title: title.trim(), date: date.trim() || undefined, country: country || undefined, photos: [] }];
+    return await saveGallerySeasons(next, me.email);
+  } catch (err) { return { ok: false, error: (err as Error).message }; }
+}
+
+export async function updateSeasonMeta(seasonId: string, patch: { title?: string; date?: string; country?: string }): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    const { seasons } = await loadGalleryRaw();
+    const next = seasons.map((s) => s.id === seasonId ? { ...s, ...(patch.title !== undefined ? { title: patch.title } : {}), ...(patch.date !== undefined ? { date: patch.date || undefined } : {}), ...(patch.country !== undefined ? { country: patch.country || undefined } : {}) } : s);
+    return await saveGallerySeasons(next, me.email);
+  } catch (err) { return { ok: false, error: (err as Error).message }; }
+}
+
+export async function removeSeason(seasonId: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    const { seasons } = await loadGalleryRaw();
+    return await saveGallerySeasons(seasons.filter((s) => s.id !== seasonId), me.email);
+  } catch (err) { return { ok: false, error: (err as Error).message }; }
+}
+
+/** 갤러리 전체 일괄 삭제 (빈 목록으로) */
+export async function clearGallery(): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    return await saveGallerySeasons([], me.email);
+  } catch (err) { return { ok: false, error: (err as Error).message }; }
+}
+
+export async function addSeasonPhotos(seasonId: string, dataUrls: string[]): Promise<Result & { added?: number }> {
+  try {
+    const me = await requireAdmin('content');
+    const { seasons } = await loadGalleryRaw();
+    const si = seasons.findIndex((s) => s.id === seasonId);
+    if (si < 0) return { ok: false, error: '시즌을 찾을 수 없습니다.' };
+    const urls: string[] = [];
+    let n = 0;
+    for (const dataUrl of dataUrls.slice(0, 40)) {
+      const m = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+      if (!m || !m[1].startsWith('image/')) continue;
+      const buffer = Buffer.from(m[2], 'base64');
+      if (buffer.byteLength > 12_000_000) continue;
+      const url = await storagePut(`gallery-${seasonId}-${Date.now()}-${n++}.jpg`, m[1], buffer);
+      if (url) urls.push(url);
+    }
+    if (!urls.length) return { ok: false, error: '업로드된 사진이 없습니다.' };
+    const next = seasons.map((s, i) => i === si ? { ...s, photos: [...s.photos, ...urls] } : s);
+    const res = await saveGallerySeasons(next, me.email);
+    return res.ok ? { ok: true, added: urls.length } : res;
+  } catch (err) { return { ok: false, error: (err as Error).message }; }
+}
+
+export async function removeSeasonPhoto(seasonId: string, url: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    const { seasons } = await loadGalleryRaw();
+    const next = seasons.map((s) => s.id === seasonId ? { ...s, photos: s.photos.filter((p) => p !== url), cover: s.cover === url ? undefined : s.cover } : s);
+    return await saveGallerySeasons(next, me.email);
+  } catch (err) { return { ok: false, error: (err as Error).message }; }
+}
+
+export async function setSeasonCover(seasonId: string, url: string): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    const { seasons } = await loadGalleryRaw();
+    const next = seasons.map((s) => s.id === seasonId && s.photos.includes(url) ? { ...s, cover: url } : s);
+    return await saveGallerySeasons(next, me.email);
+  } catch (err) { return { ok: false, error: (err as Error).message }; }
+}
+
+export async function moveSeasonPhoto(seasonId: string, url: string, dir: -1 | 1): Promise<Result> {
+  try {
+    const me = await requireAdmin('content');
+    const { seasons } = await loadGalleryRaw();
+    const next = seasons.map((s) => {
+      if (s.id !== seasonId) return s;
+      const photos = [...s.photos];
+      const i = photos.indexOf(url); const j = i + dir;
+      if (i < 0 || j < 0 || j >= photos.length) return s;
+      [photos[i], photos[j]] = [photos[j], photos[i]];
+      return { ...s, photos };
+    });
+    return await saveGallerySeasons(next, me.email);
+  } catch (err) { return { ok: false, error: (err as Error).message }; }
 }
 
 /** ── 사이트 설정 (전체 관리자 전용) ── */

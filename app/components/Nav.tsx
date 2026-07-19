@@ -16,6 +16,7 @@ const MENU = [
   { key: 'about', label: 'ABOUT', href: '/about' },
   { key: 'missions', label: 'MISSIONS', href: '/missions' },
   { key: 'stories', label: 'STORIES', href: '/stories' },
+  { key: 'gallery', label: 'GALLERY', href: '/gallery' },
 ];
 
 export default function Nav({
@@ -98,6 +99,7 @@ export default function Nav({
         </div>
 
         <Link href="/stories" className={`nav2__item${active === 'stories' ? ' is-active' : ''}`}>STORIES</Link>
+        <Link href="/gallery" className={`nav2__item${active === 'gallery' ? ' is-active' : ''}`}>GALLERY</Link>
       </div>
 
       {/* 우측: 언어 + 계정 */}

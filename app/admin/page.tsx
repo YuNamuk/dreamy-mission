@@ -54,6 +54,10 @@ export default async function AdminHome() {
             <div><b>선교지 상세 ({COUNTRIES.length}개국)</b> <span className="muted">소개 · 국가정보 · 카테고리(사진) · 연혁 · 방문 갤러리</span></div>
             <span className="adminlist__go">편집 →</span>
           </Link>
+          <Link href="/admin/gallery" className="adminlist__item">
+            <div><b>교육선교 갤러리</b> <span className="muted">시즌별 사진 · 대표 커버 · 일괄 삭제/재업로드</span></div>
+            <span className="adminlist__go">편집 →</span>
+          </Link>
           <Link href="/admin/stories" className="adminlist__item">
             <div><b>STORIES 이야기</b> <span className="muted">학생 소감문 · 계획서 · 현장 이야기</span></div>
             <span className="adminlist__go">편집 →</span>

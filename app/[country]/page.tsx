@@ -121,6 +121,13 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
         </section>
       )}
 
+      {/* ── 갤러리 연동 ── */}
+      <section className="section--wide" style={{ padding: '26px 48px 0' }}>
+        <Link href={`/gallery?country=${id}`} className="abtn">
+          {locale === 'ko' ? `${country.ko} 교육선교 갤러리 보기 →` : `View ${country.en} gallery →`}
+        </Link>
+      </section>
+
       {/* ── 국가 내비 ── */}
       <nav className="section--wide country-nav" style={{ margin: '56px auto 0', padding: '32px 48px 72px', borderTop: '1px solid var(--line)' }}>
         <Link href={`/${prev.id}`} style={{ textAlign: 'left' }}>
