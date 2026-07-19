@@ -1727,7 +1727,7 @@ img {
    v25 — 교육선교 갤러리 + 히어로 높이 화면맞춤
    ════════════════════════════════════════════════ */
 /* 첫 화면 히어로: 뷰포트에 맞춰 채우기(고해상도에서 아래가 뜨는 문제 해결) */
-.herox { height: calc(100svh - var(--nav-h)); min-height: 480px; }
+.herox { height: clamp(420px, 66svh, 760px); min-height: 420px; }
 
 /* 시즌 카드 그리드 */
 .galgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); gap: 16px; }
@@ -1767,3 +1767,9 @@ img {
   .galview__grid { columns: 2 160px; column-gap: 8px; padding: 14px 14px 50px; }
   .galcard__cap b { font-size: 14px; }
 }
+
+/* v26 — 스티키 푸터: 공개 페이지(main 직계)에서 콘텐츠가 짧아도 푸터를 화면 맨 아래로 */
+body > main { display: flex; flex-direction: column; min-height: 100svh; }
+body > main > .site-footer { margin-top: auto; }
+/* 히어로 등 주요 블록이 flex 축소되지 않도록 */
+body > main > * { flex-shrink: 0; }
