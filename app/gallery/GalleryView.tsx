@@ -46,34 +46,24 @@ export default function GalleryView({ seasons, names, ui }: { seasons: Season[];
 
   if (!seasons.length) return <p className="muted" style={{ maxWidth: 760 }}>{ui.empty}</p>;
 
-  const coverList = (s: Season) => {
-    const c = s.cover && s.photos.includes(s.cover) ? s.cover : s.photos[0];
-    const rest = s.photos.filter((p) => p !== c);
-    return [c, ...rest].filter(Boolean).slice(0, 4) as string[];
-  };
+  const coverOf = (s: Season) => (s.cover && s.photos.includes(s.cover) ? s.cover : s.photos[0]);
 
   return (
     <>
       <div className="galgrid">
-        {seasons.map((s, i) => {
-          const cs = coverList(s);
-          return (
-            <button key={s.id} className={`galcard galcard--n${cs.length}`} onClick={() => { setOpenIdx(i); setPi(null); }}>
-              <div className="galcard__mosaic">
-                {cs.map((p, j) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={j} src={thumb(p, j === 0 ? 640 : 360)} alt="" loading="lazy" />
-                ))}
-              </div>
-              <span className="galcard__scrim" />
-              <span className="galcard__count">{s.photos.length}</span>
-              <div className="galcard__cap">
-                <div className="galcard__meta">{s.date && <span>{s.date}</span>}{s.country && countryName(s.country) && <span>{countryName(s.country)}</span>}</div>
-                <b>{s.title}</b>
-              </div>
-            </button>
-          );
-        })}
+        {seasons.map((s, i) => (
+          <button key={s.id} className="galcard" onClick={() => { setOpenIdx(i); setPi(null); }}>
+            {/* 대표 사진 — 원본 비율 유지(벽 전시 형태) */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="galcard__cover" src={thumb(coverOf(s), 700)} alt="" loading="lazy" />
+            <span className="galcard__scrim" />
+            <span className="galcard__count">{s.photos.length}</span>
+            <div className="galcard__cap">
+              <div className="galcard__meta">{s.date && <span>{s.date}</span>}{s.country && countryName(s.country) && <span>{countryName(s.country)}</span>}</div>
+              <b>{s.title}</b>
+            </div>
+          </button>
+        ))}
       </div>
 
       {/* 시즌 열람 오버레이 */}

@@ -1809,3 +1809,13 @@ body > main > * { flex-shrink: 0; }
 .galview__dlall { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 700; color: var(--navy); cursor: pointer; white-space: nowrap; }
 .galview__dlall:hover { border-color: var(--sky); color: var(--sky); }
 @media (max-width: 640px) { .galview__dlall { display: none; } }
+
+/* v29 — 갤러리 시즌 카드: 원본 비율 유지 메이슨리(벽 전시). v25/v28 카드 규칙 무력화 */
+.galgrid { display: block !important; columns: 4 280px; column-gap: 14px; }
+.galcard { break-inside: avoid; margin: 0 0 14px; width: 100%; aspect-ratio: auto !important; min-height: 0 !important; display: block; position: relative; }
+.galcard__cover { position: static !important; inset: auto !important; width: 100%; height: auto !important; display: block; transition: transform .5s ease; }
+.galcard:hover .galcard__cover { transform: scale(1.04); }
+.galcard > .galcard__scrim { z-index: 1; }
+.galcard > .galcard__count, .galcard > .galcard__cap { z-index: 2; }
+@media (max-width: 900px) { .galgrid { columns: 3 220px; } }
+@media (max-width: 640px) { .galgrid { columns: 2 150px !important; column-gap: 10px; } .galcard { margin-bottom: 10px; } }
