@@ -1878,18 +1878,9 @@ body > main > * { flex-shrink: 0; }
 
 /* 벽 + 스포트라이트 */
 .museum__wall { position: relative; display: flex; align-items: center; justify-content: center; gap: 32px; padding: 8px 70px 30px; min-height: 46vh; }
-.museum__wall::before { content: ''; position: absolute; top: -8px; left: 0; right: 0; height: 62%; pointer-events: none; z-index: 0;
-  background:
-    radial-gradient(300px 340px at 23% -12%, rgba(255,243,209,.85), rgba(255,243,209,0) 62%),
-    radial-gradient(360px 400px at 50% -14%, rgba(255,247,222,.95), rgba(255,247,222,0) 64%),
-    radial-gradient(300px 340px at 77% -12%, rgba(255,243,209,.85), rgba(255,243,209,0) 62%);
-  mix-blend-mode: multiply; }
-/* 천장 스포트라이트 점(조명 기구) */
-.museum__wall::after { content: ''; position: absolute; top: 4px; left: 0; right: 0; height: 8px; pointer-events: none; z-index: 0;
-  background:
-    radial-gradient(7px 5px at 23% 0, rgba(180,150,90,.5), transparent 70%),
-    radial-gradient(7px 5px at 50% 0, rgba(180,150,90,.55), transparent 70%),
-    radial-gradient(7px 5px at 77% 0, rgba(180,150,90,.5), transparent 70%); }
+/* 색 없는 아주 옅은 상단 음영만(순백 벽) */
+.museum__wall::before { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(78% 62% at 50% -14%, rgba(255,255,255,0) 64%, rgba(72,80,96,.045) 100%); }
 .museum__center { position: relative; display: flex; flex-direction: column; align-items: center; z-index: 1; }
 
 /* 액자 */
