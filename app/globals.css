@@ -1869,7 +1869,7 @@ body > main > * { flex-shrink: 0; }
 
 /* v31 — 갤러리 상세: 미술관 벽 전시 */
 .museum { position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 0; z-index: 1100; overflow-y: auto;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfbfc 62%, #eef0f2 100%); display: flex; flex-direction: column; }
+  background: #fff; display: flex; flex-direction: column; }
 .museum__top { position: sticky; top: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; }
 .museum__back { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.85); backdrop-filter: blur(6px); border: 1px solid rgba(0,0,0,.06); border-radius: 999px; padding: 10px 18px; font-size: 13.5px; font-weight: 700; color: var(--ink); cursor: pointer; box-shadow: 0 8px 20px -12px rgba(0,0,0,.25); }
 .museum__back:hover { color: var(--sky); }
