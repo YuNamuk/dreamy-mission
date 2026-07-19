@@ -1779,3 +1779,11 @@ body > main > * { flex-shrink: 0; }
   #map { flex: 1 1 auto; min-height: 520px; display: flex; flex-direction: column; }
   #map > .herox { flex: 1 1 auto; height: auto; min-height: 400px; }
 }
+
+/* v27 — 카드 반응형: 폭에 비례해 높이도 커지도록(가로세로 비율). 앞선 고정 min-height 무력화 */
+.ccard { aspect-ratio: 16 / 10; min-height: 128px !important; }
+.dcard { aspect-ratio: 16 / 9; min-height: 150px !important; }
+@media (max-width: 640px) {
+  .ccard { aspect-ratio: 5 / 4; }
+  .dcard { aspect-ratio: 16 / 10; }
+}
