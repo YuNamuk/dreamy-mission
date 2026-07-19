@@ -85,8 +85,13 @@ export default async function GalleryPage({ searchParams }: { searchParams: Prom
               download: ko ? '다운로드' : 'Download',
               downloadAll: ko ? '전체 다운로드' : 'Download all',
               photos: ko ? '장' : 'photos',
-              back: ko ? '갤러리' : 'Gallery',
               empty: ko ? '이 조건에 해당하는 사진이 없습니다.' : 'No photos match this filter.',
+              backToGallery: ko ? '갤러리로 돌아가기' : 'Back to gallery',
+              lCountry: ko ? '국가' : 'Country',
+              lMonth: ko ? '월' : 'Month',
+              lTitle: ko ? '제목' : 'Title',
+              lPhoto: ko ? '사진' : 'Photo',
+              lPeople: ko ? '참여자' : 'Participants',
             }}
           />
         </div>

@@ -20,6 +20,12 @@ export interface Season {
   /** 대표 커버 URL (없으면 photos[0]) */
   cover?: string;
   photos: string[];
+  /** 상세 설명 */
+  description?: string;
+  /** 태그 */
+  tags?: string[];
+  /** 참여자 (예: "교사 6명, 학생 32명") */
+  participants?: string;
 }
 
 export const GALLERY_KEY = 'gallery';
@@ -31,13 +37,19 @@ function seedSeasons(locale: Locale): Season[] {
     for (let n = 1; n <= c.themes.length; n++)
       for (let k = 1; k <= 3; k++) photos.push(`${PHOTO_BASE}/gal-${c.id}-${n}-${k}.jpg`);
     const name = locale === BASE_LOCALE ? c.ko : c.en;
+    const ko = locale === BASE_LOCALE;
     return {
       id: `seed-${c.id}`,
-      title: locale === BASE_LOCALE ? `${name} 교육선교` : `${name} Education Mission`,
+      title: ko ? `${name} 교육선교` : `${name} Education Mission`,
       date: '2026.05',
       country: c.id,
       cover: photos[0],
       photos,
+      description: ko
+        ? `드리미학교 학생들이 ${name}에 방문해 현지 아이들과 함께한 교육선교 현장의 사진들입니다. 배움과 나눔, 만남과 성장의 순간을 담았습니다.`
+        : `Photos from the education mission where Dreamy School students visited ${name} and served alongside local children — moments of learning, sharing, meeting, and growth.`,
+      tags: ko ? ['교육선교', name, '현장', '2026'] : ['Education Mission', name, 'Field', '2026'],
+      participants: ko ? '교사·학생 교육선교팀' : 'Teacher·student mission team',
     };
   }).filter((s) => s.photos.length > 0);
 }
