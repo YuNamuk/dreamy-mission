@@ -3,7 +3,8 @@ export function thumb(url: string | undefined | null, width = 520, quality = 70)
   if (!url) return '';
   if (!url.includes('/storage/v1/object/public/')) return url; // 로컬/외부는 그대로
   const base = url.split('?')[0].replace('/storage/v1/object/public/', '/storage/v1/render/image/public/');
-  return `${base}?width=${width}&quality=${quality}`;
+  // resize=contain: 원본 가로세로 비율 유지(기본 cover는 폭만 바꿔 세로로 찌그러뜨림)
+  return `${base}?width=${width}&resize=contain&quality=${quality}`;
 }
 
 /** 원본 다운로드 URL(Content-Disposition attachment) */
