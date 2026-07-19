@@ -4,6 +4,7 @@ import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { addSeason, updateSeasonMeta, removeSeason, addSeasonPhotos, removeSeasonPhoto, setSeasonCover, moveSeasonPhoto, clearGallery } from '../actions';
 import type { Season } from '@/lib/gallery';
+import { thumb } from '@/lib/img';
 
 export default function GalleryEditor({ initial, countries }: { initial: Season[]; countries: { id: string; ko: string }[] }) {
   const seasons = initial; // router.refresh 시 최신 반영
@@ -91,7 +92,7 @@ export default function GalleryEditor({ initial, countries }: { initial: Season[
                 return (
                   <div key={p} className={`avisit__ph${isCover ? ' is-cover' : ''}`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p} alt="" loading="lazy" />
+                    <img src={thumb(p, 280)} alt="" loading="lazy" />
                     {isCover && <span className="avisit__coverbadge">커버</span>}
                     <div className="avisit__tools">
                       <button onClick={() => run(() => moveSeasonPhoto(s.id, p, -1))} disabled={pi === 0 || pending} title="앞으로">‹</button>
