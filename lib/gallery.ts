@@ -8,7 +8,7 @@ import 'server-only';
 import { supabase } from './supabase';
 import { CONTENT_TABLE } from './content';
 import { COUNTRIES } from './countries';
-import { resolvePhoto } from './photos';
+import { PHOTO_BASE } from './uploaded-photos';
 import { BASE_LOCALE, overlay, type Locale } from './i18n';
 
 export interface Season {
@@ -24,11 +24,12 @@ export interface Season {
 
 export const GALLERY_KEY = 'gallery';
 
-/** 기존 업로드 이미지로 만드는 더미 시드 (관리자에서 일괄 삭제 후 재구성 전까지 노출) */
+/** 더미 시드 — 이전에 올린 현장 사진(gal-<나라>-<주제>-<k>.jpg, 원본 비율)으로 구성 */
 function seedSeasons(locale: Locale): Season[] {
   return COUNTRIES.map((c) => {
-    const slots = [`card-${c.id}`, `th-${c.id}-1`, `th-${c.id}-2`, `th-${c.id}-3`, `th-${c.id}-4`, `th-${c.id}-5`];
-    const photos = slots.map((s) => resolvePhoto(s)).filter((u): u is string => !!u);
+    const photos: string[] = [];
+    for (let n = 1; n <= c.themes.length; n++)
+      for (let k = 1; k <= 3; k++) photos.push(`${PHOTO_BASE}/gal-${c.id}-${n}-${k}.jpg`);
     const name = locale === BASE_LOCALE ? c.ko : c.en;
     return {
       id: `seed-${c.id}`,
