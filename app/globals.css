@@ -1727,7 +1727,7 @@ img {
    v25 — 교육선교 갤러리 + 히어로 높이 화면맞춤
    ════════════════════════════════════════════════ */
 /* 첫 화면 히어로: 뷰포트에 맞춰 채우기(고해상도에서 아래가 뜨는 문제 해결) */
-.herox { height: clamp(440px, calc(100svh - var(--nav-h) - 72px), 860px); min-height: 440px; }
+.herox { height: calc(100svh - var(--nav-h)); min-height: 480px; }
 
 /* 시즌 카드 그리드 */
 .galgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); gap: 16px; }
