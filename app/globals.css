@@ -1884,9 +1884,9 @@ body > main > * { flex-shrink: 0; }
 .museum__center { position: relative; display: flex; flex-direction: column; align-items: center; z-index: 1; }
 
 /* 액자 */
-.frame { background: #fff; border: 3px solid #6b4f2e; border-radius: 2px; padding: 13px; box-shadow: 0 30px 58px -26px rgba(20,16,10,.5), 0 8px 20px -10px rgba(20,16,10,.3); cursor: pointer; position: relative; z-index: 1; }
+.frame { background: #fff; border: 1.5px solid #6b4f2e; border-radius: 2px; padding: 6px; box-shadow: 0 28px 54px -26px rgba(20,16,10,.46), 0 7px 18px -10px rgba(20,16,10,.28); cursor: pointer; position: relative; z-index: 1; }
 .frame img { display: block; border-radius: 1px; }
-.frame--main { padding: 16px; cursor: default; }
+.frame--main { padding: 8px; cursor: default; }
 .frame--main img { width: min(66vw, 820px); max-height: 64vh; height: auto; object-fit: contain; }
 .frame--sm { width: clamp(150px, 15vw, 210px); }
 .frame--sm img { width: 100%; height: auto; }
