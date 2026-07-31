@@ -48,7 +48,7 @@ export default async function SupportPage() {
     <main>
       <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active="support" logo={settings.logoUrl} locale={locale} />
 
-      <section className="section--wide staticpage" style={{ padding: '128px 48px 64px' }}>
+      <section className="section--wide staticpage" style={{ padding: '184px 48px 64px' }}>
         <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.22em' }}>TOGETHER · 함께하는 교육선교</div>
         <h1 className="staticpage__title">함께하기</h1>
         <p className="staticpage__sub">후원과 소식, 해외 파트너 — 드리미 교육선교에 동행하는 길입니다.</p>

@@ -15,7 +15,7 @@ export default async function StaticPage({ pageKey, active, children }: { pageKe
     <main>
       <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active={active} logo={settings.logoUrl} locale={locale} />
 
-      <section className="section--wide staticpage" style={{ padding: '128px 48px 0' }}>
+      <section className="section--wide staticpage" style={{ padding: '184px 48px 0' }}>
         <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.22em' }}>{page.eyebrow}</div>
         <h1 className="staticpage__title">{page.title}</h1>
         {page.subtitle && <p className="staticpage__sub">{page.subtitle}</p>}

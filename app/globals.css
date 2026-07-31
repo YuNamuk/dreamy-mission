@@ -1073,7 +1073,7 @@ img {
 
 /* 상단 메뉴바 */
 .nav2 {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 1200;
+  position: fixed; top: var(--ghd-h); left: 0; right: 0; z-index: 1200;
   display: flex; align-items: center; gap: 16px;
   height: var(--nav-h); padding: 0 32px;
   background: rgba(255,255,255,.93);
@@ -1154,7 +1154,7 @@ img {
 }
 @media (max-width: 640px) {
   .nav2 { padding: 0 16px; }
-  .titleband { padding-top: calc(var(--nav-h) + 24px); }
+  .titleband { padding-top: calc(var(--nav-h) + var(--ghd-h) + 24px); }
 }
 
 /* ── 히어로 재구성(레퍼런스 구성): 지도 중앙 셀 ── */
@@ -1946,19 +1946,6 @@ body > main > * { flex-shrink: 0; }
 }
 
 
-/* ===== 드리미학교 전역 헤더(교육선교 → 홈페이지 편입 프레임) ===== */
-.ghd { background:#fff; border-bottom:1px solid #E6E9EC; }
-.ghd__in { max-width:1152px; margin:0 auto; padding:9px 20px; display:flex; align-items:center; justify-content:space-between; gap:14px; }
-.ghd__brand { display:flex; align-items:center; gap:8px; text-decoration:none; }
-.ghd__mark { display:flex; width:26px; height:26px; align-items:center; justify-content:center; border-radius:7px; background:#00B5EF; color:#fff; }
-.ghd__name { font-family:var(--f-ko); font-weight:800; font-size:13.5px; color:#12303C; line-height:1.05; display:flex; flex-direction:column; }
-.ghd__name i { font-style:normal; font-family:var(--f-disp); font-weight:600; font-size:8.5px; letter-spacing:.2em; color:#0091C2; }
-.ghd__nav { display:flex; gap:16px; overflow-x:auto; scrollbar-width:none; }
-.ghd__nav::-webkit-scrollbar { display:none; }
-.ghd__link { font-family:var(--f-ko); font-size:12.5px; font-weight:600; color:#3A4A52; text-decoration:none; white-space:nowrap; padding:4px 0; border-bottom:2px solid transparent; }
-.ghd__link:hover { color:#0091C2; }
-.ghd__link.is-active { color:#0091C2; border-bottom-color:#00B5EF; }
-
 /* ===== SUPPORT(함께하기) ===== */
 .sup__group { margin-top: 46px; }
 .sup__h { font-family: var(--f-disp); font-size: 21px; font-weight: 800; color: var(--ink); margin: 0 0 4px; }
@@ -1969,3 +1956,32 @@ body > main > * { flex-shrink: 0; }
 .sup__card b { font-size: 15px; color: var(--ink); font-weight: 700; }
 .sup__card span { font-size: 12.5px; color: var(--ink3); line-height: 1.5; }
 .sup__ext { color: var(--sky); font-weight: 600; }
+
+/* ===== 드리미학교 전역 헤더(고정 + 드롭다운) — 홈페이지 프레임 ===== */
+:root { --ghd-h: 56px; }
+.ghd { position: fixed; top: 0; left: 0; right: 0; z-index: 1300; background: rgba(255,255,255,.94); backdrop-filter: saturate(140%) blur(8px); -webkit-backdrop-filter: saturate(140%) blur(8px); border-bottom: 1px solid #E6E9EC; }
+.ghd__in { max-width: 1280px; margin: 0 auto; height: var(--ghd-h); padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.ghd__brand { display: flex; align-items: center; gap: 8px; text-decoration: none; flex: none; }
+.ghd__mark { display: flex; width: 27px; height: 27px; align-items: center; justify-content: center; border-radius: 7px; background: #00B5EF; color: #fff; }
+.ghd__name { font-family: var(--f-ko); font-weight: 800; font-size: 14px; color: #12303C; line-height: 1.05; display: flex; flex-direction: column; }
+.ghd__name i { font-style: normal; font-family: var(--f-disp); font-weight: 600; font-size: 8.5px; letter-spacing: .2em; color: #0091C2; }
+.ghd__nav { display: flex; gap: 2px; overflow: visible; }
+.ghd__dd { position: relative; }
+.ghd__link { display: inline-block; font-family: var(--f-ko); font-size: 14px; font-weight: 600; color: #3A4A52; text-decoration: none; white-space: nowrap; padding: 8px 11px; border-radius: 8px; }
+.ghd__link:hover { background: #E6F7FE; color: #0091C2; }
+.ghd__link.is-active { color: #0091C2; }
+.ghd__panel { visibility: hidden; opacity: 0; transition: opacity .12s; position: absolute; left: 0; top: 100%; min-width: 176px; background: #fff; border: 1px solid #E6E9EC; border-radius: 10px; box-shadow: 0 14px 40px -18px rgba(14,36,56,.35); padding: 8px 0; display: flex; flex-direction: column; }
+.ghd__dd:hover .ghd__panel, .ghd__dd:focus-within .ghd__panel { visibility: visible; opacity: 1; }
+.ghd__plink { font-family: var(--f-ko); font-size: 13.5px; color: #3A4A52; text-decoration: none; padding: 7px 16px; white-space: nowrap; }
+.ghd__plink:hover { background: #E6F7FE; color: #0091C2; }
+.ghd__cta { flex: none; font-family: var(--f-ko); font-size: 13px; font-weight: 700; color: #fff; background: #00a7e1; border-radius: 999px; padding: 8px 15px; text-decoration: none; }
+.ghd__cta:hover { filter: brightness(1.08); }
+@media (max-width: 1023px) {
+  .ghd__nav { overflow-x: auto; scrollbar-width: none; }
+  .ghd__nav::-webkit-scrollbar { display: none; }
+  .ghd__panel { display: none; }
+  .ghd__cta { display: none; }
+}
+
+
+.sup__kind { display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; color: #0091C2; background: #E6F7FE; border-radius: 6px; padding: 2px 7px; margin-right: 7px; vertical-align: 2px; }

@@ -9,6 +9,7 @@ import { PHOTO_BASE } from '@/lib/uploaded-photos';
 import { getLocale, makeT } from '@/lib/i18n';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import { COUNTRY_LINKS, KIND_LABEL } from '@/lib/country-support';
 import EditController from '../components/EditController';
 import CategoryGallery, { type Category } from '../components/CategoryGallery';
 import VisitGallery from '../components/VisitGallery';
@@ -46,7 +47,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
       <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active="missions" logo={settings.logoUrl} locale={locale} />
 
       {/* ── 통합 히어로 카드: 이름 · 설명 · 국가정보 · 위치 지도 ── */}
-      <section className="section--wide" style={{ padding: '108px 48px 0' }}>
+      <section className="section--wide" style={{ padding: '164px 48px 0' }}>
         <div className="chero">
           <div className="chero__left">
             <div className="chero__head">
@@ -127,6 +128,26 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
           {locale === 'ko' ? `${country.ko} 교육선교 갤러리 보기 →` : `View ${country.en} gallery →`}
         </Link>
       </section>
+
+      {/* ── 소식·함께하기 — 이 나라의 선교편지·후원 ── */}
+      {(COUNTRY_LINKS[id]?.length ?? 0) > 0 && (
+        <section className="section--wide" style={{ padding: '40px 48px 0' }}>
+          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 6 }}>
+            {locale === 'ko' ? '소식 · 함께하기' : 'LETTERS · SUPPORT'}
+          </div>
+          <p style={{ fontSize: 13.5, color: 'var(--ink3)', margin: '0 0 16px' }}>
+            {locale === 'ko' ? `${country.ko} 교육선교의 편지와 동행 방법입니다.` : `Letters and ways to walk with ${country.en}.`}
+          </p>
+          <div className="sup__grid">
+            {COUNTRY_LINKS[id].map((it) => (
+              <a key={it.name} href={it.href} className="sup__card" target={it.external ? '_blank' : undefined} rel={it.external ? 'noopener noreferrer' : undefined}>
+                <b><span className="sup__kind">{KIND_LABEL[it.kind]}</span>{it.name}{it.external && <span className="sup__ext" aria-hidden> ↗</span>}</b>
+                <span>{it.desc}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── 국가 내비 ── */}
       <nav className="section--wide country-nav" style={{ margin: '56px auto 0', padding: '32px 48px 72px', borderTop: '1px solid var(--line)' }}>

@@ -16,7 +16,6 @@ const MENU = [
   { key: 'about', label: 'ABOUT', href: '/about' },
   { key: 'missions', label: 'MISSIONS', href: '/missions' },
   { key: 'stories', label: 'STORIES', href: '/stories' },
-  { key: 'gallery', label: 'GALLERY', href: '/gallery' },
   { key: 'support', label: 'SUPPORT', href: '/support' },
 ];
 
@@ -100,7 +99,6 @@ export default function Nav({
         </div>
 
         <Link href="/stories" className={`nav2__item${active === 'stories' ? ' is-active' : ''}`}>STORIES</Link>
-        <Link href="/gallery" className={`nav2__item${active === 'gallery' ? ' is-active' : ''}`}>GALLERY</Link>
         <Link href="/support" className={`nav2__item${active === 'support' ? ' is-active' : ''}`}>SUPPORT</Link>
       </div>
 
