@@ -43,7 +43,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
   });
 
   return (
-    <main id="country-root">
+    <main id="country-root" className="country-page">
       <GlobalHeader user={user} locale={locale} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} />
 
       {/* ── 통합 히어로 카드: 이름 · 설명 · 국가정보 · 위치 지도 ── */}
