@@ -14,7 +14,7 @@ const NAV: NavItem[] = [
     { label: '빚음', href: '/education/bijeum' }, { label: '신앙교육', href: '/education/faith' },
     { label: '3P 교육', href: '/education/3p' }, { label: '생활교육', href: '/education/life' },
     { label: '편제표', href: '/education/schedule' }, { label: '수업 아카이브', href: '/archive' },
-    { label: '학기별 전시', href: '/terms' }, { label: '아카이브 소식', href: '/news' } ] },
+    { label: '학기별 전시', href: '/terms' }, { label: '학부모 소식지', href: '/plaza/newsletter' } ] },
   { label: '입학', href: '/admission', children: [
     { label: '입학 안내', href: '/admission' }, { label: '고등학교 입학전형', href: '/admission/high' },
     { label: '중학교 입학전형', href: '/admission/middle' }, { label: '입학전형 공고문', href: '/admission/notice' },

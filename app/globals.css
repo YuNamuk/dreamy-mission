@@ -1999,3 +1999,6 @@ body > main > * { flex-shrink: 0; }
 .ghd__msec { font-family: var(--f-disp); font-size: 11px; font-weight: 800; letter-spacing: .18em; color: #9CA8B0; margin-bottom: 6px; }
 @media (max-width: 1023px) { .ghd__burger { display: inline-flex; } }
 
+
+/* 나라별 상세 페이지 예외 — 정보 밀도가 높아 헤더(로고) 컨테이너 폭(1280px)까지 확장 */
+.country-page .section--wide { max-width: 1280px; padding-left: 20px; padding-right: 20px; }
