@@ -1993,3 +1993,16 @@ body > main > * { flex-shrink: 0; }
 .ghd__mobile { position: fixed; top: var(--ghd-h); left: 0; right: 0; z-index: 1290; background: #fff; border-bottom: 1px solid #E6E9EC; box-shadow: 0 20px 40px -24px rgba(14,36,56,.3); display: flex; flex-direction: column; padding: 12px 20px 18px; }
 .ghd__msec { font-family: var(--f-disp); font-size: 11px; font-weight: 800; letter-spacing: .18em; color: #9CA8B0; margin-bottom: 6px; }
 @media (max-width: 1023px) { .ghd__burger { display: inline-flex; } }
+
+/* ── 홈페이지 컨테이너 정렬: 본문을 전역 헤더(로고 라인, max 1280px)와 같은 폭으로 센터 정렬.
+     풀블리드는 사이트 푸터(다크 밴드)만 유지. ── */
+main > :not(.site-footer):not(header) {
+  max-width: 1280px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 100%;
+}
+/* 컨테이너化에 따라 히어로 지도의 좌우 여백감 보정 — 카드 줄과 라인 맞춤 */
+@media (min-width: 1280px) {
+  .maprow { border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
+}
