@@ -1591,6 +1591,7 @@ img {
 .chero__meta { font-family: var(--f-disp); font-size: 14px; font-weight: 700; color: var(--ink4); letter-spacing: .05em; }
 .chero__intro { margin: 22px 0 0; font-size: 15.5px; line-height: 1.95; color: var(--ink2); font-weight: 300; }
 .chero .country-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 0 34px; margin-top: 24px; max-width: none; }
+.chero .fact { grid-template-columns: 58px 1fr; gap: 12px; } /* 라벨-값 간격 축소(정치체제 4자 기준) */
 .chero .fact--wide { grid-column: 1 / -1; } /* 면적·언어·종교 — 값이 길어 두 줄 되는 항목은 전체 폭 한 줄 */
 .chero__map { position: relative; min-height: 480px; background: #eef3f7; border-left: 1px solid var(--line); }
 .locmap { position: absolute; inset: 0; }
