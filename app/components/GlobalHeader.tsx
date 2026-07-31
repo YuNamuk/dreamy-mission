@@ -42,10 +42,9 @@ export function GlobalHeader({ user = null, locale = 'ko', countries = [] }: { u
     <header className="ghd">
       <div className="ghd__in">
         <a href="/" className="ghd__brand" aria-label="드리미학교 홈">
-          <span className="ghd__mark" aria-hidden>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v18M4 8l8-5 8 5-8 5-8-5Z" strokeLinejoin="round" strokeLinecap="round" /></svg>
-          </span>
-          <span className="ghd__name">드리미학교 <i>DREAMY SCHOOL</i></span>
+          {/* 홈페이지와 동일한 Dreamy School 로고 (site-settings.logo) */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="https://efrgphjvpatsprhazirk.supabase.co/storage/v1/object/public/class-images/homepage/live/442057207162213b7cddd0594f001b0b33efd738-1280x229.png" alt="Dreamy School" className="ghd__logo" />
         </a>
         <nav className="ghd__nav" aria-label="드리미학교 전체 메뉴">
           {NAV.map((m) => (
