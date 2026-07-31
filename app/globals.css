@@ -38,7 +38,7 @@
   --maxw: 1240px;
   --maxw-wide: 1280px; /* 헤더(로고) 컨테이너와 동일 폭 — 콘텐츠는 로고 라인 안쪽 */
   /* 지도 오버레이용: 화면이 1280px보다 넓으면 컨테이너 라인에 정렬 */
-  --edge: max(48px, calc((100vw - 1280px) / 2 + 20px));
+  --edge: max(48px, calc((100vw - 1280px) / 2 + 44px)); /* 로고 라인 + 24px 안쪽 */
   --nav-h: var(--ghd-h, 56px);  /* 단일 헤더: 구 nav2 제거, 전역 헤더 높이 기준 */
 }
 
@@ -684,6 +684,7 @@ img {
 }
 .ccard {
   position: relative;
+  min-width: 0;
   border-radius: 16px;
   overflow: hidden;
   min-height: 190px;
