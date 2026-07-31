@@ -131,12 +131,12 @@ export default function Nav({
                   <span>{user.email}{user.role ? ` · ${user.role}` : ''}</span>
                 </div>
                 <Link href="/admin" className="nav2__ddlink">{tt('관리자', 'Admin')}</Link>
-                <a href="/api/auth/logout" className="nav2__ddlink">{tt('로그아웃', 'Sign out')}</a>
+                <a href="/mission/api/auth/logout" className="nav2__ddlink">{tt('로그아웃', 'Sign out')}</a>
               </div>
             )}
           </div>
         ) : (
-          <a href="/api/auth/login" className="nav2__avatar nav2__avatar--guest" title="드리미학교 학생·교사 로그인" aria-label="학생 로그인">
+          <a href="/mission/api/auth/login" className="nav2__avatar nav2__avatar--guest" title="드리미학교 학생·교사 로그인" aria-label="학생 로그인">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="12" cy="8" r="3.4" /><path d="M5 20c0-3.3 3.1-5.5 7-5.5s7 2.2 7 5.5" strokeLinecap="round" /></svg>
           </a>
         )}
@@ -167,8 +167,8 @@ export default function Nav({
               ))}
             </div>
           </div>
-          {!user && <a href="/api/auth/login" className="nav2__mlink">{tt('학생 로그인', 'Sign in')}</a>}
-          {user && <a href="/api/auth/logout" className="nav2__mlink">{tt('로그아웃', 'Sign out')}</a>}
+          {!user && <a href="/mission/api/auth/login" className="nav2__mlink">{tt('학생 로그인', 'Sign in')}</a>}
+          {user && <a href="/mission/api/auth/logout" className="nav2__mlink">{tt('로그아웃', 'Sign out')}</a>}
         </div>
       )}
     </nav>

@@ -160,7 +160,7 @@ export default function MapHero({ countries, journey, hero, defaultLayer = 'terr
           ? `<div class="mm-pop__now"><div class="mm-pop__nowh">${c.status.year}<span>${L_INPROGRESS}</span></div>${c.status.items.map((i) => `<div class="mm-pop__li"><i>–</i><span>${i}</span></div>`).join('')}</div>`
           : '';
         m.bindPopup(
-          `<div class="mm-pop"><div class="mm-pop__hd"><b>${c.ko}</b><i>${c.en}</i></div><div class="mm-pop__sum">${c.summary}</div>${statusHtml}<a href="/${c.id}" class="mm-pop__more" data-detail="${c.id}">${L_DETAIL}</a></div>`,
+          `<div class="mm-pop"><div class="mm-pop__hd"><b>${c.ko}</b><i>${c.en}</i></div><div class="mm-pop__sum">${c.summary}</div>${statusHtml}<a href="/mission/${c.id}" class="mm-pop__more" data-detail="${c.id}">${L_DETAIL}</a></div>`,
           { closeButton: true, minWidth: 216, maxWidth: 284, autoPan: false },
         );
         // 클릭 → Leaflet 내장 flyTo 로 부드럽게 줌인(지도 보여진 채, 타일 재로딩 없이). 팝업은 살짝 아래로.
