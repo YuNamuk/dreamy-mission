@@ -47,7 +47,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
       <GlobalHeader user={user} locale={locale} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} />
 
       {/* ── 통합 히어로 카드: 이름 · 설명 · 국가정보 · 위치 지도 ── */}
-      <section className="section--wide" style={{ padding: '108px 48px 0' }}>
+      <section className="section--wide" style={{ padding: '108px 20px 0' }}>
         <div className="chero">
           <div className="chero__left">
             <div className="chero__head">
@@ -79,14 +79,14 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
           </div>
 
           <div className="chero__map">
-            <LocatorMap countryId={id} site={country.site} />
+            <LocatorMap countryId={id} site={country.site} label={country.ko} />
             <div className="chero__pin">{cname(country)}</div>
           </div>
         </div>
       </section>
 
       {/* ── 카테고리 갤러리 + 연혁 레일 ── */}
-      <section className="section--wide country-body" style={{ padding: '48px 48px 0' }}>
+      <section className="section--wide country-body" style={{ padding: '48px 20px 0' }}>
         <div>
           <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 20 }}>
             {t('label.categories')} <span style={{ color: 'var(--ink4)', fontWeight: 500 }}>{t('label.visitsHint')}</span>
@@ -114,7 +114,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
 
       {/* ── 소식·함께하기 — 이 나라의 선교편지·후원 ── */}
       {(COUNTRY_LINKS[id]?.length ?? 0) > 0 && (
-        <section className="section--wide" style={{ padding: '40px 48px 0' }}>
+        <section className="section--wide" style={{ padding: '40px 20px 0' }}>
           <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 6 }}>
             {locale === 'ko' ? '소식 · 함께하기' : 'LETTERS · SUPPORT'}
           </div>
@@ -134,7 +134,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
 
       {/* ── 교육선교 방문 갤러리 ── */}
       {hasVisits && (
-        <section className="section--wide" style={{ padding: '18px 48px 0' }}>
+        <section className="section--wide" style={{ padding: '18px 20px 0' }}>
           <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 20 }}>
             {t('label.visits')} <span style={{ color: 'var(--ink4)', fontWeight: 500 }}>{t('label.visitsHint')}</span>
           </div>
@@ -143,14 +143,14 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
       )}
 
       {/* ── 갤러리 연동 ── */}
-      <section className="section--wide" style={{ padding: '26px 48px 0' }}>
+      <section className="section--wide" style={{ padding: '26px 20px 0' }}>
         <Link href={`/gallery?country=${id}`} className="abtn">
           {locale === 'ko' ? `${country.ko} 교육선교 갤러리 보기 →` : `View ${country.en} gallery →`}
         </Link>
       </section>
 
       {/* ── 국가 내비 ── */}
-      <nav className="section--wide country-nav" style={{ margin: '56px auto 0', padding: '32px 48px 72px', borderTop: '1px solid var(--line)' }}>
+      <nav className="section--wide country-nav" style={{ margin: '56px auto 0', padding: '32px 20px 72px', borderTop: '1px solid var(--line)' }}>
         <Link href={`/${prev.id}`} style={{ textAlign: 'left' }}>
           <div style={{ fontFamily: 'var(--f-disp)', fontSize: 11.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--ink4)' }}>{t('nav.prev')}</div>
           <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4 }}>{cname(prev)}</div>

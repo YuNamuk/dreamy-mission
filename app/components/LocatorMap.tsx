@@ -7,7 +7,7 @@ import 'leaflet/dist/leaflet.css';
  * 로케이터 미니맵 — 지형(terrain) 타일 위에 대상 국가를 하이라이트.
  * 휠 줌은 홈 지도와 동일한 방식(커서 앵커 고정 + 프레임 지수감쇠 lerp).
  */
-export default function LocatorMap({ countryId, site }: { countryId: string; site?: [number, number] }) {
+export default function LocatorMap({ countryId, site, label }: { countryId: string; site?: [number, number]; label?: string }) {
   const elRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import('leaflet').Map | null>(null);
   const lat = site?.[0];
@@ -92,6 +92,11 @@ export default function LocatorMap({ countryId, site }: { countryId: string; sit
       if (lat != null && lng != null) {
         L.marker([lat, lng], { interactive: false, icon: L.divIcon({ className: '', iconSize: [0, 0], iconAnchor: [0, 0],
           html: '<div style="transform:translate(-50%,-50%)"><span style="display:block;width:15px;height:15px;border-radius:50%;background:#2f6fd0;border:3px solid #fff;box-shadow:0 3px 10px rgba(14,36,56,.45)"></span></div>' }) }).addTo(map);
+        // 나라명 칩(핀 위) — 홈 지도와 같은 흰 칩 스타일
+        if (label) {
+          L.marker([lat, lng], { interactive: false, icon: L.divIcon({ className: '', iconSize: [0, 0], iconAnchor: [0, 0],
+            html: `<div style="transform:translate(-50%,-160%)"><span style="display:inline-block;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.95);border:1px solid #dfe8ee;box-shadow:0 6px 16px -8px rgba(14,36,56,.4);font-weight:800;font-size:13px;color:#12293c;white-space:nowrap">${label}</span></div>` }) }).addTo(map);
+        }
       }
 
       ro = new ResizeObserver(() => map.invalidateSize());
