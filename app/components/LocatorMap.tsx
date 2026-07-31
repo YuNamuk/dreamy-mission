@@ -71,7 +71,7 @@ export default function LocatorMap({ countryId, site }: { countryId: string; sit
         }).addTo(map);
         const b = layer.getBounds();
         map.fitBounds(b, { padding: [24, 24] });
-        map.setView(b.getCenter(), Math.max(2, map.getZoom() - 0.7), { animate: false });
+        map.setView(b.getCenter(), Math.max(2, map.getZoom() - 1.3), { animate: false }); // 주변국까지 보이게 넓힘
         targetZoom = map.getZoom();
 
         // 줌인할수록 하이라이트 페이드아웃 (저해상도 경계가 지형과 어긋나 어색해지므로)
@@ -84,7 +84,7 @@ export default function LocatorMap({ countryId, site }: { countryId: string; sit
         map.on('zoom zoomend', updateHighlight);
         updateHighlight();
       } catch {
-        if (lat != null && lng != null) { map.setView([lat, lng], 5); targetZoom = 5; }
+        if (lat != null && lng != null) { map.setView([lat, lng], 4); targetZoom = 4; } // 지형·주변국 가시
         else { map.setView([20, 100], 3); targetZoom = 3; }
       }
 

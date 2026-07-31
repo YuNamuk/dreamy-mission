@@ -112,23 +112,6 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
         </aside>
       </section>
 
-      {/* ── 교육선교 방문 갤러리 ── */}
-      {hasVisits && (
-        <section className="section--wide" style={{ padding: '18px 48px 0' }}>
-          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 20 }}>
-            {t('label.visits')} <span style={{ color: 'var(--ink4)', fontWeight: 500 }}>{t('label.visitsHint')}</span>
-          </div>
-          <VisitGallery visits={visits} />
-        </section>
-      )}
-
-      {/* ── 갤러리 연동 ── */}
-      <section className="section--wide" style={{ padding: '26px 48px 0' }}>
-        <Link href={`/gallery?country=${id}`} className="abtn">
-          {locale === 'ko' ? `${country.ko} 교육선교 갤러리 보기 →` : `View ${country.en} gallery →`}
-        </Link>
-      </section>
-
       {/* ── 소식·함께하기 — 이 나라의 선교편지·후원 ── */}
       {(COUNTRY_LINKS[id]?.length ?? 0) > 0 && (
         <section className="section--wide" style={{ padding: '40px 48px 0' }}>
@@ -148,6 +131,23 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
           </div>
         </section>
       )}
+
+      {/* ── 교육선교 방문 갤러리 ── */}
+      {hasVisits && (
+        <section className="section--wide" style={{ padding: '18px 48px 0' }}>
+          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 20 }}>
+            {t('label.visits')} <span style={{ color: 'var(--ink4)', fontWeight: 500 }}>{t('label.visitsHint')}</span>
+          </div>
+          <VisitGallery visits={visits} />
+        </section>
+      )}
+
+      {/* ── 갤러리 연동 ── */}
+      <section className="section--wide" style={{ padding: '26px 48px 0' }}>
+        <Link href={`/gallery?country=${id}`} className="abtn">
+          {locale === 'ko' ? `${country.ko} 교육선교 갤러리 보기 →` : `View ${country.en} gallery →`}
+        </Link>
+      </section>
 
       {/* ── 국가 내비 ── */}
       <nav className="section--wide country-nav" style={{ margin: '56px auto 0', padding: '32px 48px 72px', borderTop: '1px solid var(--line)' }}>
