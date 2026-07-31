@@ -36,9 +36,9 @@
   --f-disp: var(--font-display), "Montserrat", var(--font-noto-kr), sans-serif;
 
   --maxw: 1240px;
-  --maxw-wide: 1280px; /* 헤더(로고) 컨테이너와 동일 폭 — 콘텐츠는 로고 라인 안쪽 */
+  --maxw-wide: 1152px; /* 홈페이지 콘텐츠 표준(max-w-6xl)과 동일 */
   /* 지도 오버레이용: 화면이 1280px보다 넓으면 컨테이너 라인에 정렬 */
-  --edge: max(48px, calc((100vw - 1280px) / 2 + 44px)); /* 로고 라인 + 24px 안쪽 */
+  --edge: max(48px, calc((100vw - 1152px) / 2 + 16px)); /* 홈페이지 콘텐츠 라인(max-w-6xl + px-4)과 동일 */
   --nav-h: var(--ghd-h, 56px);  /* 단일 헤더: 구 nav2 제거, 전역 헤더 높이 기준 */
 }
 
@@ -202,8 +202,8 @@ img {
   max-width: var(--maxw-wide);
   margin-left: auto;
   margin-right: auto;
-  padding-left: 48px;
-  padding-right: 48px;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 /* ── 편집 모드 (로그인 학생) ── */
@@ -680,7 +680,7 @@ img {
   gap: 14px;
   max-width: var(--maxw-wide);
   margin: 30px auto 0;
-  padding: 0 48px;
+  padding: 0 16px;
 }
 .ccard {
   position: relative;
