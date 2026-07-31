@@ -64,7 +64,7 @@ export default function LocatorMap({ countryId, site, label }: { countryId: stri
       map.on('zoomend', () => { if (!raf) targetZoom = map.getZoom(); });
 
       try {
-        const gj = await fetch(`/geo/${countryId}.geo.json`).then((r) => r.json());
+        const gj = await fetch(`/mission/geo/${countryId}.geo.json`).then((r) => r.json());
         const layer = L.geoJSON(gj, {
           interactive: false,
           style: { color: '#0089c2', weight: 2, fillColor: '#00a7e1', fillOpacity: 0.22 },
@@ -78,7 +78,7 @@ export default function LocatorMap({ countryId, site, label }: { countryId: stri
         const baseZoom = map.getZoom();
         const updateHighlight = () => {
           const z = map.getZoom();
-          const fade = Math.max(0, Math.min(1, 1 - (z - (baseZoom + 0.8)) / 1.8));
+          const fade = Math.max(0, Math.min(1, 1 - (z - (baseZoom + 2)) / 2.5));
           layer.setStyle({ opacity: 0.9 * fade, fillOpacity: 0.22 * fade });
         };
         map.on('zoom zoomend', updateHighlight);
