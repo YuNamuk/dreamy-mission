@@ -30,7 +30,8 @@ const NAV: NavItem[] = [
     { label: '선교지 (Missions)', href: '/mission/missions' }, { label: '스토리', href: '/mission/stories' },
     { label: '갤러리', href: '/mission/gallery' }, { label: '함께하기 (후원·파트너)', href: '/mission/support' } ] },
   { label: '학부모 공간', href: null, children: [
-    { label: '학부모 소식지', href: '/plaza/newsletter' }, { label: '학생 시스템', href: 'https://stu.dreamyedu.net' } ] },
+    { label: '학부모 소식지', href: '/plaza/newsletter' }, { label: '아카이브 소식', href: '/news' },
+    { label: '학생 시스템', href: 'https://stu.dreamyedu.net' } ] },
   { label: 'FAQ', href: '/faq', children: [] },
 ];
 
