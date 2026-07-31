@@ -1783,7 +1783,7 @@ img {
 /* v26 — 공개 페이지: 한 화면에 담기 + 푸터 화면 맨 아래 */
 body > main { display: flex; flex-direction: column; min-height: 100svh; }
 body > main > .site-footer { margin-top: auto; } /* 콘텐츠 페이지: 짧으면 푸터를 바닥으로 */
-body > main > * { flex-shrink: 0; }
+body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:auto 자식이 수축(갤러리 사고) 방지 */
 
 @media (min-width: 901px) {
   /* 홈: 지도가 남는 공간을 채워 지도+카드+그리는세상+푸터가 한 화면에, 빈 공간 없이 */
