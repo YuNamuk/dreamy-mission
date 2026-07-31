@@ -1251,14 +1251,14 @@ img {
    v7 — 타이트 레이아웃 (한 화면 · 낮고 긴 카드)
    ════════════════════════════════════════════════ */
 .herox { height: clamp(372px, 50svh, 530px); min-height: 372px; }
-.herox__title { top: 28px; left: 44px; }
+.herox__title { top: 28px; left: var(--edge); }
 .herox__h { font-size: clamp(29px, 3vw, 45px); }
 .herox__sub { margin-top: 11px; font-size: 13.5px; max-width: 330px; }
 .herox .valuechips { margin-top: 15px; gap: 8px; }
 .herox .valuechip { padding: 10px 6px; border-radius: 13px; }
 .herox .valuechip svg { margin-bottom: 5px; }
-.herox__journey { top: 24px; right: 28px; width: 288px; max-height: calc(100% - 48px); }
-.herox__switch { bottom: 16px; left: 44px; }
+.herox__journey { top: 24px; right: var(--edge); width: 288px; max-height: calc(100% - 48px); }
+.herox__switch { bottom: 16px; left: var(--edge); }
 
 /* 선교 발자취 컴팩트 */
 .herox__journey.tlpanel { padding: 17px 19px 12px; }
