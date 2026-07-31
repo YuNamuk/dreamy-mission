@@ -71,7 +71,7 @@ export default function LocatorMap({ countryId, site, label }: { countryId: stri
         }).addTo(map);
         const b = layer.getBounds();
         map.fitBounds(b, { padding: [24, 24] });
-        map.setView(b.getCenter(), Math.max(2, map.getZoom() - 1.3), { animate: false }); // 주변국까지 보이게 넓힘
+        map.setView(b.getCenter(), Math.max(2, map.getZoom() - 0.45), { animate: false }); // 해당 나라 크게, 주변국은 가장자리만
         targetZoom = map.getZoom();
 
         // 줌인할수록 하이라이트 페이드아웃 (저해상도 경계가 지형과 어긋나 어색해지므로)
