@@ -36,7 +36,9 @@
   --f-disp: var(--font-display), "Montserrat", var(--font-noto-kr), sans-serif;
 
   --maxw: 1240px;
-  --maxw-wide: none; /* 가로 폭 제한 없음 — 풀 반응형 */
+  --maxw-wide: 1280px; /* 헤더(로고) 컨테이너와 동일 폭 — 콘텐츠는 로고 라인 안쪽 */
+  /* 지도 오버레이용: 화면이 1280px보다 넓으면 컨테이너 라인에 정렬 */
+  --edge: max(48px, calc((100vw - 1280px) / 2 + 20px));
   --nav-h: var(--ghd-h, 56px);  /* 단일 헤더: 구 nav2 제거, 전역 헤더 높이 기준 */
 }
 
@@ -198,6 +200,8 @@ img {
 }
 .section--wide {
   max-width: var(--maxw-wide);
+  margin-left: auto;
+  margin-right: auto;
   padding-left: 48px;
   padding-right: 48px;
 }
@@ -1186,7 +1190,7 @@ img {
 .herox__overlay { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
 .herox__overlay > * { pointer-events: auto; }
 
-.herox__title { position: absolute; top: 40px; left: 48px; max-width: 440px; }
+.herox__title { position: absolute; top: 40px; left: var(--edge); max-width: 440px; }
 .herox__h {
   margin: 12px 0 0; font-family: var(--f-disp); font-weight: 900;
   font-size: clamp(34px, 3.6vw, 54px); line-height: 1.12; letter-spacing: -.02em;
@@ -1196,10 +1200,10 @@ img {
 .herox__sub { margin: 16px 0 0; max-width: 350px; font-size: 14.5px; line-height: 1.75; color: var(--ink2); font-weight: 400; text-shadow: 0 1px 8px rgba(255,255,255,.85); }
 .herox .valuechips { max-width: 440px; margin-top: 22px; }
 
-.herox__journey { position: absolute; top: 36px; right: 36px; width: 300px; max-height: calc(100% - 72px); overflow: auto; }
+.herox__journey { position: absolute; top: 36px; right: var(--edge); width: 300px; max-height: calc(100% - 72px); overflow: auto; }
 
 .herox__switch {
-  position: absolute; left: 48px; bottom: 24px; display: flex; gap: 4px; padding: 4px;
+  position: absolute; left: var(--edge); bottom: 24px; display: flex; gap: 4px; padding: 4px;
   background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-radius: 999px;
   box-shadow: 0 8px 22px -12px rgba(14,36,56,.4);
 }
