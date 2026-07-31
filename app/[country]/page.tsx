@@ -62,15 +62,15 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
               {([
                 [t('facts.capital'), country.capital],
                 [t('facts.pop'), country.pop],
-                [t('facts.area'), country.area],
-                [t('facts.language'), country.language],
-                [t('facts.religion'), country.religion],
+                [t('facts.area'), country.area, true],
+                [t('facts.language'), country.language, true],
+                [t('facts.religion'), country.religion, true],
                 [t('facts.government'), country.government],
                 [t('facts.currency'), country.currency],
                 [t('facts.climate'), country.climate],
                 [t('facts.timezone'), country.timezone],
-              ] as [string, string][]).map(([label, value]) => (
-                <div className="fact" key={label}>
+              ] as [string, string, boolean?][]).map(([label, value, wide]) => (
+                <div className={wide ? 'fact fact--wide' : 'fact'} key={label}>
                   <div className="fact__label">{label}</div>
                   <div className="fact__val">{value}</div>
                 </div>
