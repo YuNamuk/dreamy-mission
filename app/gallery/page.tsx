@@ -3,7 +3,7 @@ import { getSettings } from '@/lib/settings';
 import { getGallery } from '@/lib/gallery';
 import { COUNTRIES } from '@/lib/countries';
 import { getLocale, makeT } from '@/lib/i18n';
-import Nav from '../components/Nav';
+import { GlobalHeader } from '../components/GlobalHeader';
 import Footer from '../components/Footer';
 import GalleryView from './GalleryView';
 
@@ -40,7 +40,7 @@ export default async function GalleryPage({ searchParams }: { searchParams: Prom
 
   return (
     <main>
-      <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active="gallery" logo={settings.logoUrl} locale={locale} />
+      <GlobalHeader user={user} locale={locale} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} />
 
       <section className="section--wide galhero" style={{ padding: '116px 48px 0' }}>
         <h1 className="galhero__title">{ko ? '선교 사진 아카이브' : 'Mission Photo Archive'}</h1>

@@ -7,7 +7,7 @@ import { COUNTRIES, countryIndex } from '@/lib/countries';
 import { resolvePhoto } from '@/lib/photos';
 import { PHOTO_BASE } from '@/lib/uploaded-photos';
 import { getLocale, makeT } from '@/lib/i18n';
-import Nav from '../components/Nav';
+import { GlobalHeader } from '../components/GlobalHeader';
 import Footer from '../components/Footer';
 import { COUNTRY_LINKS, KIND_LABEL } from '@/lib/country-support';
 import EditController from '../components/EditController';
@@ -44,10 +44,10 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
 
   return (
     <main id="country-root">
-      <Nav user={user} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} active="missions" logo={settings.logoUrl} locale={locale} />
+      <GlobalHeader user={user} locale={locale} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} />
 
       {/* ── 통합 히어로 카드: 이름 · 설명 · 국가정보 · 위치 지도 ── */}
-      <section className="section--wide" style={{ padding: '164px 48px 0' }}>
+      <section className="section--wide" style={{ padding: '108px 48px 0' }}>
         <div className="chero">
           <div className="chero__left">
             <div className="chero__head">

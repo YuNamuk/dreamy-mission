@@ -34,7 +34,10 @@ const NAV: NavItem[] = [
   { label: 'FAQ', href: '/faq', children: [] },
 ];
 
-export function GlobalHeader() {
+import MissionUtils, { type UtilCountry } from './MissionUtils';
+import type { DreamiUser } from '@/lib/dreami';
+
+export function GlobalHeader({ user = null, locale = 'ko', countries = [] }: { user?: DreamiUser | null; locale?: string; countries?: UtilCountry[] } = {}) {
   return (
     <header className="ghd">
       <div className="ghd__in">
@@ -58,7 +61,10 @@ export function GlobalHeader() {
             </div>
           ))}
         </nav>
-        <a href="/admission/consult" className="ghd__cta">방문상담 신청</a>
+        <div className="ghd__right">
+          <a href="/admission/consult" className="ghd__cta">방문상담 신청</a>
+          <MissionUtils user={user} locale={locale} countries={countries} />
+        </div>
       </div>
     </header>
   );

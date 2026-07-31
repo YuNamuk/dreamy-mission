@@ -5,7 +5,7 @@ import { getHome } from '@/lib/home';
 import { getSettings } from '@/lib/settings';
 import { resolvePhoto } from '@/lib/photos';
 import { getLocale, makeT } from '@/lib/i18n';
-import Nav from './components/Nav';
+import { GlobalHeader } from './components/GlobalHeader';
 import Footer from './components/Footer';
 import MapHero from './components/MapHero';
 import { IconEducation, IconService, IconCommunity, IconFaith } from './components/icons';
@@ -40,7 +40,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Nav user={user} countries={navCountries} active="home" logo={settings.logoUrl} locale={locale} />
+      <GlobalHeader user={user} locale={locale} countries={navCountries} />
 
       {/* ── 히어로: 풀블리드 지도 + 타이틀(좌)·발자취(우) 오버레이 ── */}
       <div id="map">
