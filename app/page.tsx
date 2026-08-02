@@ -15,6 +15,7 @@ import { IconEducation, IconService, IconCommunity, IconFaith } from './componen
 export const dynamic = 'force-dynamic';
 
 const CARD_ORDER = ['mongolia', 'philippines', 'cambodia', 'indonesia', 'india', 'pakistan'];
+const CARD_FLAG: Record<string, string> = { mongolia: '🇲🇳', philippines: '🇵🇭', cambodia: '🇰🇭', indonesia: '🇮🇩', india: '🇮🇳', pakistan: '🇵🇰' };
 const DRAW_ICONS = [<IconEducation key="e" size={22} />, <IconCommunity key="c" size={22} />, <IconService key="s" size={22} />, <IconFaith key="f" size={22} />];
 const DRAW_SLOTS = ['draw-education', 'draw-community', 'draw-service', 'draw-faith'];
 
@@ -62,22 +63,75 @@ export default async function Home() {
           if (!c) return null;
           const img = home.cardImages?.[id] ?? resolvePhoto(`card-${id}`) ?? resolvePhoto(`th-${id}-1`);
           return (
-            <Link key={id} href={`/${id}`} className="ccard">
+            <Link key={id} href={`/${id}`} className="ccard ccard--light">
               {img && (
-                <>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img} alt="" className="ccard__img" />
-                  <span className="ccard__scrim" />
-                </>
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={img} alt="" className="ccard__img" />
               )}
-              <span className="ccard__en">{locale === 'ko' ? c.en : c.ko}</span>
-              <span className="ccard__ko">{locale === 'ko' ? c.ko : c.en}</span>
-              <span className="ccard__desc">{home.taglines[id]}</span>
-              <span className="ccard__go">{t('cta.detail')}</span>
+              <span className="ccard__body">
+                <span><span className="ccard__flag">{CARD_FLAG[id]}</span> <span className="ccard__ko2">{locale === 'ko' ? c.ko : c.en}</span></span>
+                <span className="ccard__en2">{locale === 'ko' ? c.en : c.ko}</span>
+                <span className="ccard__desc2">{home.taglines[id]}</span>
+                <span className="ccard__go2">{t('cta.detail')} →</span>
+              </span>
             </Link>
           );
         })}
       </div>
+
+      {/* ── FOCUS COUNTRY (ui/ 시안 5) — 최신 발자취 국가, 콘텐츠는 실데이터 ── */}
+      {(() => {
+        const fid = journey[0]?.id;
+        const fc = fid ? byId[fid] : null;
+        if (!fc) return null;
+        const season = seasons.find((s) => s.country === fid);
+        const cover = season?.cover ?? season?.photos[0] ?? resolvePhoto(`card-${fid}`);
+        const startYear = fc.timeline[0]?.y;
+        return (
+          <section className="section--wide" style={{ padding: '64px 20px 8px' }}>
+            <div className="focusc">
+              <div>
+                <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 10 }}>FOCUS COUNTRY</div>
+                <h2 style={{ margin: 0, fontSize: 30, fontWeight: 900, letterSpacing: '-.015em', color: 'var(--navy)' }}>
+                  <span style={{ fontFamily: 'var(--f-disp)' }}>{fc.en}</span> {fc.ko} 사역
+                </h2>
+                <p style={{ margin: '14px 0 0', fontSize: 14.5, lineHeight: 1.85, color: 'var(--ink2)', maxWidth: 420 }}>{fc.intro}</p>
+                {startYear && (
+                  <div className="focusc__start"><b>{startYear}</b><span>{locale === 'ko' ? '사역 시작' : 'Since'}</span></div>
+                )}
+                <div>
+                  <Link href={`/${fid}`} className="focusc__btn">{locale === 'ko' ? `${fc.ko} 이야기 더 보기 →` : `More about ${fc.en} →`}</Link>
+                </div>
+              </div>
+              {cover && (
+                <Link href={`/${fid}`} className="focusc__photo">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={cover} alt="" loading="lazy" />
+                  <span className="focusc__badge">{locale === 'ko' ? fc.ko : fc.en}</span>
+                </Link>
+              )}
+            </div>
+            {fc.timeline.length > 0 && (
+              <div style={{ marginTop: 40 }}>
+                <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 16 }}>
+                  {locale === 'ko' ? `${fc.ko} 주요 연혁` : `${fc.en} chronicle`}
+                </div>
+                <div className="chrono">
+                  {fc.timeline.map((tl, ti) => (
+                    <div key={ti} className="chrono__item">
+                      <span className="chrono__dot" />
+                      <b>{tl.y}</b>
+                      <div>
+                        {tl.items.slice(0, 2).map((it, ii) => <span key={ii}>{it}</span>)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        );
+      })()}
 
       {/* ── 우리가 그리는 세상 ── */}
       <section id="about" className="draws">
