@@ -2031,3 +2031,15 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
 .othc a { display: flex; align-items: center; gap: 9px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 9px 18px 9px 12px; text-decoration: none; color: var(--ink); font-size: 13.5px; font-weight: 800; transition: border-color .15s ease, color .15s ease; }
 .othc a:hover { border-color: var(--sky); color: var(--sky); }
 .othc .othc__flag { font-size: 17px; line-height: 1; }
+
+/* 나라 상세 — 가로 노드 연혁(ui/ 시안 2) */
+.chrono { display: flex; gap: 0; overflow-x: auto; padding: 10px 2px 18px; position: relative; }
+.chrono__item { position: relative; flex: 0 0 200px; padding: 0 18px 0 0; }
+.chrono__item::before { content: ''; position: absolute; top: 5px; left: 14px; right: 0; height: 1px; background: var(--line); }
+.chrono__item:last-child::before { right: 40%; }
+.chrono__dot { position: relative; z-index: 1; display: block; width: 11px; height: 11px; border-radius: 50%; background: #fff; border: 3px solid var(--sky); margin-bottom: 12px; }
+.chrono__item b { display: block; font-family: var(--f-disp); font-size: 17px; font-weight: 800; color: var(--sky); letter-spacing: .02em; margin-bottom: 8px; }
+.chrono__item > div { display: grid; gap: 4px; }
+.chrono__item > div span { font-size: 12.5px; color: var(--ink2); line-height: 1.6; }
+.strow--3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 900px) { .strow--3 { grid-template-columns: 1fr 1fr; } }

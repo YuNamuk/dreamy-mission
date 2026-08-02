@@ -9,6 +9,7 @@ const OTH_FLAG: Record<string, string> = { mongolia: '🇲🇳', philippines: '�
 import { resolvePhoto } from '@/lib/photos';
 import { PHOTO_BASE } from '@/lib/uploaded-photos';
 import { getLocale, makeT } from '@/lib/i18n';
+import { getGallery } from '@/lib/gallery';
 import CtaBand from '../components/CtaBand';
 import { GlobalHeader } from '../components/GlobalHeader';
 import Footer from '../components/Footer';
@@ -24,7 +25,8 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
   const { country: id } = await params;
   const locale = await getLocale();
   const t = makeT(locale);
-  const [user, { country, images, catPhotos, visits }, settings] = await Promise.all([getUser(), getCountry(id, locale), getSettings(locale)]);
+  const [user, { country, images, catPhotos, visits }, settings, seasons] = await Promise.all([getUser(), getCountry(id, locale), getSettings(locale), getGallery(locale)]);
+  const stories = seasons.filter((s) => s.country === id).sort((x, y) => (y.date ?? '').localeCompare(x.date ?? '')).slice(0, 3);
   if (!country) notFound();
   const hasVisits = visits.some((v) => v.photos.length > 0);
 
@@ -88,32 +90,60 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
         </div>
       </section>
 
-      {/* ── 카테고리 갤러리 + 연혁 레일 ── */}
-      <section className="section--wide country-body" style={{ padding: '48px 20px 0' }}>
-        <div>
-          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 20 }}>
-            {t('label.categories')} <span style={{ color: 'var(--ink4)', fontWeight: 500 }}>{t('label.visitsHint')}</span>
-          </div>
-          <CategoryGallery categories={cats} />
-        </div>
-
-        <aside className="rail">
-          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 24 }}>{t('label.chronicle')}</div>
-          {[...country.timeline].reverse().map((t, ti) => (
-            <div key={ti} style={{ display: 'grid', gridTemplateColumns: '52px 1fr', gap: 14, marginBottom: 22 }}>
-              <div style={{ fontFamily: 'var(--f-disp)', fontSize: 16, fontWeight: 800, color: 'var(--sky)', letterSpacing: '.02em' }}>{t.y}</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 5, paddingTop: 2 }}>
-                {t.items.map((it, ii) => (
-                  <div key={ii} style={{ fontSize: 12.5, color: 'var(--ink2)', lineHeight: 1.65, display: 'flex', gap: 7 }}>
-                    <span style={{ color: 'var(--ink4)' }}>–</span>
-                    <span>{it}</span>
-                  </div>
-                ))}
+      {/* ── 연혁 — ui/ 시안: 가로 노드 타임라인 ── */}
+      {country.timeline.length > 0 && (
+        <section className="section--wide" style={{ padding: '48px 20px 0' }}>
+          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 6 }}>{t('label.chronicle')}</div>
+          <h2 style={{ margin: '0 0 26px', fontSize: 24, fontWeight: 800, letterSpacing: '-.01em', color: 'var(--navy)' }}>
+            {locale === 'ko' ? '하나님께서 걸어오신 길' : 'The road God has walked'}
+          </h2>
+          <div className="chrono">
+            {country.timeline.map((tl, ti) => (
+              <div key={ti} className="chrono__item">
+                <span className="chrono__dot" />
+                <b>{tl.y}</b>
+                <div>
+                  {tl.items.map((it, ii) => <span key={ii}>{it}</span>)}
+                </div>
               </div>
-            </div>
-          ))}
-        </aside>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── 미션 카테고리 갤러리 ── */}
+      <section className="section--wide" style={{ padding: '44px 20px 0' }}>
+        <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 20 }}>
+          {t('label.categories')} <span style={{ color: 'var(--ink4)', fontWeight: 500 }}>{t('label.visitsHint')}</span>
+        </div>
+        <CategoryGallery categories={cats} />
       </section>
+
+      {/* ── 나라 이야기 — 갤러리 시즌 다크 카드 ── */}
+      {stories.length > 0 && (
+        <section className="section--wide" style={{ padding: '44px 20px 0' }}>
+          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 6 }}>STORIES</div>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, marginBottom: 18 }}>
+            <h2 style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: '-.01em', color: 'var(--navy)' }}>
+              {locale === 'ko' ? `${country.ko} 이야기` : `${country.en} stories`}
+            </h2>
+            <Link href={`/gallery?country=${id}`} style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--sky)', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+              {locale === 'ko' ? '이야기 더보기 →' : 'More →'}
+            </Link>
+          </div>
+          <div className="strow strow--3">
+            {stories.map((s) => (
+              <Link key={s.id} href={`/gallery?country=${id}`} className="stcard">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={s.cover ?? s.photos[0]} alt="" loading="lazy" />
+                <span className="stcard__scrim" />
+                {s.date && <span className="stcard__badge">{s.date}</span>}
+                <span className="stcard__cap"><b>{s.title}</b></span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── 소식·함께하기 — 이 나라의 선교편지·후원 ── */}
       {(COUNTRY_LINKS[id]?.length ?? 0) > 0 && (
