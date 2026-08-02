@@ -2004,3 +2004,30 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
 
 /* 나라별 상세 페이지 예외 — 정보 밀도가 높아 헤더(로고) 컨테이너 폭(1280px)까지 확장 */
 .country-page .section--wide { max-width: 1280px; padding-left: 20px; padding-right: 20px; }
+
+/* ── ui/ 시안 통일: 참여 CTA 밴드 · 최근 선교 이야기 · 다른 나라 행 ── */
+.mcta { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; background: var(--sky-soft, #eaf6fd); border-radius: 20px; padding: 34px 38px; }
+.mcta > div:first-child { display: grid; gap: 7px; }
+.mcta b { font-size: 20px; font-weight: 800; letter-spacing: -.01em; color: var(--navy); }
+.mcta span { font-size: 14px; color: var(--ink2); }
+.mcta__btns { display: flex; gap: 10px; flex-shrink: 0; }
+.mcta__primary { display: inline-block; background: var(--sky); color: #fff; font-size: 13.5px; font-weight: 800; padding: 12px 22px; border-radius: 999px; text-decoration: none; box-shadow: 0 10px 24px -14px rgba(0,137,194,.6); }
+.mcta__primary:hover { filter: brightness(1.06); }
+.mcta__ghost { display: inline-block; background: #fff; color: var(--ink); border: 1px solid var(--line); font-size: 13.5px; font-weight: 800; padding: 12px 22px; border-radius: 999px; text-decoration: none; }
+.mcta__ghost:hover { border-color: var(--sky); color: var(--sky); }
+
+.strow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 900px) { .strow { grid-template-columns: repeat(2, 1fr); } }
+.stcard { position: relative; display: block; border-radius: 16px; overflow: hidden; background: #0a1a33; text-decoration: none; box-shadow: 0 16px 40px -26px rgba(11,33,64,.5); }
+.stcard img { display: block; width: 100%; aspect-ratio: 4/3; object-fit: cover; opacity: .92; transition: transform .5s ease; }
+.stcard:hover img { transform: scale(1.05); }
+.stcard__scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,20,40,.92) 0%, rgba(8,20,40,.25) 55%, rgba(8,20,40,.05) 80%); }
+.stcard__badge { position: absolute; top: 12px; left: 12px; font-size: 11px; font-weight: 800; color: #fff; background: rgba(0,137,194,.85); border-radius: 999px; padding: 4px 11px; }
+.stcard__cap { position: absolute; left: 15px; right: 15px; bottom: 13px; color: #fff; }
+.stcard__cap i { display: block; font-style: normal; font-family: var(--f-disp); font-size: 10.5px; font-weight: 700; letter-spacing: .08em; color: #b9cbe0; margin-bottom: 4px; }
+.stcard__cap b { display: block; font-size: 15px; font-weight: 700; line-height: 1.35; letter-spacing: -.01em; }
+
+.othc { display: flex; flex-wrap: wrap; gap: 10px; }
+.othc a { display: flex; align-items: center; gap: 9px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 9px 18px 9px 12px; text-decoration: none; color: var(--ink); font-size: 13.5px; font-weight: 800; transition: border-color .15s ease, color .15s ease; }
+.othc a:hover { border-color: var(--sky); color: var(--sky); }
+.othc .othc__flag { font-size: 17px; line-height: 1; }

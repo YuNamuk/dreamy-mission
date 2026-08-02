@@ -4,9 +4,12 @@ import { getUser } from '@/lib/session';
 import { getCountry } from '@/lib/content';
 import { getSettings } from '@/lib/settings';
 import { COUNTRIES, countryIndex } from '@/lib/countries';
+
+const OTH_FLAG: Record<string, string> = { mongolia: '🇲🇳', philippines: '🇵🇭', cambodia: '🇰🇭', indonesia: '🇮🇩', india: '🇮🇳', pakistan: '🇵🇰' };
 import { resolvePhoto } from '@/lib/photos';
 import { PHOTO_BASE } from '@/lib/uploaded-photos';
 import { getLocale, makeT } from '@/lib/i18n';
+import CtaBand from '../components/CtaBand';
 import { GlobalHeader } from '../components/GlobalHeader';
 import Footer from '../components/Footer';
 import { COUNTRY_LINKS, KIND_LABEL } from '@/lib/country-support';
@@ -163,6 +166,20 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
           <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4 }}>{cname(next)}</div>
         </Link>
       </nav>
+      {/* ── 다른 나라 교육선교 (ui/ 시안) ── */}
+      <section className="section--wide" style={{ padding: '40px 20px 0' }}>
+        <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 14 }}>
+          {locale === 'ko' ? '다른 나라 교육선교' : 'OTHER COUNTRIES'}
+        </div>
+        <div className="othc">
+          {COUNTRIES.filter((c) => c.id !== id).map((c) => (
+            <Link key={c.id} href={`/${c.id}`}><span className="othc__flag">{OTH_FLAG[c.id] ?? '🌍'}</span>{locale === 'ko' ? c.ko : c.en}</Link>
+          ))}
+        </div>
+      </section>
+
+      <CtaBand ko={locale === 'ko'} country={locale === 'ko' ? country.ko : country.en} />
+
 
       <Footer />
 

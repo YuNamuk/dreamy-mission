@@ -3,6 +3,8 @@ import { getUser } from '@/lib/session';
 import { getCountries } from '@/lib/content';
 import { getHome } from '@/lib/home';
 import { getSettings } from '@/lib/settings';
+import { getGallery } from '@/lib/gallery';
+import CtaBand from './components/CtaBand';
 import { resolvePhoto } from '@/lib/photos';
 import { getLocale, makeT } from '@/lib/i18n';
 import { GlobalHeader } from './components/GlobalHeader';
@@ -19,7 +21,7 @@ const DRAW_SLOTS = ['draw-education', 'draw-community', 'draw-service', 'draw-fa
 export default async function Home() {
   const locale = await getLocale();
   const t = makeT(locale);
-  const [user, countries, home, settings] = await Promise.all([getUser(), getCountries(locale), getHome(locale), getSettings()]);
+  const [user, countries, home, settings, seasons] = await Promise.all([getUser(), getCountries(locale), getHome(locale), getSettings(), getGallery(locale)]);
   const byId = Object.fromEntries(countries.map((c) => [c.id, c]));
   const navCountries = countries.map((c) => ({ id: c.id, ko: c.ko, en: c.en }));
 
@@ -108,6 +110,30 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── 최근 선교 이야기 (ui/ 시안) ── */}
+      {seasons.length > 0 && (
+        <section className="section--wide" style={{ padding: '56px 20px 8px' }}>
+          <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.2em', marginBottom: 6 }}>MISSION ARCHIVE</div>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, marginBottom: 20 }}>
+            <h2 style={{ margin: 0, fontSize: 26, fontWeight: 800, letterSpacing: '-.01em', color: 'var(--navy)' }}>{locale === 'ko' ? '최근 선교 이야기' : 'Recent mission stories'}</h2>
+            <Link href="/gallery" style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--sky)', textDecoration: 'none', whiteSpace: 'nowrap' }}>{locale === 'ko' ? '전체 아카이브 보기 →' : 'View all →'}</Link>
+          </div>
+          <div className="strow">
+            {[...seasons].sort((x, y) => (y.date ?? '').localeCompare(x.date ?? '')).slice(0, 4).map((s) => (
+              <Link key={s.id} href={s.country ? `/gallery?country=${s.country}` : '/gallery'} className="stcard">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={s.cover ?? s.photos[0]} alt="" loading="lazy" />
+                <span className="stcard__scrim" />
+                {s.country && byId[s.country] && <span className="stcard__badge">{locale === 'ko' ? byId[s.country].ko : byId[s.country].en}</span>}
+                <span className="stcard__cap">{s.date && <i>{s.date}</i>}<b>{s.title}</b></span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <CtaBand ko={locale === 'ko'} />
 
       <Footer />
     </main>
