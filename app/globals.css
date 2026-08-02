@@ -10,13 +10,13 @@
 :root {
   --bg: #ffffff;
   --wash: #f7fafc;
-  --ink: #12293c;
-  --ink2: #41586b;
+  --ink: #102E47;   /* Deep Navy — Design System v1.0 */
+  --ink2: #304657;  /* Ink Gray */
   --ink3: #7c8fa0;
   --ink4: #a8b7c3;
   --line: #e5ebf0;
-  --sky: #00a7e1;
-  --sky-soft: #e5f6fd;
+  --sky: #00ABDC;      /* Dreamy Blue */
+  --sky-soft: #EAF7FB; /* Sky Mist */
   --iris: #6c5ce7;
 
   /* 네이비 뎁스 (v3 세련된 톤) */
