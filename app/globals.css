@@ -2069,3 +2069,12 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
 .focusc__start { display: inline-flex; align-items: baseline; gap: 8px; margin-top: 18px; background: var(--sky-soft); border-radius: 14px; padding: 12px 18px; }
 .focusc__start b { font-family: var(--f-disp); font-size: 22px; font-weight: 900; color: var(--sky-600, #0090ba); }
 .focusc__start span { font-size: 12.5px; font-weight: 700; color: var(--ink2); }
+
+
+/* ui/ 시안 6: 활성(포커스) 나라 카드 */
+.ccard--active { border-color: var(--sky); box-shadow: 0 18px 40px rgba(16,46,71,.16); }
+.ccard--active .ccard__body { background: var(--sky); }
+.ccard--active .ccard__ko2, .ccard--active .ccard__go2 { color: #fff; }
+.ccard--active .ccard__en2 { color: rgba(255,255,255,.75); }
+.ccard--active .ccard__desc2 { color: rgba(255,255,255,.9); }
+.ccard--active .ccard__badge { position: absolute; top: 10px; left: 10px; background: var(--sky); color: #fff; font-size: 10.5px; font-weight: 800; border-radius: 999px; padding: 3px 10px; }

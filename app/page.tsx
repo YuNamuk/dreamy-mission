@@ -63,11 +63,12 @@ export default async function Home() {
           if (!c) return null;
           const img = home.cardImages?.[id] ?? resolvePhoto(`card-${id}`) ?? resolvePhoto(`th-${id}-1`);
           return (
-            <Link key={id} href={`/${id}`} className="ccard ccard--light">
+            <Link key={id} href={`/${id}`} className={`ccard ccard--light${id === journey[0]?.id ? ' ccard--active' : ''}`}>
               {img && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={img} alt="" className="ccard__img" />
               )}
+              {id === journey[0]?.id && <span className="ccard__badge">{locale === 'ko' ? '활동 국가' : 'Focus'}</span>}
               <span className="ccard__body">
                 <span><span className="ccard__flag">{CARD_FLAG[id]}</span> <span className="ccard__ko2">{locale === 'ko' ? c.ko : c.en}</span></span>
                 <span className="ccard__en2">{locale === 'ko' ? c.en : c.ko}</span>
