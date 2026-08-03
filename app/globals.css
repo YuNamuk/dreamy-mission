@@ -1961,8 +1961,9 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
 .sup__h { font-family: var(--f-disp); font-size: 21px; font-weight: 800; color: var(--ink); margin: 0 0 4px; }
 .sup__sub { font-size: 14px; color: var(--ink3); margin: 0 0 16px; }
 .sup__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
-.sup__card { display: flex; flex-direction: column; gap: 5px; padding: 17px 18px; border: 1px solid #dfe8ee; border-radius: 13px; background: #fff; text-decoration: none; transition: border-color .15s, box-shadow .15s; }
-.sup__card:hover { border-color: var(--sky); box-shadow: 0 4px 16px rgba(0,167,225,.10); }
+.sup__card { display: flex; flex-direction: column; gap: 5px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 16px; background: #fff; text-decoration: none; box-shadow: 0 12px 32px rgba(16,46,71,.08); transition: transform .18s ease, border-color .15s, box-shadow .18s ease; }
+.sup__card:hover { border-color: var(--sky); transform: translateY(-3px); box-shadow: 0 18px 40px rgba(16,46,71,.14); }
+.sup__go { margin-top: 8px; font-size: 12.5px; font-weight: 800; color: var(--sky); }
 .sup__card b { font-size: 15px; color: var(--ink); font-weight: 700; }
 .sup__card span { font-size: 12.5px; color: var(--ink3); line-height: 1.5; }
 .sup__ext { color: var(--sky); font-weight: 600; }

@@ -4,6 +4,7 @@ import { COUNTRIES } from '@/lib/countries';
 import { getLocale } from '@/lib/i18n';
 import { GlobalHeader } from '../components/GlobalHeader';
 import Footer from '../components/Footer';
+import CtaBand from '../components/CtaBand';
 
 export const dynamic = 'force-dynamic';
 
@@ -62,6 +63,7 @@ export default async function SupportPage() {
                 <a key={it.name} href={it.href} className="sup__card" target={it.external ? '_blank' : undefined} rel={it.external ? 'noopener noreferrer' : undefined}>
                   <b>{it.name}{it.external && <span className="sup__ext" aria-hidden> ↗</span>}</b>
                   <span>{it.desc}</span>
+                  <span className="sup__go">{locale === 'ko' ? '자세히 보기' : 'View'} →</span>
                 </a>
               ))}
             </div>
@@ -69,6 +71,7 @@ export default async function SupportPage() {
         ))}
       </section>
 
+      <CtaBand ko={locale === 'ko'} />
       <Footer />
     </main>
   );
