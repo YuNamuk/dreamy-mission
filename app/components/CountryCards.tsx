@@ -23,7 +23,7 @@ export default async function CountryCards() {
             {img && (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img} alt="" className="ccard__img" />
+                <img loading="lazy" src={img} alt="" className="ccard__img" />
                 <span className="ccard__scrim" />
               </>
             )}

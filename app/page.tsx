@@ -66,7 +66,7 @@ export default async function Home() {
             <Link key={id} href={`/${id}`} className={`ccard ccard--light${id === journey[0]?.id ? ' ccard--active' : ''}`}>
               {img && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={img} alt="" className="ccard__img" />
+                <img loading="lazy" src={img} alt="" className="ccard__img" />
               )}
               {id === journey[0]?.id && <span className="ccard__badge">{locale === 'ko' ? '활동 국가' : 'Focus'}</span>}
               <span className="ccard__body">
@@ -152,7 +152,7 @@ export default async function Home() {
                   {img && (
                     <>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img} alt="" className="dcard__img" />
+                      <img loading="lazy" src={img} alt="" className="dcard__img" />
                       <span className="dcard__scrim" />
                     </>
                   )}

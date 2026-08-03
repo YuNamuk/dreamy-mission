@@ -45,7 +45,7 @@ export function GlobalHeader({ user = null, locale = 'ko', countries = [] }: { u
         <a href="/" className="ghd__brand" aria-label="드리미학교 홈">
           {/* 홈페이지와 동일한 Dreamy School 로고 (site-settings.logo) */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="https://efrgphjvpatsprhazirk.supabase.co/storage/v1/object/public/class-images/homepage/live/442057207162213b7cddd0594f001b0b33efd738-1280x229.png" alt="Dreamy School" className="ghd__logo" />
+          <img loading="lazy" src="https://efrgphjvpatsprhazirk.supabase.co/storage/v1/object/public/class-images/homepage/live/442057207162213b7cddd0594f001b0b33efd738-1280x229.png" alt="Dreamy School" className="ghd__logo" />
         </a>
         <nav className="ghd__nav" aria-label="드리미학교 전체 메뉴">
           {NAV.map((m) => (

@@ -9,7 +9,7 @@ export default async function Footer() {
       <div className="site-footer__inner">
         <div className="site-footer__brand">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={s.logoWhiteUrl || '/mark-white.png'} alt="" />
+          <img loading="lazy" src={s.logoWhiteUrl || '/mark-white.png'} alt="" />
           <b>Dreamy School · Missions</b>
         </div>
         <div className="site-footer__verse">

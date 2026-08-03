@@ -58,7 +58,7 @@ export default function VisitGallery({ visits }: { visits: Visit[] }) {
             <div className="lb__stage">
               {v.photos.length > 1 && <button className="lb__nav lb__nav--prev" onClick={prev} aria-label="이전">‹</button>}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="lb__img" src={v.photos[pi]} alt={v.label} />
+              <img loading="lazy" className="lb__img" src={v.photos[pi]} alt={v.label} />
               {v.photos.length > 1 && <button className="lb__nav lb__nav--next" onClick={next} aria-label="다음">›</button>}
             </div>
             <div className="lb__meta">
@@ -70,7 +70,7 @@ export default function VisitGallery({ visits }: { visits: Visit[] }) {
                 {v.photos.map((p, idx) => (
                   <button key={idx} className={`lb__thumb${idx === pi ? ' is-on' : ''}`} onClick={() => setPi(idx)}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p} alt="" />
+                    <img loading="lazy" src={p} alt="" />
                   </button>
                 ))}
               </div>

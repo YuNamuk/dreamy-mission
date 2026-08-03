@@ -105,7 +105,7 @@ export default function GalleryView({ seasons, cinfo, ui }: { seasons: Season[];
             <div className="museum__center" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
               <div className="frame frame--main">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={thumb(season.photos[pi], 1400, 84)} alt={season.title} />
+                <img loading="lazy" src={thumb(season.photos[pi], 1400, 84)} alt={season.title} />
               </div>
               <div className="museum__placard">
                 {info && <b>{info.flag} {info.ko} <i>{info.en}</i></b>}

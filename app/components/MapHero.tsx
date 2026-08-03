@@ -142,7 +142,7 @@ export default function MapHero({ countries, journey, hero, defaultLayer = 'terr
         const d = c.site; if (!d) continue;
         const dir = LABEL_DIR[c.id] || 'right';
         const dot = c.pin
-          ? `<img src="${c.pin}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;border:2.5px solid #fff;box-shadow:0 3px 12px rgba(14,36,56,.4)"/>`
+          ? `<img loading="lazy" src="${c.pin}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;border:2.5px solid #fff;box-shadow:0 3px 12px rgba(14,36,56,.4)"/>`
           : `<span style="display:block;width:100%;height:100%;border-radius:50%;background:#2f6fd0;border:2.5px solid #fff;box-shadow:0 3px 12px rgba(14,36,56,.4)"></span>`;
         const pos = dir === 'left' ? 'right:calc(100% + 7px);top:50%;transform:translateY(-50%)'
           : dir === 'top' ? 'bottom:calc(100% + 8px);left:50%;transform:translateX(-50%)'

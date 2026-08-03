@@ -64,7 +64,7 @@ export default function Nav({
     <nav className="nav2">
       <Link href="/" className="nav2__brand" aria-label="홈">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={logo || '/mark.png'} alt="" />
+        <img loading="lazy" src={logo || '/mark.png'} alt="" />
         <span className="nav2__wordmark">
           <b>Dreamy School</b>
           <i>Missions</i>
