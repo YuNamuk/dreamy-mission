@@ -5,6 +5,7 @@ import { COUNTRIES } from '@/lib/countries';
 import { getLocale, makeT } from '@/lib/i18n';
 import { GlobalHeader } from '../components/GlobalHeader';
 import Footer from '../components/Footer';
+import CtaBand from '../components/CtaBand';
 import GalleryView from './GalleryView';
 
 export const dynamic = 'force-dynamic';
@@ -96,6 +97,7 @@ export default async function GalleryPage({ searchParams }: { searchParams: Prom
           />
         </div>
       </section>
+      <CtaBand ko={ko} />
       <Footer />
     </main>
   );
