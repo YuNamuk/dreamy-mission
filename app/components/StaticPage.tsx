@@ -5,6 +5,7 @@ import { getPage, type PageKey } from '@/lib/pages';
 import { getLocale } from '@/lib/i18n';
 import { GlobalHeader } from './GlobalHeader';
 import Footer from './Footer';
+import PageTitleBar, { type MissionTab } from './PageTitleBar';
 
 /** ABOUT·STORIES·MISSIONS·ARCHIVE 공용 셸. children 에 카드/추가 콘텐츠. */
 export default async function StaticPage({ pageKey, active, children }: { pageKey: PageKey; active?: string; children?: React.ReactNode }) {
@@ -15,11 +16,15 @@ export default async function StaticPage({ pageKey, active, children }: { pageKe
     <main>
       <GlobalHeader user={user} locale={locale} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} />
 
-      <section className="section--wide staticpage" style={{ padding: '128px 48px 0' }}>
-        <div className="eyebrow" style={{ fontSize: 12, letterSpacing: '.22em' }}>{page.eyebrow}</div>
-        <h1 className="staticpage__title">{page.title}</h1>
-        {page.subtitle && <p className="staticpage__sub">{page.subtitle}</p>}
+      <PageTitleBar
+        eyebrow={page.eyebrow}
+        title={page.title}
+        subtitle={page.subtitle}
+        active={active as MissionTab | undefined}
+        locale={locale}
+      />
 
+      <section className="section--wide staticpage" style={{ padding: '36px 48px 0' }}>
         {page.sections.length > 0 && (
           <div className="staticpage__body">
             {page.sections.map((s, i) => (

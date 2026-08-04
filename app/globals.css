@@ -2082,3 +2082,33 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
 .ccard--active .ccard__en2 { color: rgba(255,255,255,.75); }
 .ccard--active .ccard__desc2 { color: rgba(255,255,255,.9); }
 .ccard--active .ccard__badge { position: absolute; top: 10px; left: 10px; background: var(--sky); color: #fff; font-size: 10.5px; font-weight: 800; border-radius: 999px; padding: 3px 10px; }
+
+/* ── 교육선교 하위 페이지 타이틀바 (PageTitleBar) ───────────────────
+   서브메뉴 어디에 있는지 보이도록 브레드크럼 + 제목 + 존 탭을 한 띠로. */
+.ptbar {
+  background: linear-gradient(180deg, var(--sky-soft) 0%, #fff 100%);
+  border-bottom: 1px solid var(--line);
+  padding-top: 104px;
+}
+.ptbar__inner { padding: 26px 48px 0; }
+.ptbar__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink2); opacity: .8; }
+.ptbar__crumbs a { color: inherit; text-decoration: none; }
+.ptbar__crumbs a:hover { color: var(--sky); }
+.ptbar__crumbs strong { color: var(--navy); font-weight: 600; }
+.ptbar__eyebrow { margin-top: 14px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--sky); font-weight: 700; }
+.ptbar__title { margin: 8px 0 0; font-family: var(--f-disp); font-weight: 500; font-size: clamp(30px, 4vw, 52px); line-height: 1.08; letter-spacing: -.02em; color: var(--navy); }
+.ptbar__sub { margin: 12px 0 0; max-width: 820px; font-size: clamp(14.5px, 1.5vw, 17px); line-height: 1.65; color: var(--ink2); font-weight: 300; }
+.ptbar__tabs { display: flex; flex-wrap: wrap; gap: 4px; margin: 22px 0 0; padding-bottom: 0; }
+.ptbar__tab {
+  display: inline-block; padding: 11px 16px; border-radius: 10px 10px 0 0;
+  font-size: 13.5px; font-weight: 600; color: var(--ink2); text-decoration: none;
+  border: 1px solid transparent; border-bottom: none; transition: background .18s, color .18s;
+}
+.ptbar__tab:hover { background: rgba(255,255,255,.7); color: var(--sky); }
+.ptbar__tab.is-on { background: #fff; color: var(--navy); border-color: var(--line); box-shadow: 0 -2px 0 var(--sky) inset; }
+@media (max-width: 768px) {
+  .ptbar { padding-top: 86px; }
+  .ptbar__inner { padding: 20px 18px 0; }
+  .ptbar__tabs { gap: 2px; overflow-x: auto; flex-wrap: nowrap; }
+  .ptbar__tab { white-space: nowrap; padding: 10px 12px; font-size: 12.5px; }
+}

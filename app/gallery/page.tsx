@@ -5,6 +5,7 @@ import { COUNTRIES } from '@/lib/countries';
 import { getLocale, makeT } from '@/lib/i18n';
 import { GlobalHeader } from '../components/GlobalHeader';
 import Footer from '../components/Footer';
+import PageTitleBar from '../components/PageTitleBar';
 import CtaBand from '../components/CtaBand';
 import GalleryView from './GalleryView';
 
@@ -43,14 +44,16 @@ export default async function GalleryPage({ searchParams }: { searchParams: Prom
     <main>
       <GlobalHeader user={user} locale={locale} countries={COUNTRIES.map((c) => ({ id: c.id, ko: c.ko, en: c.en }))} />
 
-      <section className="section--wide galhero" style={{ padding: '116px 48px 0' }}>
-        <h1 className="galhero__title">{ko ? '선교 사진 아카이브' : 'Mission Photo Archive'}</h1>
-        <p className="galhero__sub">{ko ? '드리미학교의 선교 순간들을 나라별·월별로 기록한 사진 아카이브입니다.' : 'A photo archive of Dreamy School’s mission moments, recorded by country and month.'}</p>
-        <div className="galhero__label">{ko ? '나라별 정렬 · 월별 기록' : 'By country · by month'}</div>
-      </section>
+      <PageTitleBar
+        eyebrow={ko ? '나라별 정렬 · 월별 기록' : 'By country · by month'}
+        title={ko ? '선교 사진 아카이브' : 'Mission Photo Archive'}
+        subtitle={ko ? '드리미학교의 선교 순간들을 나라별·월별로 기록한 사진 아카이브입니다.' : 'A photo archive of Dreamy School’s mission moments, recorded by country and month.'}
+        active="gallery"
+        locale={locale}
+      />
 
       {/* 필터칩 */}
-      <section className="section--wide" style={{ padding: '22px 48px 0' }}>
+      <section className="section--wide" style={{ padding: '28px 48px 0' }}>
         <div className="galtabs">
           <a className={`galtab${!filterCountry ? ' is-on' : ''}`} href={qs({ month: filterMonth })}>{ko ? '전체' : 'All'}</a>
           {tabCountries.map((c) => (
