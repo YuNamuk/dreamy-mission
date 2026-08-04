@@ -5,7 +5,7 @@ export default function MissionsPage() {
   return (
     <StaticPage pageKey="missions" active="missions">
       <div style={{ marginTop: 8 }}>
-        <CountryCards />
+        <CountryCards variant="wide" />
       </div>
       <div style={{ height: 40 }} />
     </StaticPage>
