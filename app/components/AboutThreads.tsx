@@ -23,7 +23,7 @@ interface Thread {
 const THREADS: Thread[] = [
   {
     key: 'school',
-    title: '학교를 세운다',
+    title: '학교를 세움',
     lead: '배움이 끊긴 자리에 학교가 선다. 건물을 올리는 일에서 시작해 교육과정을 함께 짜고, 학년이 하나씩 늘어나는 방식으로 학교는 자란다.',
     // '20개교' 처럼 수량 뒤의 '개교' 가 걸리지 않도록 숫자 뒤는 제외
     match: /(?<![0-9])개교|건축|설립|드림빌|MOU|교육과정 개발|교육과정 계획|12년제|캠퍼스/,
@@ -31,36 +31,37 @@ const THREADS: Thread[] = [
   },
   {
     key: 'teacher',
-    title: '교사를 세운다',
-    lead: '한 교사가 서면 한 교실이 바뀐다. 드리미의 교육선교는 학생보다 먼저 교사를 만나고, 연수와 동행으로 현지 교사들이 스스로 서도록 돕는다.',
+    title: '교사를 세움',
+    lead: '한 교사가 서면 한 교실이 바뀐다. 드리미의 교육선교는 학생보다 먼저 교사를 만나고, 함께 서는 자리를 만든다. 교육 연수와 코치 과정이 그 방식이다.',
     match: /교사 연수|교사연수|연수|세미나|아카데미|코치/,
     photo: { country: 'mongolia', n: 2 },
   },
   {
     key: 'send',
-    title: '졸업생을 보낸다',
+    title: '졸업생 파송',
     lead: '드리미의 졸업생들이 인턴 교사로 파송된다. 배운 사람이 가르치는 자리로 건너가는 이 순환이, 드리미 교육선교의 가장 뚜렷한 결이다.',
     match: /파송/,
-    photo: { country: 'philippines', n: 4 },
+    // ⚠ th-philippines-4 는 현지 교사 사진이라 '졸업생 파송' 과 맞지 않아 교체(학교 건축에 참여한 드리미 학생들)
+    photo: { country: 'philippines', n: 2 },
   },
   {
     key: 'festival',
-    title: '함께 배우는 축제를 연다',
+    title: '함께 여는 축제',
     lead: '3P(Play · Performance · Practice)는 드리미의 교육 원리이자 만남의 형식이다. 후원자와 수혜자가 아니라 같은 배움의 파트너로 마주 선다.',
     match: /3P|페스티벌|Festival|축제/,
     photo: { country: 'mongolia', n: 1 },
   },
   {
     key: 'village',
-    title: '마을로 들어간다',
+    title: '교육 소외 지역',
     lead: '학교 담장 밖에도 배움이 필요하다. 초원 끝 마을, 쓰레기산 옆 이주촌, 유치원과 도서관 — 아이들이 있는 자리로 찾아간다.',
     match: /지역 선교|캠프|에듀센터|Edu-Center|유치원|도서관|마을|방문 연수|교육선교/,
     photo: { country: 'philippines', n: 3 },
   },
   {
     key: 'legacy',
-    title: '배움을 남긴다',
-    lead: '한 번의 방문으로 끝나지 않도록, 교재와 책과 교육과정을 남긴다. 남겨진 것들이 우리가 없는 날에도 계속 가르친다.',
+    title: '교재와 출판',
+    lead: '한 번의 방문으로 끝나지 않도록 교재와 책, 교육과정을 남긴다. 남겨진 것들이 우리가 없는 날에도 계속 가르친다.',
     match: /교재|출판|Dreamy Books|그림책|IT|미술|한국어/,
     photo: { country: 'mongolia', n: 3 },
   },
