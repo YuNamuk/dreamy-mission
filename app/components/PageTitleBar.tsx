@@ -22,12 +22,12 @@ const TABS: { key: MissionTab; href: string; ko: string; en: string }[] = [
 /** 메뉴별 타이틀 이미지(사진 슬롯) — 없으면 카드 사진으로 폴백. */
 const TITLE_PHOTO: Record<string, string[]> = {
   home: ['card-mongolia'],
-  about: ['th-mongolia-3', 'card-mongolia'],
-  missions: ['card-india', 'th-india-1'],
-  stories: ['th-philippines-5', 'card-philippines'],
-  gallery: ['th-cambodia-2', 'card-cambodia'],
-  support: ['th-philippines-3', 'card-philippines'],
-  archive: ['th-indonesia-1', 'card-indonesia'],
+  about: ['draw-faith', 'th-mongolia-3', 'card-mongolia'],            // 신앙·빚음
+  missions: ['draw-education', 'card-india', 'th-india-1'],           // 교육
+  stories: ['th-philippines-5', 'draw-community', 'card-philippines'], // 학생들의 이야기
+  gallery: ['th-cambodia-2', 'card-cambodia'],                        // 활동 사진
+  support: ['draw-service', 'th-philippines-3', 'card-philippines'],  // 섬김·동행
+  archive: ['draw-community', 'card-indonesia'],                      // 공동체
 };
 
 export default function PageTitleBar({

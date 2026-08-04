@@ -3,6 +3,7 @@ import { getCountries } from '@/lib/content';
 import { getHome } from '@/lib/home';
 import { resolvePhoto } from '@/lib/photos';
 import { getLocale, makeT } from '@/lib/i18n';
+import { countrySilhouette } from '@/lib/silhouette';
 
 const ORDER = ['mongolia', 'philippines', 'cambodia', 'indonesia', 'india', 'pakistan'];
 const FLAG: Record<string, string> = {
@@ -36,6 +37,14 @@ export default async function CountryCards({ variant = 'strip' }: { variant?: 's
                 <span className="ccard__scrim" />
               </>
             )}
+            {wide && (() => {
+              const d = countrySilhouette(id);
+              return d ? (
+                <svg className="ccard__silo" viewBox="0 0 100 100" aria-hidden focusable="false">
+                  <path d={d} />
+                </svg>
+              ) : null;
+            })()}
             {wide && <span className="ccard__flag" aria-hidden>{FLAG[id]}</span>}
             <span className="ccard__en">{locale === 'ko' ? c.en : c.ko}</span>
             <span className="ccard__ko">

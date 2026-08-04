@@ -2191,3 +2191,14 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
   .ptbar__veil { background: linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.97) 62%, #fff 100%); }
   .ptbar__photo img { object-position: center 35%; }
 }
+
+/* 선교지 카드 배경의 나라 실루엣 워터마크 */
+.ccard__silo {
+  position: absolute; z-index: 1; right: -6%; bottom: -8%;
+  width: 58%; height: auto; aspect-ratio: 1 / 1;
+  fill: rgba(255,255,255,.14);
+  stroke: rgba(255,255,255,.28); stroke-width: .6; vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+.ccard--wide:hover .ccard__silo { fill: rgba(255,255,255,.2); }
+@media (max-width: 900px) { .ccard__silo { width: 46%; right: -4%; bottom: -6%; } }
