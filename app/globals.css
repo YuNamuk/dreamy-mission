@@ -2146,3 +2146,32 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
   .ccard--wide .ccard__ko { font-size: 23px; }
   .ccard--wide .ccard__desc { font-size: 13px; }
 }
+
+/* ── ABOUT: 선교의 결 (AboutThreads) ─────────────────────────────── */
+.threads { padding: 56px 0 12px; }
+.threads__eyebrow { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--sky); font-weight: 700; }
+.threads__h { margin: 10px 0 0; font-family: var(--f-disp); font-weight: 500; font-size: clamp(26px, 3.4vw, 42px); color: var(--navy); letter-spacing: -.02em; }
+.threads__lead { margin: 14px 0 0; max-width: 760px; font-size: clamp(14.5px, 1.5vw, 17px); line-height: 1.7; color: var(--ink2); font-weight: 300; }
+.threads__list { margin-top: 40px; display: grid; gap: 34px; }
+
+.thread { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 30px; align-items: center; }
+.thread--flip .thread__media { order: 2; }
+.thread__media { border-radius: 18px; overflow: hidden; background: var(--sky-soft); box-shadow: 0 18px 44px -28px rgba(14, 36, 56, .55); }
+.thread__media img { display: block; width: 100%; height: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.thread__ph { aspect-ratio: 4 / 3; background: linear-gradient(135deg, var(--sky-soft), #fff); }
+.thread__no { font-family: var(--f-disp); font-size: 13px; font-weight: 700; letter-spacing: .18em; color: var(--sky); }
+.thread__t { margin: 6px 0 0; font-family: var(--f-disp); font-weight: 500; font-size: clamp(21px, 2.4vw, 30px); color: var(--navy); letter-spacing: -.01em; }
+.thread__lead { margin: 10px 0 0; font-size: 15px; line-height: 1.75; color: var(--ink2); font-weight: 300; }
+.thread__ev { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 16px; }
+.thread__ev li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; font-size: 13.5px; line-height: 1.6; color: var(--ink2); }
+.thread__tag {
+  white-space: nowrap; font-size: 11.5px; font-weight: 700; color: var(--navy);
+  background: var(--sky-soft); border: 1px solid #d7ecf5; border-radius: 999px; padding: 3px 10px; text-decoration: none;
+}
+.thread__tag:hover { background: #dff2fa; color: var(--sky); }
+@media (max-width: 860px) {
+  .thread { grid-template-columns: 1fr; gap: 16px; }
+  .thread--flip .thread__media { order: 0; }
+  .thread__ev li { grid-template-columns: 1fr; gap: 4px; }
+  .threads { padding-top: 36px; }
+}
