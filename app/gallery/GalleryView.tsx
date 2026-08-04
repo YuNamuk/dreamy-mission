@@ -55,11 +55,8 @@ export default function GalleryView({ seasons, cinfo, ui }: { seasons: Season[];
   if (!seasons.length) return <p className="muted" style={{ maxWidth: 760 }}>{ui.empty}</p>;
 
   const coverOf = (s: Season) => (s.cover && s.photos.includes(s.cover) ? s.cover : s.photos[0]);
-  const sideIdx = (offset: number) => (n ? ((pi + offset) % n + n) % n : 0);
 
   const info = season ? ci(season.country) : undefined;
-  const leftFrames = n >= 3 ? [sideIdx(-2), sideIdx(-1)] : [];
-  const rightFrames = n >= 3 ? [sideIdx(1), sideIdx(2)] : [];
 
   return (
     <>
@@ -84,79 +81,54 @@ export default function GalleryView({ seasons, cinfo, ui }: { seasons: Season[];
         })}
       </div>
 
-      {/* 미술관 벽 상세 */}
+      {/* 상세 보기 — 사진 한 장에 집중하는 단순 구조 */}
       {season && (
-        <div className="museum" role="dialog" aria-modal="true">
-          <div className="museum__top">
-            <button className="museum__back" onClick={close}>← {ui.backToGallery}</button>
-            <button className="museum__close" onClick={close} aria-label="닫기">✕</button>
+        <div className="lbx" role="dialog" aria-modal="true">
+          <header className="lbx__bar">
+            <button className="lbx__back" onClick={close}>← {ui.backToGallery}</button>
+            <div className="lbx__title">
+              <b>{season.title}</b>
+              <span>
+                {info && `${info.flag} ${info.ko}`}
+                {season.date && ` · ${season.date}`}
+                {` · ${pi + 1}/${n}`}
+              </span>
+            </div>
+            <div className="lbx__acts">
+              <a className="lbx__btn" href={season.photos[pi]} target="_blank" rel="noreferrer">{ui.open}</a>
+              <a className="lbx__btn" href={downloadUrl(season.photos[pi])} download>{ui.download}</a>
+              <button className="lbx__btn" onClick={() => downloadAll(season)}>{ui.downloadAll}</button>
+              <button className="lbx__close" onClick={close} aria-label="닫기">✕</button>
+            </div>
+          </header>
+
+          <div className="lbx__stage" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+            {n > 1 && <button className="lbx__nav lbx__nav--prev" onClick={prev} aria-label="이전">‹</button>}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="lbx__img" src={thumb(season.photos[pi], 1600, 86)} alt={season.title} />
+            {n > 1 && <button className="lbx__nav lbx__nav--next" onClick={next} aria-label="다음">›</button>}
           </div>
 
-          <div className="museum__wall">
-            {n > 1 && <button className="museum__nav museum__nav--prev" onClick={prev} aria-label="이전">‹</button>}
-            <div className="museum__side museum__side--left">
-              {leftFrames.map((idx) => (
-                <button key={idx} className="frame frame--sm" onClick={() => setPi(idx)}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={thumb(season.photos[idx], 460)} alt="" loading="lazy" />
-                </button>
-              ))}
-            </div>
-            <div className="museum__center" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-              <div className="frame frame--main">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img loading="lazy" src={thumb(season.photos[pi], 1400, 84)} alt={season.title} />
-              </div>
-              <div className="museum__placard">
-                {info && <b>{info.flag} {info.ko} <i>{info.en}</i></b>}
-                <span>{season.date}</span>
-              </div>
-            </div>
-            <div className="museum__side museum__side--right">
-              {rightFrames.map((idx) => (
-                <button key={idx} className="frame frame--sm" onClick={() => setPi(idx)}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={thumb(season.photos[idx], 460)} alt="" loading="lazy" />
-                </button>
-              ))}
-            </div>
-            {n > 1 && <button className="museum__nav museum__nav--next" onClick={next} aria-label="다음">›</button>}
-          </div>
-
-          <div className="museum__info">
-            <dl className="museum__meta">
-              <div><i>🏳</i><span>{ui.lCountry}</span><b>{info ? `${info.ko} ${info.en}` : '-'}</b></div>
-              <div><i>📅</i><span>{ui.lMonth}</span><b>{season.date ?? '-'}</b></div>
-              <div><i>🏷</i><span>{ui.lTitle}</span><b>{season.title}</b></div>
-              <div><i>🖼</i><span>{ui.lPhoto}</span><b>{pi + 1} / {n}</b></div>
-              {season.participants && <div><i>👥</i><span>{ui.lPeople}</span><b>{season.participants}</b></div>}
-            </dl>
-            <div className="museum__desc">
-              <h2>{season.title}</h2>
+          {(season.description || (season.tags && season.tags.length > 0) || season.participants) && (
+            <div className="lbx__note">
               {season.description && <p>{season.description}</p>}
-              {season.tags && season.tags.length > 0 && (
-                <div className="museum__tags">{season.tags.map((tg) => <span key={tg}>#{tg}</span>)}</div>
-              )}
-              <div className="museum__dactions">
-                <a className="lb__btn" href={season.photos[pi]} target="_blank" rel="noreferrer">{ui.open} ↗</a>
-                <a className="lb__btn lb__btn--primary" href={downloadUrl(season.photos[pi])} download>{ui.download} ↓</a>
-                <button className="lb__btn" onClick={() => downloadAll(season)}>{ui.downloadAll} ↓</button>
+              <div className="lbx__notemeta">
+                {season.participants && <span>{ui.lPeople} · {season.participants}</span>}
+                {season.tags?.map((tg) => <span key={tg}>#{tg}</span>)}
               </div>
             </div>
-          </div>
+          )}
 
-          <div className="museum__strip">
-            {n > 1 && <button className="museum__stripnav" onClick={prev} aria-label="이전">‹</button>}
-            <div className="museum__filmstrip" ref={filmRef}>
+          {n > 1 && (
+            <div className="lbx__strip" ref={filmRef}>
               {season.photos.map((p, idx) => (
-                <button key={idx} className={`museum__film${idx === pi ? ' is-on' : ''}`} onClick={() => setPi(idx)}>
+                <button key={idx} className={`lbx__film${idx === pi ? ' is-on' : ''}`} onClick={() => setPi(idx)}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={thumb(p, 220, 62)} alt="" loading="lazy" />
                 </button>
               ))}
             </div>
-            {n > 1 && <button className="museum__stripnav" onClick={next} aria-label="다음">›</button>}
-          </div>
+          )}
         </div>
       )}
     </>

@@ -2272,3 +2272,72 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
 .galtab { border-color: rgba(14,36,56,.1); font-weight: 600; }
 .galtab.is-on { font-weight: 700; }
 .galside { border-color: rgba(14,36,56,.08); box-shadow: 0 10px 26px -24px rgba(14,36,56,.4); }
+
+/* ══ 갤러리 상세(lbx) — 사진 한 장에 집중하는 단순 구조 ═════════════
+   이전 '미술관 벽'(좌우 액자 + 명패 + 정보 표 + 스트립)은 요소가 겹치고 복잡했다.
+   구조: 상단 바 / 사진 / 짧은 설명 / 필름스트립. 겹치는 레이어 없음. */
+.lbx {
+  position: fixed; inset: 0; z-index: 1200;
+  display: grid; grid-template-rows: auto 1fr auto auto;
+  background: #f7f9fb;
+}
+.lbx__bar {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 18px; background: rgba(255,255,255,.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(14,36,56,.07);
+}
+.lbx__back {
+  border: none; background: transparent; color: var(--ink2); cursor: pointer;
+  font-size: 13.5px; font-weight: 700; padding: 8px 10px; border-radius: 10px;
+}
+.lbx__back:hover { background: var(--sky-soft); color: var(--sky); }
+.lbx__title { min-width: 0; flex: 1; display: flex; flex-direction: column; line-height: 1.35; }
+.lbx__title b { font-size: 15px; font-weight: 700; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lbx__title span { font-size: 12px; color: var(--ink4); }
+.lbx__acts { display: flex; align-items: center; gap: 6px; }
+.lbx__btn {
+  border: 1px solid rgba(14,36,56,.1); background: #fff; color: var(--ink2); cursor: pointer;
+  border-radius: 999px; padding: 7px 13px; font-size: 12.5px; font-weight: 600; text-decoration: none; white-space: nowrap;
+}
+.lbx__btn:hover { border-color: var(--sky); color: var(--sky); }
+.lbx__close { border: none; background: transparent; color: var(--ink3); font-size: 18px; cursor: pointer; padding: 6px 8px; }
+.lbx__close:hover { color: var(--navy); }
+
+.lbx__stage { position: relative; display: flex; align-items: center; justify-content: center; padding: 22px 64px; min-height: 0; }
+.lbx__img {
+  max-width: min(1180px, 100%); max-height: 100%; width: auto; height: auto;
+  object-fit: contain; border-radius: 14px; box-shadow: 0 26px 60px -34px rgba(11,33,64,.5);
+  background: #fff;
+}
+.lbx__nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 46px; height: 46px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,.9); color: var(--navy); font-size: 24px; line-height: 1; cursor: pointer;
+  box-shadow: 0 10px 26px -16px rgba(14,36,56,.45);
+}
+.lbx__nav:hover { color: var(--sky); }
+.lbx__nav--prev { left: 14px; }
+.lbx__nav--next { right: 14px; }
+
+.lbx__note { padding: 0 24px 8px; max-width: 940px; margin: 0 auto; text-align: center; }
+.lbx__note p { margin: 0; font-size: 14px; line-height: 1.75; color: var(--ink2); font-weight: 300; }
+.lbx__notemeta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 8px; }
+.lbx__notemeta span { font-size: 11.5px; font-weight: 600; color: var(--sky); background: var(--sky-soft); border-radius: 999px; padding: 4px 10px; }
+
+.lbx__strip { display: flex; gap: 8px; overflow-x: auto; padding: 12px 20px 16px; scroll-behavior: smooth; }
+.lbx__strip::-webkit-scrollbar { height: 6px; }
+.lbx__strip::-webkit-scrollbar-thumb { background: rgba(14,36,56,.14); border-radius: 3px; }
+.lbx__film { flex: 0 0 auto; width: 96px; height: 62px; border: none; border-radius: 10px; overflow: hidden; padding: 0; background: #e9eef3; cursor: pointer; position: relative; }
+.lbx__film img { width: 100%; height: 100%; object-fit: cover; opacity: .55; transition: opacity .2s ease; }
+.lbx__film:hover img { opacity: .85; }
+.lbx__film.is-on img { opacity: 1; }
+.lbx__film.is-on::after { content: ''; position: absolute; left: 8px; right: 8px; bottom: 5px; height: 2px; background: var(--sky); border-radius: 2px; }
+
+@media (max-width: 760px) {
+  .lbx__bar { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+  .lbx__acts .lbx__btn { display: none; }
+  .lbx__stage { padding: 12px 10px; }
+  .lbx__nav { width: 38px; height: 38px; font-size: 20px; }
+  .lbx__note { padding: 0 16px 6px; }
+  .lbx__film { width: 76px; height: 50px; }
+}
