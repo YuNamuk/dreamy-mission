@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { getCountries } from '@/lib/content';
 import { resolvePhoto } from '@/lib/photos';
 import { getLocale } from '@/lib/i18n';
@@ -125,10 +124,7 @@ export default async function AboutThreads() {
                   <p className="thread__lead">{t.lead}</p>
                   <ul className="thread__ev">
                     {ev.map((e, j) => (
-                      <li key={j}>
-                        <Link href={`/${e.country}`} className="thread__tag">{e.ko} {e.year}</Link>
-                        <span>{e.text}</span>
-                      </li>
+                      <li key={j}><span>{e.text}</span></li>
                     ))}
                   </ul>
                 </div>
