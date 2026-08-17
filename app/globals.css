@@ -32,8 +32,8 @@
     radial-gradient(120% 120% at 80% 80%, #fbf3e8 0%, transparent 55%),
     linear-gradient(160deg, #f4f9fd 0%, #f7f4ee 100%);
 
-  --f-ko: 'Atomy', var(--font-noto-kr), "Noto Sans KR", sans-serif;
-  --f-disp: var(--font-display), "Montserrat", var(--font-noto-kr), sans-serif;
+  --f-ko: 'Atomy', "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-disp: var(--font-display), "Montserrat", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
 
   --maxw: 1240px;
   --maxw-wide: 1152px; /* 홈페이지 콘텐츠 표준(max-w-6xl)과 동일 */
