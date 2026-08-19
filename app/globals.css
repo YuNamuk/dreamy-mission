@@ -2162,52 +2162,45 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
 
 
 /* ── 선교지: 글 패널 | 사진 2단 카드 (CountryCards variant="wide") ───── */
-.country-cards--wide { grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 26px; }
+.country-cards--wide { grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 26px; }
+
+/* 선교지 카드 — 사진 위 · 흰 본문 아래. 홈페이지(dreamyedu.net) 카드와 같은 언어를 쓴다. */
 .wcard {
-  display: grid; grid-template-columns: 1.06fr 0.94fr;
-  min-height: 288px; border-radius: 20px; overflow: hidden;
-  background: var(--grad-navy); color: #fff; text-decoration: none;
-  box-shadow: 0 16px 40px -26px rgba(11, 33, 64, .55);
-  transition: transform .25s var(--ease, ease), box-shadow .25s ease;
+  display: flex; flex-direction: column; overflow: hidden;
+  border-radius: 18px; background: #fff; border: 1px solid var(--line);
+  color: var(--ink); text-decoration: none;
+  box-shadow: 0 12px 32px rgba(16, 46, 71, .08);
+  transition: transform .2s ease, box-shadow .2s ease;
 }
-.wcard:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -28px rgba(11, 33, 64, .7); }
-.wcard__body { position: relative; display: flex; flex-direction: column; justify-content: center; padding: 26px 26px 24px; min-width: 0; }
-.wcard__silo {
-  position: absolute; right: -14%; bottom: -16%; width: 74%; aspect-ratio: 1/1; z-index: 0;
-  fill: rgba(255,255,255,.07); stroke: rgba(255,255,255,.16); stroke-width: .6; vector-effect: non-scaling-stroke; pointer-events: none;
+.wcard:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(16, 46, 71, .14); }
+.wcard__shot { position: relative; display: block; aspect-ratio: 16 / 10; background: var(--sky-50, #f2fafd); }
+.wcard__shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wcard__flag {
+  position: absolute; left: 12px; top: 12px; font-size: 20px; line-height: 1;
+  background: rgba(255,255,255,.92); border-radius: 8px; padding: 3px 7px;
+  box-shadow: 0 4px 12px rgba(16,46,71,.18);
 }
-.wcard__body > * { position: relative; z-index: 1; }
-.wcard__head { display: flex; align-items: center; gap: 9px; }
-.wcard__flag { font-size: 22px; line-height: 1; }
-.wcard__en { font-family: var(--f-disp); font-size: 11.5px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #9fc6ee; }
-.wcard__ko { margin: 8px 0 0; display: flex; align-items: baseline; gap: 9px; font-size: 27px; font-weight: 800; letter-spacing: -.01em; }
-.wcard__ko em { font-style: normal; font-family: var(--f-disp); font-size: 13.5px; font-weight: 600; color: #9fc6ee; }
-.wcard__desc { margin: 9px 0 0; font-size: 13.5px; line-height: 1.6; color: #d7e3f0; font-weight: 300; }
-.wcard__chips { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 6px; }
-.wcard__chips li {
-  font-size: 11.5px; font-weight: 600; color: #e2eefa; line-height: 1.4;
-  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.16); border-radius: 8px;
-  padding: 5px 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+.wcard__body { display: flex; flex-direction: column; padding: 16px 18px 18px; min-width: 0; }
+.wcard__en {
+  font-family: var(--f-disp); font-size: 11px; font-weight: 800; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--sky);
 }
-.wcard__go {
-  margin: 16px 0 0; width: fit-content; display: inline-flex; align-items: center; gap: 5px;
-  font-size: 12.5px; font-weight: 700; color: #fff;
-  background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22); border-radius: 999px; padding: 7px 14px;
+.wcard__ko { margin-top: 5px; display: flex; align-items: baseline; gap: 8px; font-size: 23px; font-weight: 800; letter-spacing: -.01em; color: var(--navy); }
+.wcard__ko em { font-style: normal; font-family: var(--f-disp); font-size: 12.5px; font-weight: 600; color: var(--ink3); }
+.wcard__desc { margin-top: 8px; font-size: 13.5px; line-height: 1.65; color: var(--ink2); }
+/* 테마는 칩(버튼처럼 보임) 대신 한 줄 나열 */
+.wcard__keys {
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line);
+  font-size: 12px; line-height: 1.55; color: var(--ink3);
 }
-.wcard__shot { position: relative; min-height: 100%; background: #0a1a33; }
-.wcard__shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-/* 사진 왼쪽 가장자리를 패널 색으로 자연스럽게 녹인다 */
-.wcard__shot::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(90deg, rgba(11,33,64,.96) 0%, rgba(11,33,64,.45) 26%, rgba(11,33,64,0) 62%);
-}
+.wcard__go { margin-top: 12px; font-size: 12.5px; font-weight: 800; color: var(--sky); display: inline-flex; align-items: center; gap: 5px; }
+.wcard:hover .wcard__go i { transform: translateX(2px); }
+.wcard__go i { font-style: normal; transition: transform .2s ease; }
+
 @media (max-width: 1000px) { .country-cards--wide { grid-template-columns: 1fr; } }
 @media (max-width: 620px) {
-  .wcard { grid-template-columns: 1fr; min-height: 0; }
-  .wcard__shot { order: -1; aspect-ratio: 16/9; }
-  .wcard__shot::after { background: linear-gradient(180deg, rgba(11,33,64,0) 40%, rgba(11,33,64,.9) 100%); }
-  .wcard__body { padding: 18px 20px 20px; }
-  .wcard__ko { font-size: 23px; }
+  .wcard__body { padding: 14px 16px 16px; }
+  .wcard__ko { font-size: 20px; }
 }
 
 /* ══ 갤러리 정리(2026-08) ══════════════════════════════════════════

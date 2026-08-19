@@ -60,7 +60,7 @@ const UI: Record<string, Record<string, string>> = {
   'cta.backToMap': { ko: '지도로 돌아가기', en: 'Back to map' },
   'label.visits': { ko: '교육선교 방문 · Mission Visits', en: 'Mission Visits' },
   'label.visitsHint': { ko: '— 눌러서 사진 보기', en: '— tap to view photos' },
-  'status.inProgress': { ko: '진행 중', en: 'In progress' },
+  'status.inProgress': { ko: '최근 기록', en: 'Latest record' },   // 연혁의 최신 연도일 뿐, 현재 활동 여부가 아니다
   'label.journey': { ko: '선교 발자취', en: 'Mission Journey' },
   'nav.prev': { ko: '← 이전', en: '← Prev' },
   'nav.next': { ko: '다음 →', en: 'Next →' },

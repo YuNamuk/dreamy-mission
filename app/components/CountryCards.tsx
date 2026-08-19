@@ -3,7 +3,6 @@ import { getCountries } from '@/lib/content';
 import { getHome } from '@/lib/home';
 import { resolvePhoto } from '@/lib/photos';
 import { getLocale, makeT } from '@/lib/i18n';
-import { countrySilhouette } from '@/lib/silhouette';
 
 const ORDER = ['mongolia', 'philippines', 'cambodia', 'indonesia', 'india', 'pakistan'];
 const FLAG: Record<string, string> = {
@@ -29,39 +28,29 @@ export default async function CountryCards({ variant = 'strip' }: { variant?: 's
         if (!c) return null;
         const img = home.cardImages?.[id] ?? resolvePhoto(`card-${id}`) ?? resolvePhoto(`th-${id}-1`);
 
-        // ── 선교지 페이지: 글 패널 | 사진 을 좌우로 나눈 카드(글이 사진 위에 얹히지 않게) ──
+        // ── 선교지 페이지: 사진 위 · 흰 본문 아래(홈페이지 카드와 같은 언어) ──
         if (wide) {
-          const d = countrySilhouette(id);
-          // 테마 제목은 "이름 — 설명" 형태 → 칩에는 앞부분만
-          const chips = (c.themes ?? []).slice(0, 3).map((th) => th.t.split('—')[0].trim());
+          // 테마 제목은 "이름 — 설명" 형태 → 앞부분만 모아 한 줄로 나열(칩 대신)
+          const keys = (c.themes ?? []).slice(0, 4).map((th) => th.t.split('—')[0].trim());
           return (
             <Link key={id} href={`/${id}`} className="wcard">
-              <div className="wcard__body">
-                {d && (
-                  <svg className="wcard__silo" viewBox="0 0 100 100" aria-hidden focusable="false"><path d={d} /></svg>
-                )}
-                <div className="wcard__head">
-                  <span className="wcard__flag" aria-hidden>{FLAG[id]}</span>
-                  <span className="wcard__en">{locale === 'ko' ? c.en : c.ko}</span>
-                </div>
-                <h3 className="wcard__ko">
-                  {locale === 'ko' ? c.ko : c.en}
-                  {c.years && <em>{c.years}</em>}
-                </h3>
-                <p className="wcard__desc">{home.taglines[id]}</p>
-                {chips.length > 0 && (
-                  <ul className="wcard__chips">
-                    {chips.map((t) => <li key={t}>{t}</li>)}
-                  </ul>
-                )}
-                <span className="wcard__go">{t('cta.detail')}</span>
-              </div>
-              <div className="wcard__shot">
+              <span className="wcard__shot">
                 {img && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img loading="lazy" src={img} alt="" />
                 )}
-              </div>
+                <span className="wcard__flag" aria-hidden>{FLAG[id]}</span>
+              </span>
+              <span className="wcard__body">
+                <span className="wcard__en">{locale === 'ko' ? c.en : c.ko}</span>
+                <span className="wcard__ko">
+                  {locale === 'ko' ? c.ko : c.en}
+                  {c.years && <em>{c.years}</em>}
+                </span>
+                <span className="wcard__desc">{home.taglines[id]}</span>
+                {keys.length > 0 && <span className="wcard__keys">{keys.join(' · ')}</span>}
+                <span className="wcard__go">{t('cta.detail')} <i aria-hidden>→</i></span>
+              </span>
             </Link>
           );
         }
