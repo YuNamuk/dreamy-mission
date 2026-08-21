@@ -44,13 +44,14 @@ export default async function CountryCards({ variant = 'strip' }: { variant?: 's
                 </span>
               </span>
               <span className="wcard__body">
-                <span className="wcard__en">{locale === 'ko' ? c.en : c.ko}</span>
-                <span className="wcard__ko">
-                  {locale === 'ko' ? c.ko : c.en}
-                  {c.years && <em>{c.years}</em>}
+                {/* 나라끼리 견주려면 같은 것이 같은 자리에 있어야 한다 — 기간과 활동을 사진 바로 아래 한 줄로 */}
+                <span className="wcard__chips">
+                  {c.years && <span className="wcard__chip wcard__chip--yr">{c.years}</span>}
+                  {keys.slice(0, 3).map((k) => <span key={k} className="wcard__chip">{k}</span>)}
                 </span>
+                <span className="wcard__en">{locale === 'ko' ? c.en : c.ko}</span>
+                <span className="wcard__ko">{locale === 'ko' ? c.ko : c.en}</span>
                 <span className="wcard__desc">{home.taglines[id]}</span>
-                {keys.length > 0 && <span className="wcard__keys">{keys.join(' · ')}</span>}
                 <span className="wcard__go">{t('cta.detail')} <i aria-hidden>→</i></span>
               </span>
             </Link>
