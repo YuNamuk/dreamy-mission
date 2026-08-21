@@ -1,13 +1,16 @@
 /**
- * 드리미학교 홈페이지 전역 헤더 — 홈페이지(hp/header)와 동일한 고정 헤더를 mission 안에 재현.
- * 상단 고정(fixed) + 호버 드롭다운(CSS) + 방문상담 CTA. 링크는 홈페이지 절대경로(<a>, basePath 미적용).
- * 메뉴 데이터는 homepage lib/site-nav.json 스냅샷 — 홈페이지 메뉴 개편 시 함께 갱신할 것.
+ * 드리미학교 홈페이지 전역 헤더 — 홈페이지(hp/header)와 같은 고정 헤더를 mission 안에 재현.
+ * 상단 고정(fixed) + 호버 드롭다운(CSS) + 수업 검색 + 방문상담 CTA. 링크는 홈페이지 절대경로(<a>).
+ *
+ * ⚠ 메뉴는 **홈페이지에서 읽어 온다**(`/api/site-nav`). 예전에는 손으로 복사한 스냅샷을 썼는데,
+ * 홈페이지에서 공지사항을 숨기고 3P Festival 을 옮긴 뒤 두 헤더가 갈라졌다(2026-08-22 사용자 지적).
+ * 아래 NAV_FALLBACK 은 **연결이 안 될 때만** 쓰는 대비다 — 여기를 고쳐 맞추려 하지 말 것.
  */
 interface NavChild { label: string; href: string }
 interface NavItem { label: string; href: string | null; children: NavChild[] }
 
-// ⚠ 홈페이지 lib/site-nav.json 스냅샷 — 메뉴 변경 시 반드시 함께 갱신(자동 생성)
-const NAV: NavItem[] = [
+// 연결이 안 될 때만 쓰는 대비(홈페이지 메뉴의 옛 스냅샷)
+const NAV_FALLBACK: NavItem[] = [
   { label: '학교', href: '/school', children: [
     { label: '학교 소개', href: '/school' }, { label: '교육철학', href: '/school/philosophy' }, { label: '교육시설', href: '/facilities' }, { label: '학교 상징(SI)', href: '/brand' } ] },
   { label: '드리미교육', href: '/education', children: [
@@ -27,7 +30,22 @@ const NAV: NavItem[] = [
 import MissionUtils, { type UtilCountry } from './MissionUtils';
 import type { DreamiUser } from '@/lib/dreami';
 
-export function GlobalHeader({ user = null, locale = 'ko', countries = [] }: { user?: DreamiUser | null; locale?: string; countries?: UtilCountry[] } = {}) {
+const HOMEPAGE = process.env.NEXT_PUBLIC_HOMEPAGE_ORIGIN || 'https://dreamyedu.vercel.app';
+
+/** 홈페이지에서 메뉴를 읽어 온다. 실패하면 옛 스냅샷으로 버틴다(헤더가 사라지지 않게). */
+async function loadNav(): Promise<NavItem[]> {
+  try {
+    const r = await fetch(`${HOMEPAGE}/api/site-nav`, { next: { revalidate: 300 } });
+    if (!r.ok) return NAV_FALLBACK;
+    const j = (await r.json()) as { items?: NavItem[] };
+    return Array.isArray(j.items) && j.items.length ? j.items : NAV_FALLBACK;
+  } catch {
+    return NAV_FALLBACK;
+  }
+}
+
+export async function GlobalHeader({ user = null, locale = 'ko', countries = [] }: { user?: DreamiUser | null; locale?: string; countries?: UtilCountry[] } = {}) {
+  const NAV = await loadNav();
   return (
     <header className="ghd">
       <div className="ghd__in">
@@ -51,6 +69,11 @@ export function GlobalHeader({ user = null, locale = 'ko', countries = [] }: { u
           ))}
         </nav>
         <div className="ghd__right">
+          {/* 홈페이지 헤더와 같은 순서 — 수업 검색 · 방문상담 · 유틸 */}
+          <a href="/archive" className="ghd__search" aria-label="수업 검색">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+            <span>수업 검색</span>
+          </a>
           <a href="/admission/consult" className="ghd__cta">방문상담 신청</a>
           <MissionUtils user={user} locale={locale} countries={countries} />
         </div>

@@ -1985,6 +1985,8 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
 .ghd__dd:hover .ghd__panel, .ghd__dd:focus-within .ghd__panel { visibility: visible; opacity: 1; }
 .ghd__plink { font-family: var(--f-ko); font-size: 13.5px; color: #3A4A52; text-decoration: none; padding: 7px 16px; white-space: nowrap; }
 .ghd__plink:hover { background: #E6F7FE; color: #0091C2; }
+.ghd__search { display: inline-flex; align-items: center; gap: 6px; flex: none; font-family: var(--f-ko); font-size: 13px; font-weight: 700; color: #6E8294; text-decoration: none; padding: 8px 10px; border-radius: 999px; }
+.ghd__search:hover { background: #F2F6F8; color: #0091C2; }
 .ghd__cta { flex: none; font-family: var(--f-ko); font-size: 13px; font-weight: 700; color: #fff; background: #00a7e1; border-radius: 999px; padding: 8px 15px; text-decoration: none; }
 .ghd__cta:hover { filter: brightness(1.08); }
 @media (max-width: 1023px) {
@@ -1992,6 +1994,7 @@ body > main > * { flex-shrink: 0; width: 100%; } /* flex 컬럼에서 margin:aut
   .ghd__nav::-webkit-scrollbar { display: none; }
   .ghd__panel { display: none; }
   .ghd__cta { display: none; }
+  .ghd__search span { display: none; }
 }
 
 
