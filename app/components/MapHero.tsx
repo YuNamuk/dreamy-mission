@@ -183,7 +183,8 @@ export default function MapHero({ countries, journey, hero, defaultLayer = 'terr
       elRef.current.addEventListener('click', onMore);
 
       const wide = window.innerWidth > 900;
-      map.fitBounds(L.latLngBounds([SEOUL_LATLNG, ...dests]), { paddingTopLeft: [wide ? 300 : 20, 90], paddingBottomRight: [wide ? 320 : 20, 60] });
+      // 좁은 화면에서는 좌우 여백을 더 둔다 — 20px 로는 국가 표기가 지도 밖으로 잘렸다
+      map.fitBounds(L.latLngBounds([SEOUL_LATLNG, ...dests]), { paddingTopLeft: [wide ? 300 : 34, wide ? 90 : 46], paddingBottomRight: [wide ? 320 : 34, wide ? 60 : 46] });
       ro = new ResizeObserver(() => map.invalidateSize()); ro.observe(elRef.current);
       setTimeout(() => map.invalidateSize(), 60);
     })();
