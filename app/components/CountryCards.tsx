@@ -39,7 +39,9 @@ export default async function CountryCards({ variant = 'strip' }: { variant?: 's
                   // eslint-disable-next-line @next/next/no-img-element
                   <img loading="lazy" src={img} alt="" />
                 )}
-                <span className="wcard__flag" aria-hidden>{FLAG[id]}</span>
+                <span className="wcard__tag">
+                  <span aria-hidden>{FLAG[id]}</span> {locale === 'ko' ? c.ko : c.en}
+                </span>
               </span>
               <span className="wcard__body">
                 <span className="wcard__en">{locale === 'ko' ? c.en : c.ko}</span>
