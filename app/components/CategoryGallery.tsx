@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { thumb } from '@/lib/img';
 
 export interface Category {
   num: string;
@@ -39,7 +40,7 @@ export default function CategoryGallery({ categories }: { categories: Category[]
             <div className="catcard__media">
               {c.cover ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={c.cover} alt="" loading="lazy" />
+                <img src={thumb(c.cover, 560)} alt="" loading="lazy" decoding="async" />
               ) : (
                 <div className="catcard__ph" />
               )}
@@ -64,7 +65,7 @@ export default function CategoryGallery({ categories }: { categories: Category[]
             <div className="lb__stage">
               {cat.photos.length > 1 && <button className="lb__nav lb__nav--prev" onClick={prev} aria-label="이전">‹</button>}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="lb__img" src={cat.photos[pi]} alt={cat.t} onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }} />
+              <img className="lb__img" src={thumb(cat.photos[pi], 1600, 80)} alt={cat.t} onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }} />
               {cat.photos.length > 1 && <button className="lb__nav lb__nav--next" onClick={next} aria-label="다음">›</button>}
             </div>
             <div className="lb__meta">

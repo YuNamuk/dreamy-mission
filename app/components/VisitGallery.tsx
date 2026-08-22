@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { thumb } from '@/lib/img';
 import type { Visit } from '@/lib/content';
 
 export default function VisitGallery({ visits }: { visits: Visit[] }) {
@@ -38,7 +39,7 @@ export default function VisitGallery({ visits }: { visits: Visit[] }) {
             <button key={vs.id} className="vcard" onClick={() => { setPi(coverIdx); setOpen(realIdx); }}>
               <div className="vcard__media">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={cover} alt="" loading="lazy" />
+                <img src={thumb(cover, 560)} alt="" loading="lazy" decoding="async" />
                 <span className="vcard__scrim" />
                 <span className="vcard__count">{vs.photos.length}장</span>
                 <div className="vcard__cap">
@@ -58,7 +59,7 @@ export default function VisitGallery({ visits }: { visits: Visit[] }) {
             <div className="lb__stage">
               {v.photos.length > 1 && <button className="lb__nav lb__nav--prev" onClick={prev} aria-label="이전">‹</button>}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img loading="lazy" className="lb__img" src={v.photos[pi]} alt={v.label} />
+              <img loading="lazy" className="lb__img" src={thumb(v.photos[pi], 1600, 80)} alt={v.label} />
               {v.photos.length > 1 && <button className="lb__nav lb__nav--next" onClick={next} aria-label="다음">›</button>}
             </div>
             <div className="lb__meta">
@@ -70,7 +71,7 @@ export default function VisitGallery({ visits }: { visits: Visit[] }) {
                 {v.photos.map((p, idx) => (
                   <button key={idx} className={`lb__thumb${idx === pi ? ' is-on' : ''}`} onClick={() => setPi(idx)}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img loading="lazy" src={p} alt="" />
+                    <img loading="lazy" src={thumb(p, 160)} alt="" />
                   </button>
                 ))}
               </div>

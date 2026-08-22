@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { thumb } from '@/lib/img';
 import { getCountries } from '@/lib/content';
 import { getHome } from '@/lib/home';
 import { resolvePhoto } from '@/lib/photos';
@@ -37,7 +38,7 @@ export default async function CountryCards({ variant = 'strip' }: { variant?: 's
               <span className="wcard__shot">
                 {img && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img loading="lazy" src={img} alt="" />
+                  <img loading="lazy" decoding="async" src={thumb(img, 640)} alt="" />
                 )}
                 <span className="wcard__tag">
                   <span aria-hidden>{FLAG[id]}</span> {locale === 'ko' ? c.ko : c.en}
@@ -63,7 +64,7 @@ export default async function CountryCards({ variant = 'strip' }: { variant?: 's
             {img && (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img loading="lazy" src={img} alt="" className="ccard__img" />
+                <img loading="lazy" decoding="async" src={thumb(img, 640)} alt="" className="ccard__img" />
                 <span className="ccard__scrim" />
               </>
             )}

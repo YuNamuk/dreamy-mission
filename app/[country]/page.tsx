@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { thumb } from '@/lib/img';
 import { notFound } from 'next/navigation';
 import { getUser } from '@/lib/session';
 import { getCountry } from '@/lib/content';
@@ -135,7 +136,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
             {stories.map((s) => (
               <Link key={s.id} href={`/gallery?country=${id}`} className="stcard">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.cover ?? s.photos[0]} alt="" loading="lazy" />
+                <img src={thumb(s.cover ?? s.photos[0], 640)} alt="" loading="lazy" decoding="async" />
                 <span className="stcard__scrim" />
                 {s.date && <span className="stcard__badge">{s.date}</span>}
                 <span className="stcard__cap"><b>{s.title}</b></span>

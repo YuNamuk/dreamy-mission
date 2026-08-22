@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { thumb } from '@/lib/img';
 import { resolvePhoto } from '@/lib/photos';
 
 /**
@@ -52,7 +53,7 @@ export default function PageTitleBar({
       {photo && (
         <div className="ptbar__photo" aria-hidden>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={photo} alt="" />
+          <img src={thumb(photo, 1440, 62)} alt="" decoding="async" />
           <span className="ptbar__veil" />
         </div>
       )}

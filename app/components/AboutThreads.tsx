@@ -1,4 +1,5 @@
 import { getCountries } from '@/lib/content';
+import { thumb } from '@/lib/img';
 import { resolvePhoto } from '@/lib/photos';
 import { getLocale } from '@/lib/i18n';
 
@@ -113,7 +114,7 @@ export default async function AboutThreads() {
                 <div className="thread__media">
                   {img ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={img} alt="" loading="lazy" />
+                    <img src={thumb(img, 640)} alt="" loading="lazy" decoding="async" />
                   ) : (
                     <div className="thread__ph" aria-hidden />
                   )}

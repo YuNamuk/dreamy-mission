@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { thumb } from '@/lib/img';
 import { getUser } from '@/lib/session';
 import { getCountries } from '@/lib/content';
 import { getHome } from '@/lib/home';
@@ -66,7 +67,7 @@ export default async function Home() {
             <Link key={id} href={`/${id}`} className="ccard ccard--light">
               {img && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img loading="lazy" src={img} alt="" className="ccard__img" />
+                <img loading="lazy" decoding="async" src={thumb(img, 640)} alt="" className="ccard__img" />
               )}
               <span className="ccard__body">
                 <span><span className="ccard__flag">{CARD_FLAG[id]}</span> <span className="ccard__ko2">{locale === 'ko' ? c.ko : c.en}</span></span>
@@ -97,7 +98,7 @@ export default async function Home() {
                   {img && (
                     <>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img loading="lazy" src={img} alt="" className="dcard__img" />
+                      <img loading="lazy" decoding="async" src={thumb(img, 640)} alt="" className="dcard__img" />
                       <span className="dcard__scrim" />
                     </>
                   )}
@@ -123,7 +124,7 @@ export default async function Home() {
             {[...seasons].sort((x, y) => (y.date ?? '').localeCompare(x.date ?? '')).slice(0, 4).map((s) => (
               <Link key={s.id} href={s.country ? `/gallery?country=${s.country}` : '/gallery'} className="stcard">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.cover ?? s.photos[0]} alt="" loading="lazy" />
+                <img src={thumb(s.cover ?? s.photos[0], 640)} alt="" loading="lazy" decoding="async" />
                 <span className="stcard__scrim" />
                 {s.country && byId[s.country] && <span className="stcard__badge">{locale === 'ko' ? byId[s.country].ko : byId[s.country].en}</span>}
                 <span className="stcard__cap">{s.date && <i>{s.date}</i>}<b>{s.title}</b></span>
